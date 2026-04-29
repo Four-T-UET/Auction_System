@@ -1,5 +1,13 @@
-package controller;
+package controller.etrade;
 
+import enums.ItemCategory;
+import factory.ArtFactory;
+import factory.ElectronicsFactory;
+import factory.ItemFactory;
+import factory.RealEstateFactory;
+import factory.VehicleFactory;
+import model.Auction;
+import model.Item;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,7 +21,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 
@@ -74,6 +81,9 @@ public class ControlSelling implements Initializable {
             case ARTS:
                 factory = new ArtFactory();
                 break;
+            case REAL_ESTATE:
+                factory = new RealEstateFactory();
+                break;
             case ELECTRONICS:
                 factory = new ElectronicsFactory();
                 break;
@@ -85,7 +95,7 @@ public class ControlSelling implements Initializable {
                 break;
         }
 
-        String imagePathStr = StatusFile.getText() != null && !StatusFile.getText().equals("Not Found") ? StatusFile.getText() : "default.png";
+        String imagePathStr = selectFile != null ? selectFile.getAbsolutePath() : null;
         return factory.createItem(name, description, imagePathStr);
     }
 
@@ -94,11 +104,6 @@ public class ControlSelling implements Initializable {
         // Sẽ được hoàn thiện ở bước tiếp theo để an toàn hơn
         if (nameSelling.getText().isEmpty() || firstPrice.getText().isEmpty() || categoryBox.getValue() == null) {
             showAlert(Alert.AlertType.ERROR,"Error","Please fill all the fields!");
-            return false;
-        }
-
-        if (StatusFile.getText().equals("Not Found")) {
-            showAlert(Alert.AlertType.ERROR,"Error", "Please select an image file!");
             return false;
         }
 
@@ -133,7 +138,7 @@ public class ControlSelling implements Initializable {
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             this.selectFile = file;
-            StatusFile.setText("Image Selected");
+            StatusFile.setText(file.getName());
         }
     }
     @FXML

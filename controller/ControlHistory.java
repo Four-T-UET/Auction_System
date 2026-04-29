@@ -1,5 +1,9 @@
-package controller;
+package controller.etrade;
 
+import enums.AuctionStatus;
+import enums.ItemCategory;
+import model.Auction;
+import model.Item;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -82,7 +86,9 @@ public class ControlHistory implements Initializable {
 
         categoryColPurchases.setCellValueFactory(cellData -> {
             Item product = cellData.getValue().getItem();
-            String category = product.toString();
+            String category = (product != null && product.getCategory() != null)
+                    ? product.getCategory().name()
+                    : "Unknown!";
             return new SimpleStringProperty(category);
         });
 
@@ -103,14 +109,24 @@ public class ControlHistory implements Initializable {
     //
     //
     public void loadImage(String path){
-        Image image = new Image(getClass().getResourceAsStream(path));
-        imagePurchaseIcon.setImage(image);
+        if (path == null || imagePurchaseIcon == null) {
+            return;
+        }
+        var stream = getClass().getResourceAsStream(path);
+        if (stream != null) {
+            Image image = new Image(stream);
+            imagePurchaseIcon.setImage(image);
+        }
     }
     //
     public void loadPieChart(){
         Map<ItemCategory,Integer> count = new HashMap<>();
         for(Auction auction: auctionList){
-            ItemCategory temp =  auction.getItem().getCategory();
+            Item product = auction.getItem();
+            if (product == null || product.getCategory() == null) {
+                continue;
+            }
+            ItemCategory temp =  product.getCategory();
             count.put(temp,count.getOrDefault(temp,0) + 1);
         }
         int total = 0;
@@ -237,7 +253,7 @@ public class ControlHistory implements Initializable {
         loadDataForSelling();
         
         loadPieChart();
-        loadImage("/controller/loginImage.jpg");// cần thay đổi:)))
+        loadImage("/controller/etrade/loginImage.jpg");
 
         // --- CHẠY ĐỒNG HỒ ĐẾM NGƯỢC ---
         Timeline clock = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), e -> {

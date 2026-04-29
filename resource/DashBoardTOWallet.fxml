@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="900.0" spacing="40.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="900.0" spacing="40.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.etrade.ControlWallet">
    <padding>
       <Insets bottom="40.0" left="60.0" right="60.0" top="40.0" />
    </padding>
@@ -107,12 +107,12 @@
                   <TextField fx:id="depositField" prefHeight="35.0" promptText="Amount to deposit..." style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ced4da;" GridPane.columnIndex="1" />
                   <TextField fx:id="withdrawField" prefHeight="35.0" promptText="Amount to withdraw..." style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ced4da;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                  <Button fx:id="depositBtn" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Deposit" GridPane.columnIndex="2">
+                  <Button fx:id="depositBtn" onAction="#handleDeposit" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Deposit" GridPane.columnIndex="2">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="withdrawBtn" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #e67e22; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Withdraw" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="withdrawBtn" onAction="#handleWithdraw" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #e67e22; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Withdraw" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

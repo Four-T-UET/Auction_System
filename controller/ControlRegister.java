@@ -1,4 +1,4 @@
-package controller;
+package controller.etrade;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import java.net.URL;
