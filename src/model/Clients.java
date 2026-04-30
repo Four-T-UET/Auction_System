@@ -4,18 +4,14 @@ import enums.AuctionClosedException;
 import enums.AuctionEvent;
 import enums.AuctionStatus;
 import enums.InvalidBidException;
-
 import java.util.HashMap;
 
 public class Clients extends User implements Bidder, Seller{
     private HashMap<String, Item> inventory = new HashMap<>();
     private Wallet wallet = new Wallet();
+
     public Clients(String username, String password){
         super(username, password);
-    }
-    // method nạp tiền
-    public void deposit(double amount){
-        wallet.deposit(amount);
     }
     @Override
     public synchronized boolean login(String name, String pass) {
@@ -25,11 +21,14 @@ public class Clients extends User implements Bidder, Seller{
         return new Clients(name, pass);
     }
 
-    @Override
-    public void addItem(Item temp) {
-        inventory.put(temp.getId(), temp);
+    // method nạp tiền
+    public void deposit(double amount){
+        wallet.deposit(amount);
     }
 
+    @Override
+    public void addItem(Item temp) {inventory.put(temp.getId(), temp);
+    }
     @Override
     public void removeItem(Item temp) {
         inventory.remove(temp.getId());
@@ -51,7 +50,7 @@ public class Clients extends User implements Bidder, Seller{
             return;
         }
 
-		//check money
+        //check money
         try {
             if (wallet.getBalance() + wallet.getLockBalance() < price) {
                 throw new InvalidBidException("Khong du tien trong tai khoan");
@@ -65,47 +64,44 @@ public class Clients extends User implements Bidder, Seller{
         //Lockmoney
         if (isBidValid) {
             //lockbalance
-            wallet.lockWallet(price);
-            System.out.println("Dat gia thanh cong");
+            wallet.lockWallet(auction,price);
         } else {
-            System.out.println("Dat gia that bai, so tien dat khong hop le");
+
         }
-	}
+    }
 
-	public void update(Auction a, AuctionEvent eventType, String message){
-		//print notification
-		System.out.println("Cap nhat phien: "+ message);
-		// logic wallet
-		if (eventType== AuctionEvent.PRICE_UPDATED){
-			//check lockbalance
-			boolean isMoneyLocked = this.wallet.getLockBalance() > 0;
-			//check winner
-			boolean amIWinner = (a.getCurrentWinner() == this);
-			
-			if (isMoneyLocked && !amIWinner){
-				this.wallet.releaseBalance(a.getCurrentPrice());
-				System.out.println("Ban da bi vuot gia, tien da duoc tra ve tai khoan");
-			}
-		}
+    public void update(Auction auction, AuctionEvent eventType, String message){
+        //print notification
+        // logic wallet
+        if (eventType== AuctionEvent.PRICE_UPDATED){
+            //check lockbalance
+            boolean isMoneyLocked = this.wallet.getLockBalance() > 0;
+            //check winner
+            boolean amIWinner = (auction.getCurrentWinner() == this);
+
+            if (isMoneyLocked && !amIWinner){
+                this.wallet.releaseBalance(auction);
+            }
+        }
 
 
-	}
+    }
+
+
     public Wallet getWallet(){
         return this.wallet;
     }
-
     @Override
-    public void releaseBalance(double amount) {
-        wallet.releaseBalance(amount);
+    public void releaseBalance(Auction auction) {
+        wallet.releaseBalance(auction);
     }
 
     @Override
-    public void deductLockbalance(double amount) {
-        wallet.deductLockBalance(amount);
+    public void deductLockbalance(Auction auction) {
+        wallet.deductLockBalance(auction);
     }
     //    @Override
-//    public void setAutoBid(model.Auction a, double maxBid, double increment) {
+//    public void setAutoBid(model.Auction , double maxBid, double increment) {
 //
 //    }
 }
-

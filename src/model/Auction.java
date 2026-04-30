@@ -4,6 +4,8 @@ package model;
 import enums.AuctionEvent;
 import enums.AuctionStatus;
 import enums.AuthenticationException;
+import manager.AuctionStateManagement;
+import manager.BidHistory;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -16,10 +18,14 @@ public class Auction extends Entity {
     private double currentPrice;
     private double minimumStep;
     private Bidder currentWinner;
+
+	private BidHistory bidHistory;
 	private AuctionObservers auctionObservers;
-    private HashMap<String,BidTransaction> BidHistory = new HashMap<>();
+    private final AuctionStateManagement auctionStateManagement;
+
 	// Constructor
     public Auction(Item product, double currentPrice, double miniumStep){
+		super();
 		try{
 			if(currentPrice < 0){
 				throw new AuthenticationException("Giá tiến không hợp lệ. Vui lòng nhập lại");
@@ -28,9 +34,8 @@ public class Auction extends Entity {
 			System.out.println(e.getMessage());
 		}
 
-
-        super();
 		this.auctionObservers=new AuctionObservers();
+		this.auctionStateManagement = new AuctionStateManagement();
         this.product=product;
         this.currentPrice=currentPrice;
         this.minimumStep=miniumStep;
@@ -38,11 +43,8 @@ public class Auction extends Entity {
         this.startTime=LocalDateTime.now();
         this.finishTime=startTime.plusDays(1);//useless
     }
-	public void notifyObservers(AuctionEvent event, String message){
-		auctionObservers.sendNotification(this,event, message );
-	}
 	// Hàm kiểm tra, set người chiến thắng hiện tại
-    public boolean setCurrentWinner(Bidder bidder, double price){
+    public boolean setCurrentWinner(Clients bidder, double price){
 
 		synchronized (this){ // NGon vay, this ở đây chỉ cái auction đó
 							// không Auction.class vì sẽ blocks ALL auction
@@ -66,11 +68,6 @@ public class Auction extends Entity {
 		}
     }
 
-	// Thêm lịch sử đã giao dịch
-    public void addBidTransaction(Bidder bidder, double price){
-        BidTransaction temp = new BidTransaction(bidder,price);
-        BidHistory.put(temp.getId(),temp);
-    }
 
 	// Getter - Setter
 	public double getMiniumStep(){
@@ -83,50 +80,33 @@ public class Auction extends Entity {
 	public AuctionStatus getStatus(){
 		return status;
 	}
+	public synchronized void setStatus(AuctionStatus status){
+		this.status = status;
+	}
 
+
+	public void notifyObservers(AuctionEvent event, String message){
+		auctionObservers.sendNotification(this,event, message );
+	}
+	// Thêm lịch sử đã giao dịch
+	public void addBidTransaction(Clients bidder, double price){
+		bidHistory.addingTransaction(bidder, price);
+	}
+	public void printBidTransaction(){
+		bidHistory.printBidTransaction();
+	}
 	// --------------------------------------------------------
 	// Logic chuyển trạng thái của AUCTION --------------------
 	public synchronized void startAuction(){
-		if(this.status == AuctionStatus.PENDING){
-			this.status = AuctionStatus.RUNNING;
-			System.out.println("Bắt đầu phiên đấu giá");
-		}
+		auctionStateManagement.startAuction(this);
 	}
 	public synchronized void finishAuction(){
-		if(this.status == AuctionStatus.RUNNING){
-			this.status = AuctionStatus.FINISHED;
-			this.payingAuction();
-			System.out.println("Hoàn thành phiên đấu giá");
-		}
+		auctionStateManagement.finishAuction(this);
 	}
 	public synchronized void payingAuction(){
-		if (this.status != AuctionStatus.FINISHED){
-			System.out.println("Phiên đấu giá không thể thanh toán");
-			return;
-		}
-		if (this.currentWinner == null || this.currentWinner.getWallet() == null){
-			System.out.println("Không có người thắng để thanh toán");
-			return;
-		}
-
-		this.currentWinner.deductLockbalance(currentPrice);
-		this.status = AuctionStatus.PAID;
-		System.out.println("Phiên đấu giá đã được thanh toán");
+		auctionStateManagement.payingAuction(this);
 	}
-
 	public synchronized void cancelAuction(){
-		if(this.status != AuctionStatus.PAID && this.status != AuctionStatus.CANCELLED){
-			this.status = AuctionStatus.CANCELLED;
-			notifyObservers(AuctionEvent.AUCTION_CANCELLED,"Phiên đấu giá đã bị huỷ");
-			try{
-				this.currentWinner.releaseBalance(currentPrice);
-
-			} catch (NullPointerException e) {
-				System.out.println("");
-			}
-			System.out.println("Phiên đâu giá đã bị huỷ");
-		}else{
-			System.out.println("Không thể huỷ phiên đấu giá");
-		}
+		auctionStateManagement.cancelAuction(this);
 	}
 }

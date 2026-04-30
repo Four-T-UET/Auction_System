@@ -12,6 +12,9 @@ public abstract class User extends Entity {
         this.username = username;
         this.password = password;
     }
+    public String getUsername(){
+        return username;
+    }
     public synchronized boolean login(String name, String pass){
         boolean check = true;
         try{
