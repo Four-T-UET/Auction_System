@@ -6,4 +6,3 @@ public enum AuctionEvent{
 	AUCTION_CLOSED_WINNER,
 	AUCTION_CANCELLED
 }
-	

@@ -4,14 +4,13 @@ package model;
 import enums.AuctionEvent;
 import enums.AuctionStatus;
 import enums.AuthenticationException;
+import manager.AuctionManager;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class Auction extends Entity {
     private AuctionStatus status;
-    private LocalDateTime startTime;
-    private LocalDateTime finishTime;
     private Item product;
     private double currentPrice;
     private double minimumStep;
@@ -34,9 +33,9 @@ public class Auction extends Entity {
         this.product=product;
         this.currentPrice=currentPrice;
         this.minimumStep=miniumStep;
-        this.status= AuctionStatus.PENDING;
-        this.startTime=LocalDateTime.now();
-        this.finishTime=startTime.plusDays(1);//useless
+        this.status= AuctionStatus.RUNNING;
+		AuctionManager.getInstance().add(this);
+//useless
     }
 	public void notifyObservers(AuctionEvent event, String message){
 		auctionObservers.sendNotification(this,event, message );
@@ -49,7 +48,7 @@ public class Auction extends Entity {
 			if (bidder == null || this.status != AuctionStatus.RUNNING){
 				return false;
 			}
-			if (this.currentPrice + minimumStep <= price) {
+			if (this.currentPrice + minimumStep <= price){
 				//update new winner
 				this.currentWinner = bidder;
 				this.currentPrice = price;
@@ -109,7 +108,7 @@ public class Auction extends Entity {
 			return;
 		}
 
-		this.currentWinner.deductLockbalance(currentPrice);
+		this.currentWinner.deductLockbalance(this);
 		this.status = AuctionStatus.PAID;
 		System.out.println("Phiên đấu giá đã được thanh toán");
 	}
@@ -119,7 +118,7 @@ public class Auction extends Entity {
 			this.status = AuctionStatus.CANCELLED;
 			notifyObservers(AuctionEvent.AUCTION_CANCELLED,"Phiên đấu giá đã bị huỷ");
 			try{
-				this.currentWinner.releaseBalance(currentPrice);
+				this.currentWinner.releaseBalance(this);
 
 			} catch (NullPointerException e) {
 				System.out.println("");

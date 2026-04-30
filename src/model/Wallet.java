@@ -1,46 +1,53 @@
 package model;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Wallet extends Entity {
     private volatile double balance;
-    private double lockBalance;
+    private double totalLockBalance;
     private ReentrantLock lock=new ReentrantLock();
+    private ConcurrentHashMap<String,Double> lockList=new ConcurrentHashMap<>();
     public Wallet(){
         super();
-        this.balance = 0;this.lockBalance = 0;
+        this.balance = 0;this.totalLockBalance = 0;
     }
     //Getter/Setter
     public void setBalance(double balance){this.balance = balance;}
-    public void setLockBalance(double lockBalance){this.lockBalance = lockBalance;}
+    public void settotalLockBalance(double lockBalance){this.totalLockBalance = lockBalance;}
     public double getBalance(){return this.balance;}
-    public double getLockBalance(){return this.lockBalance;}
+    public double getLockBalance(){return this.totalLockBalance;}
 
     //Methods
     public synchronized void deposit(double amount){
         balance += amount;
     }
-    public synchronized void lockWallet(double amount){
-        this.balance = this.balance - (amount - this.lockBalance);
-        this.lockBalance = amount;
+    public synchronized void lockWallet(Auction auction,double amount){
+        this.totalLockBalance=this.totalLockBalance-lockList.getOrDefault(auction.getId(),0.0)+amount;
+        lockList.put(auction.getId(), amount);
+        this.balance = this.balance - totalLockBalance;
+
     }
 
-    public void releaseBalance(double amount){
+    public void releaseBalance(Auction auction){
         lock.lock();
         try {
-            this.balance += amount;
-            this.lockBalance -= amount;
+            this.balance += lockList.get(auction.getId());
+            this.totalLockBalance -= lockList.get(auction.getId());
+            lockList.remove(auction.getId());
+
         }finally {
             lock.unlock();
         }
 
     }
 
-    public void deductLockBalance(double amount){
+    public void deductLockBalance(Auction auction){
         lock.lock();
         try {
-            this.balance -= amount;
-            this.lockBalance -= amount;
+            this.balance -= lockList.get(auction.getId());
+            this.totalLockBalance -= lockList.get(auction.getId());
+            lockList.remove(auction.getId());
         }finally{
             lock.unlock();
         }
