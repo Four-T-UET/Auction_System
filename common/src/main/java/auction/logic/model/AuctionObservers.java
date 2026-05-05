@@ -1,0 +1,15 @@
+package auction.logic.model;
+import auction.logic.enums.AuctionEvent;
+
+import java.util.HashSet;
+public class AuctionObservers {
+    private HashSet<Bidder> observers = new HashSet<>();
+    public synchronized void registerObserver(Bidder bidder) {
+        observers.add(bidder);
+    }
+    public void sendNotification(Auction auction, AuctionEvent event, String message){
+        for (Bidder observer: observers){
+            observer.update(auction,event,message);
+        }
+    }
+}
