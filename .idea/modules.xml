@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Auction_System.iml" filepath="$PROJECT_DIR$/Auction_System.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Etrade.iml" filepath="$PROJECT_DIR$/Etrade.iml" />
     </modules>
   </component>
 </project>
