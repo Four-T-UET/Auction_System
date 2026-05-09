@@ -1,0 +1,19 @@
+package sever;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import sever.handler.ClientHandler;
+import sever.handler.LoginHandler;
+
+public class Server {
+  public static void main(String[] args) {
+    try (ServerSocket serverSocket = new ServerSocket(5000)) {
+      System.out.println("Server UET đang chạy tại port 5000...");
+      while (true) {
+        Socket clientSocket = serverSocket.accept();
+        new Thread(new ClientHandler(clientSocket)).start();
+      }
+    } catch (IOException e) { e.printStackTrace(); }
+  }
+}
