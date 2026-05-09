@@ -1,9 +1,10 @@
 package auction.logic.model;
 
 import auction.logic.enums.AuthenticationException;
+import java.io.Serializable;
 import javax.swing.*;
 
-public abstract class User extends Entity {
+public abstract class User extends Entity implements Serializable {
     private String username;
     private String password;
     public User( String username, String password){

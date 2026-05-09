@@ -6,7 +6,7 @@ import auction.logic.model.Item;
 
 public class ElectronicsFactory extends ItemFactory{
     @Override
-    public Item createItem(String name, String description) {
-        return new Electronics(name, description);
+    public Item createItem(String name, String description,String imagepath) {
+        return new Electronics(name, description, imagepath);
     }
 }

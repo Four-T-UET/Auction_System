@@ -1,9 +1,10 @@
 package auction.logic.model;
 
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Wallet extends Entity {
+public class Wallet extends Entity implements Serializable {
     private volatile double balance;
     private double totalLockBalance;
     private ReentrantLock lock=new ReentrantLock();
@@ -51,6 +52,9 @@ public class Wallet extends Entity {
         }finally{
             lock.unlock();
         }
+    }
+    public void withdraw(double money) {
+        this.balance -= money;
     }
 
 }
