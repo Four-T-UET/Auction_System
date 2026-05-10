@@ -8,7 +8,7 @@ public class AuthService {
   public Object verifyWithServer(String user, String pass) {
     try{
       ClientSocket clientSocket = ClientSocket.getInstance(); // tạo ClientSocket duy nhất 1 lần;
-
+//
       Object response = clientSocket.sendAndReceive("LOGIN|" + user + "|" + pass);
 
       return response;
