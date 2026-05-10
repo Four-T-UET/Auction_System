@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="" />
+    <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="new branch" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +12,7 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_C:/Users/PC/Documents/code/BaiTapLon/Auction_System" value="3DUUB06mxYIQkEEf4lxmc12mCw5" />
       <entry key="_D:/Auction_Project/Auction_System" value="3DITvUe84OcuZNFlgo9DnymNlBm" />
       <entry key="_D:/Auction_Project/Auction_System/client" value="3DOWiorAo7bxNFJiHAkCD4XbbHk" />
       <entry key="_D:/Testing_SeverandDtbase" value="3DOlIz7VgN7EpQ0XTOBsLzayjrs" />
@@ -28,7 +29,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/logic" />
+        <entry key="$PROJECT_DIR$" value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -42,7 +43,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Four-T-UET/Auction_System.git&quot;,
-    &quot;accountId&quot;: &quot;af9249f8-e86f-4ecd-9842-441c9bd573a1&quot;
+    &quot;accountId&quot;: &quot;0e1fd155-d039-4743-a93f-a7fbac53fd91&quot;
   }
 }</component>
   <component name="McpProjectServerCommands">
@@ -64,6 +65,7 @@
     &quot;Application.Server.executor&quot;: &quot;Run&quot;,
     &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
     &quot;JUnit.AuctionTest.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.common [validate].executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
@@ -74,12 +76,13 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev__Tuan&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Testing_SeverandDtbase&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/PC/Documents/code/BaiTapLon/Auction_System&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -113,15 +116,6 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="AuctionTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Auction_System" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="AuctionTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <module name="client" />
       <method v="2">
@@ -133,12 +127,6 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="JUnit.AuctionTest" />
-        <item itemvalue="JUnit.AuctionTest" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -174,7 +162,29 @@
       <workItem from="1778302522134" duration="3618000" />
       <workItem from="1778306387055" duration="1562000" />
       <workItem from="1778312193900" duration="1172000" />
+      <workItem from="1778335986109" duration="84000" />
+      <workItem from="1778336157072" duration="76000" />
+      <workItem from="1778336247279" duration="171000" />
+      <workItem from="1778336543732" duration="5643000" />
+      <workItem from="1778382376578" duration="311000" />
     </task>
+    <task id="LOCAL-00001" summary="new branch">
+      <option name="closed" value="true" />
+      <created>1778383195693</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778383195693</updated>
+    </task>
+    <task id="LOCAL-00002" summary="new branch">
+      <option name="closed" value="true" />
+      <created>1778383363171</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1778383363171</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -190,6 +200,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="new branch" />
+    <option name="LAST_COMMIT_MESSAGE" value="new branch" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
