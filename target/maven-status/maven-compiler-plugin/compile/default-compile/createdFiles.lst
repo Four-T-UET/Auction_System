@@ -1,0 +1,17 @@
+app\models\User.class
+app\models\Auction.class
+app\models\AuctionStatus.class
+app\Main.class
+app\models\Item.class
+app\models\AuctionEvent.class
+app\models\Wallet.class
+app\models\ItemCategory.class
+app\models\Entity.class
+app\models\AuctionObservers.class
+app\models\BidTransaction.class
+app\models\Seller.class
+app\models\Bidder.class
+app\AppTrade.class
+app\models\AuctionStateManagement.class
+app\models\Clients.class
+app\models\BidHistory.class
