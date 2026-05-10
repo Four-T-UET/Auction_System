@@ -8,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import service.AuthService;
 
 import java.util.Optional;
 
@@ -31,56 +32,39 @@ public class ControlRegister implements Initializable {
         String repass = reEnterpass.getText();
 
         // Validate
-        if (!validate(user, pass, repass)) {
+        if (!validateInput(user, pass, repass)) {
             return; // Nếu không hợp lệ thì dừng việc tạo tài khoản
         }
-
-        LoginDB.insertUser(user, pass);// connect to config
-
-        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-        successAlert.setTitle("Thành công");
-        successAlert.setHeaderText(null);
-        successAlert.setContentText("Đăng ký thành công! Vui lòng quay lại màn hình Login.");
-
-        Optional<ButtonType> result = successAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try{
-                // Gọi hàm SignUpToLogin và truyền registerButton vào để hàm biết Stage nào cần đổi
-                ChangeScene.SignUpToLogin(event);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
+        boolean registerSuccess =  AuthService.registerRequest(user, pass);
+        if (!registerSuccess) {
+            AlertShow.showAlert(Alert.AlertType.ERROR,"Error","Username is existed");
+            return;
+        }
+        AlertShow.showAlert(Alert.AlertType.INFORMATION, "Info", "Register Successfully");
+        try{
+            // Gọi hàm SignUpToLogin và truyền registerButton vào để hàm biết Stage nào cần đổi
+            ChangeScene.SignUpToLogin(event);
+        }
+        catch (Exception e){
+            AlertShow.showAlert(Alert.AlertType.ERROR,"Error","Something went wrong. Try again.");
         }
     }
-
-    // Hàm Helper để hiển thị thông báo giảm lặp code
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    private boolean validate(String user,String pass,String repass){
+    private boolean validateInput(String user,String pass,String repass){
         // 1. Kiểm tra không được để trống
-        if(LoginDB.isUserExists(user)){
-            return false;
-        }
         if(user.isEmpty() || pass.isEmpty() || repass.isEmpty()){
-            showAlert(Alert.AlertType.WARNING, "Thiếu thông tin", "Vui lòng điền đầy đủ tên đăng nhập và mật khẩu!");
+            AlertShow.showAlert(Alert.AlertType.WARNING, "", "Vui lòng điền đầy đủ tên đăng nhập và mật khẩu!");
             return false;
         }
 
         // 2. Kiểm tra mật khẩu nhập lại có khớp không
         if(!pass.equals(repass)){
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu nhập lại không khớp!");
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Mật khẩu nhập lại không khớp!");
             return false;
         }
 
         // 3. (Tuỳ chọn) Kiểm tra độ dài/độ an toàn của mật khẩu
         if(pass.length() < 6){
-            showAlert(Alert.AlertType.WARNING, "Mật khẩu yếu", "Mật khẩu phải có ít nhất 6 ký tự!");
+            AlertShow.showAlert(Alert.AlertType.WARNING, "Mật khẩu yếu", "Mật khẩu phải có ít nhất 6 ký tự!");
             return false;
         }
         return true;

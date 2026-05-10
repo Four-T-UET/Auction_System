@@ -12,6 +12,7 @@ public class Server {
       System.out.println("Server UET đang chạy tại port 5000...");
       while (true) {
         Socket clientSocket = serverSocket.accept();
+        System.out.println("Đã có khách kết nối");
         new Thread(new ClientHandler(clientSocket)).start();
       }
     } catch (IOException e) { e.printStackTrace(); }

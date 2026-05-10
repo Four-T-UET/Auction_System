@@ -30,6 +30,10 @@ public class ClientHandler implements Runnable {
         if ("LOGIN".equals(command)) {
           AuthHandler handler = new LoginHandler();
           handler.handle(parts, out);
+        } else if ("REGISTER".equals(command)) {
+
+          AuthHandler handler = new RegisterHandler();
+          handler.handle(parts, out);
         } else {
           out.writeObject("UNDEFINED");
           out.flush();
