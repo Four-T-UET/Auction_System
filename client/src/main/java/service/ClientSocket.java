@@ -15,7 +15,7 @@ public class ClientSocket {
   // Singleton: Đảm bảo cả ứng dụng chỉ có 1 kết nối duy nhất
   private ClientSocket() {
     try {
-      socket = new Socket("192.168.1.26", 5000);
+      socket = new Socket("10.11.1.146", 5000);
       out = new ObjectOutputStream(socket.getOutputStream()); // lấy dữ liệu output stream của socket localhost
       in = new ObjectInputStream(socket.getInputStream()); // đọc dữ liệu sẽ được gửi lại từ sever: byte --> text
     } catch (IOException e) {

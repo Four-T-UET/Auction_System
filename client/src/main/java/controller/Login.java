@@ -44,12 +44,12 @@ public class Login {
         }
 
 
-        boolean checkLogin = AuthService.verifyWithServer(user, pass);
+        Object checkLogin = AuthService.verifyWithServer(user, pass);
 
-        if(checkLogin){
+        if(checkLogin instanceof Clients){
 
             try{
-                UserSession.setCurrentUser(new Clients(user, pass));
+                UserSession.setCurrentUser((Clients) checkLogin);
                 ChangeScene.LoginToDashBoard(event);
             }catch (Exception e){
                 e.printStackTrace();
