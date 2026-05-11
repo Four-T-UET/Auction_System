@@ -3,8 +3,10 @@ package controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
-public class ControlProductCard implements Initializable {
+public class ControlProductCard{
     private Timeline countdownTimeline;
     @FXML
     private ImageView itemImageView;
@@ -35,41 +37,25 @@ public class ControlProductCard implements Initializable {
     private Label itemCurrentBid;
     @FXML
     private Button bidBut;
-    
+
     private Auction currentAuction;
-    private BidButtonListener bidListener;
 
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        bidBut.setOnAction(event -> {
-            try{
-            BidNow(event);}
-            catch (IOException e){
-                e.printStackTrace();
-            }
-        });
-    }
-
-    // Interface để callback khi nhấn Bid
-    @FunctionalInterface
-    public interface BidButtonListener {
-        void onBidClicked(Auction auction);
-    }
-    
-    // Set listener từ Dashboard
-    public void setBidListener(BidButtonListener listener) {
-        this.bidListener = listener;
-    }
-    
-    @FXML
-    public void BidNow(ActionEvent event) throws IOException {
-        if (bidListener != null && currentAuction != null) {
-            bidListener.onBidClicked(currentAuction);
+    //HELPER
+    public void setOnBidHandler(EventHandler<ActionEvent> eventHandler) {
+        if(bidBut != null){
+            bidBut.setOnAction(eventHandler);
         }
     }
-    
+    public void setBidButVisible(boolean visible) {
+        if(bidBut != null){
+            bidBut.setVisible(visible);
+            bidBut.setManaged(visible);
+        }
+    }
     public void setData(Auction auction){
+        if(currentAuction != null){
+            itemCurrentBid.textProperty().unbind();
+        }
         this.currentAuction = auction;
         if (auction == null || auction.getItem() == null) {
             return;
@@ -79,12 +65,11 @@ public class ControlProductCard implements Initializable {
         itemType.setText(auction.getItem().getCategory() != null ? auction.getItem().getCategory().toString() : "Unknown");
         itemCurrentBid.textProperty().bind(auction.currentPriceProperty().asString("%.2f"));
         loadImage(auction);
+        if(countdownTimeline != null){
+            countdownTimeline.stop();
+            countdownTimeline = null;
+        }
         startRealtimeUpdate();
-    }
-
-    private String formatFinishTime(Auction auction) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return auction.getFinishTime() != null ? auction.getFinishTime().format(formatter) : "N/A";
     }
 
     private void loadImage(Auction auction) {
@@ -94,7 +79,23 @@ public class ControlProductCard implements Initializable {
                 itemImageView.setImage(image);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Co loi trong viec load anh");
+        }
+    }
+
+    public static VBox renderCard(Auction myAuction,boolean isHidden) {
+        try{
+            FXMLLoader loader = new FXMLLoader(ControlProductCard.class.getResource("/productCard.fxml"));
+            VBox cardBox = loader.load();
+            ControlProductCard controlProductCard = loader.getController();
+            if(isHidden){
+                controlProductCard.bidBut.setDisable(isHidden);
+            }
+            controlProductCard.setData(myAuction);
+            return cardBox;
+        }catch (IOException e){
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Co loi trong viec renderCard");
+            return null;
         }
     }
 
@@ -102,71 +103,16 @@ public class ControlProductCard implements Initializable {
         if (auction.getItem().getImageBytes() != null && auction.getItem().getImageBytes().length > 0) {
             return new Image(new ByteArrayInputStream(auction.getItem().getImageBytes()));
         }
-
-        String imagePath = auction.getItem().getImagePath();
-        if (imagePath == null || imagePath.isBlank()) {
-            return null;
-        }
-
-        if (imagePath.startsWith("/")) {
-            var stream = getClass().getResourceAsStream(imagePath);
-            return stream != null ? new Image(stream) : null;
-        }
-
-        File file = new File(imagePath);
-        if (file.exists()) {
-            return new Image(file.toURI().toString());
-        }
-
-        var stream = getClass().getResourceAsStream("/controller/etrade/" + imagePath);
-        return stream != null ? new Image(stream) : null;
+        return new Image(ClassLoader.getSystemResourceAsStream("resource/loginImage.jpg"));
     }
 
-//    public static VBox renderCard(Auction myAuction, BidButtonListener bidListener) {
-//        try{
-//            FXMLLoader loader = new FXMLLoader(ControlProductCard.class.getResource("/sever/etrade/productCard.fxml"));
-//            VBox cardBox = loader.load();
-//            ControlProductCard controlProductCard = loader.getController();
-//            controlProductCard.setBidListener(bidListener);
-//            controlProductCard.setData(myAuction);
-//            return cardBox;
-//        }catch (IOException e){
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-    public static VBox renderCard(Auction myAuction) {
-        try{
-            FXMLLoader loader = new FXMLLoader(ControlProductCard.class.getResource("/productCard.fxml"));
-            VBox cardBox = loader.load();
-            ControlProductCard controlProductCard = loader.getController();
-            controlProductCard.setData(myAuction);
-            return cardBox;
-        }catch (IOException e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static VBox renderCard(Auction myAuction, BidButtonListener bidListener,boolean isHidden) {
-        try{
-            FXMLLoader loader = new FXMLLoader(ControlProductCard.class.getResource("/productCard.fxml"));
-            VBox cardBox = loader.load();
-            ControlProductCard controlProductCard = loader.getController();
-            controlProductCard.setBidListener(bidListener);
-            controlProductCard.setData(myAuction);
-            return cardBox;
-        }catch (IOException e){
-            e.printStackTrace();
-            return null;
-        }
-    }
     // chage time
     private void startRealtimeUpdate(){
         if (countdownTimeline != null) countdownTimeline.stop();
         countdownTimeline = new Timeline(
-                new KeyFrame(javafx.util.Duration.seconds(1), e -> {
-                    itemTimeLeft.setText(formatRemaining(currentAuction));
-                })
+            new KeyFrame(javafx.util.Duration.seconds(1), e -> {
+                itemTimeLeft.setText(formatRemaining(currentAuction));
+            })
         );
         countdownTimeline.setCycleCount(Timeline.INDEFINITE);
         countdownTimeline.play();
@@ -181,8 +127,8 @@ public class ControlProductCard implements Initializable {
             return "END";
         }
         long hours = dur.toHours();
-        long minutes = dur.toMinutes();
-        long seconds = dur.getSeconds();
+        long minutes = dur.toMinutes() % 60;
+        long seconds = dur.getSeconds() % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 

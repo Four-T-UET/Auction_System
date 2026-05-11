@@ -9,12 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,18 +26,6 @@ public class ControlDashBoard implements Initializable {
     @FXML
     private BorderPane mainPane;
     @FXML
-    private Button acountBut;
-    @FXML
-    private Button historyBut;
-    @FXML
-    private Button walletBut;
-    @FXML
-    private Button sellingBut;
-    @FXML
-    private Button settingBut;
-    @FXML
-    private Button mainScene;
-    @FXML
     private Button findItem;
     @FXML
     private TextField searchField;
@@ -49,21 +35,21 @@ public class ControlDashBoard implements Initializable {
     private Pagination pagination;
 
     @FXML
-    public void chooseCategory(){
-
+    public ItemCategory chooseCategory(){
+        return categoryComBox.getSelectionModel().getSelectedItem();
     }
     @FXML
     public void Find(ActionEvent event) {
         ItemCategory type = categoryComBox.getValue();
         String searchData = searchField.getText().toLowerCase();
-//        compareData(type, searchData);
+        //TODO: request đến server, lọc dữu liệu.
     }
 
     @FXML
     private void returnToMain(ActionEvent event) {
-        // Because the main scene's center has the find bar (VBox/HBox) + pagination
-        // we can reload the MainDashboard.fxml to reset everything back
         try {
+            //TODO: Tạo request đến server pull dữ liệu về, các auction có
+            // sẽ load lại mainPane
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainDashboard.fxml"));
             Parent root = loader.load();
             Scene scene = mainPane.getScene();
@@ -79,7 +65,6 @@ public class ControlDashBoard implements Initializable {
         this.allAuctions = AuctionsDB;
     }
 
-
     /**
      * Load Bidding screen vào mainPane khi nhấn Bid Now
      */
@@ -87,10 +72,8 @@ public class ControlDashBoard implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Bidding.fxml"));
             Parent biddingView = loader.load();
-
             ControlBidding biddingController = loader.getController();
             biddingController.setAuction(auction);
-
             mainPane.setCenter(biddingView);
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,59 +131,38 @@ public class ControlDashBoard implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         categoryComBox.setItems(FXCollections.observableArrayList(ItemCategory.values()));
-        categoryComBox.getSelectionModel().select(ItemCategory.ALL);
-        findItem.setOnAction(event ->{
-            Find(event);
-        });
-        historyBut.setOnAction(event ->{
-            chageToHistory(event);
-        });
-        walletBut.setOnAction(event ->{
-            chageToWallet(event);
-        });
-        sellingBut.setOnAction(event ->{
-            chageToSelling(event);
-        });
-        acountBut.setOnAction(event ->{
-            changeToAccount(event);
-        });
-        mainScene.setOnAction(event ->{
-            returnToMain(event);
-        });
+        categoryComBox.getSelectionModel().select(ItemCategory.REAL_ESTATE);
         // Load auctions từ config
-        this.allAuctions = AuctionDB.getAuctions();
-        dividePage(allAuctions);
+        //TODO: tạo request đến server để có thể lấy dữ liệu
+//        dividePage(allAuctions);
 
     }
 
-    private void dividePage(List<Auction> listAuctions){
-        final int NUM_ITEM = 9;
+    private void dividePage(List<Auction> listAuctions) {
+        final int NUM_ITEM = 6;
         int pageCount = (int) Math.ceil((double) listAuctions.size() / NUM_ITEM);
-        pagination.setPageCount((pageCount));
-        pagination.setPageFactory((Integer pageIndex) -> {
-            int start = pageIndex*NUM_ITEM;
-            int end = Math.min(start + NUM_ITEM, listAuctions.size());
+        pagination.setPageCount(pageCount);
+        pagination.setPageFactory((pageIndex) -> createPage(listAuctions, pageIndex, NUM_ITEM));
+    }
 
-            FlowPane page = new FlowPane();
-            page.setHgap(25.0);
-            page.setVgap(25.0);
-            page.setVgap(25.0);
-            page.setPadding(new javafx.geometry.Insets(30));
-            page.setAlignment(javafx.geometry.Pos.TOP_CENTER);
+    private ScrollPane createPage(List<Auction> auctions, int pageIndex, int itemsPerPage) {
+        int start = pageIndex * itemsPerPage;
+        int end = Math.min(start + itemsPerPage, auctions.size());
 
-            // Đảm bảo FlowPane tự động chiếm hết chiều ngang có thể
-            page.setMaxWidth(Double.MAX_VALUE);
+        FlowPane page = new FlowPane();
+        for (int i = start; i < end; i++) {
+            page.getChildren().add(createAuctionCard(auctions.get(i)));
+        }
 
-            for(int i = start;i < end;i++){
-                page.getChildren().add(ControlProductCard.renderCard(listAuctions.get(i), this::openBiddingScreen, false));
-            }
+        return new ScrollPane(page);
+    }
 
-            // Bọc FlowPane trong ScrollPane để khi số lượng sản phẩm lớn sẽ không bị mất trên màn hình nhỏ
-            javafx.scene.control.ScrollPane scrollPane = new javafx.scene.control.ScrollPane(page);
-            scrollPane.setFitToWidth(true);
-            scrollPane.setStyle("-fx-background-color: transparent; -fx-background: #f4f7f6;");
-
-            return scrollPane;
-        });
+    private VBox createAuctionCard(Auction auction) {
+        try {
+            return ControlProductCard.renderCard(auction,false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

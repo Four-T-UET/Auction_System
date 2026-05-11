@@ -39,6 +39,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
                         <Label text="Current price:" textFill="#7f8c8d">
@@ -51,7 +52,7 @@
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label text="Your bid price:" textFill="#7f8c8d" GridPane.rowIndex="2">
+                        <Label text="Your bid price:" textFill="#7f8c8d" GridPane.rowIndex="3">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -70,12 +71,22 @@
                         </Label>
 
                         <!-- Ô nhập liệu -->
-                        <TextField fx:id="fieldPrice" promptText="Enter amount..." style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #bdc3c7; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="fieldPrice" promptText="Enter amount..." style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #bdc3c7; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Winner Bidder:" textFill="#7f8c8d" GridPane.rowIndex="2">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="winnerLabel" text="N/A" textFill="#e74c3c" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
                     </children>
                 </GridPane>
 
                 <!-- Nút bấm -->
-                <Button fx:id="Bidding" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBid" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 12;" text="Bid Now" VBox.vgrow="ALWAYS">
+                <Button fx:id="Bidding" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBid" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 30; -fx-padding: 12; -fx-border-radius: 30;" text="Bid Now" VBox.vgrow="ALWAYS">
                     <font>
                         <Font size="15.0" />
                     </font>

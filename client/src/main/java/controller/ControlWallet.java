@@ -11,6 +11,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import auction.logic.model.Clients;
 
+import static controller.AlertShow.showAlert;
+
 public class ControlWallet implements Initializable {
     private Clients client = new Clients("tung","123");
     @FXML
@@ -45,7 +47,6 @@ public class ControlWallet implements Initializable {
         }catch (IllegalArgumentException e){
             showAlert(Alert.AlertType.ERROR,"Error" ,"Negative input");
         }catch (Exception e){
-            e.printStackTrace();
             showAlert(Alert.AlertType.ERROR,"Error" ,"Something went wrong: " + e.getMessage());
         }finally {
             depositField.clear();
@@ -56,10 +57,7 @@ public class ControlWallet implements Initializable {
         try{
             String withdrawMoney = withdrawField.getText().trim();
             double money = Double.parseDouble(withdrawMoney);
-            if (this.client == null) {
-                showAlert(Alert.AlertType.ERROR,"Error" ,"User not logged in");
-                return;
-            }
+
             this.client.getWallet().withdraw(money);
             double balance = this.client.getWallet().getBalance();
             balanceLabel.setText(String.format("$ %.2f", balance));
@@ -96,12 +94,5 @@ public class ControlWallet implements Initializable {
         withdrawBtn.setOnAction(event -> {
             handleWithdraw(event);
         });
-    }
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

@@ -5,7 +5,5 @@ public enum ItemCategory {
     VEHICLE,
     ELECTRONICS,
     REAL_ESTATE,
-    NOT_DEFINE,
-    ALL
 }
 

@@ -14,7 +14,9 @@ import auction.logic.model.Clients;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ControlBidding implements Initializable {
+
+
+public class ControlBidding {
     private Auction auction;
 
     @FXML
@@ -26,77 +28,40 @@ public class ControlBidding implements Initializable {
     @FXML
     private TextField fieldPrice;
     @FXML
-    private Button Bidding;
+    private Label winnerLabel;
 
     public void setAuction(Auction auction) {
         this.auction = auction;
         if (auction != null) {
             priceCurrent.setText(String.format("%.2f", auction.getCurrentPrice()));
             step.setText(String.format("%.2f", auction.getMiniumStep()));
-            ProductCard.getChildren().setAll(ControlProductCard.renderCard(auction, null, false));
+            winnerLabel.setText(auction.getCurrentWinner().getId());
+            ProductCard.getChildren().setAll(ControlProductCard.renderCard(auction, true));
         }
     }
 
     @FXML
     public void handleBid(ActionEvent event) {
-        String price = fieldPrice.getText().trim();
-
         try {
+            String price = fieldPrice.getText().trim();
             if (auction == null) {
-                showAlert(Alert.AlertType.ERROR, "Không tìm thấy phiên đấu giá!");
+                AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không tìm thấy phiên đấu giá!");
                 return;
             }
+            //TODO:Kiểm tra giá, gửi request lên sever cùng với price, this.auction
 
-            double my_price = Double.parseDouble(price);
+            // Cập nhật UI
+            auction.currentPriceProperty().set(Double.parseDouble(price));
+            priceCurrent.setText(String.format("%.2f", price));
+            winnerLabel.setText("Bạn đang dẫn đầu!");
+            AlertShow.showAlert(Alert.AlertType.INFORMATION, "Thành công", "Bid thành công!");
 
-            // Lấy user hiện tại từ session
-            Clients currentBidder = UserSession.getCurrentUser();
-
-            if (currentBidder == null) {
-                showAlert(Alert.AlertType.ERROR, "Bạn chưa đăng nhập!");
-                return;
-            }
-
-            // Kiểm tra giá bid
-            if (my_price <= 0) {
-                showAlert(Alert.AlertType.ERROR, "Giá phải lớn hơn 0!");
-                return;
-            }
-
-            // Thực hiện bid
-            if (this.auction.setCurrentWinner(currentBidder, my_price)) {
-                // Lưu vào config (memory)
-                AuctionDB.insertAuction(this.auction);
-
-                // Cập nhật UI
-                auction.currentPriceProperty().set(my_price);
-                priceCurrent.setText(String.format("%.2f", my_price));
-
-                // Xóa text field
-                fieldPrice.clear();
-
-                showAlert(Alert.AlertType.INFORMATION, "Bid thành công!");
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Giá của bạn thấp hơn mức tối thiểu!");
-            }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Giá không hợp lệ!");
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Giá không hợp lệ!");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Có lỗi xảy ra: " + e.getMessage());
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra: " + e.getMessage());
+        }finally {
+            fieldPrice.clear();
         }
     }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-    }
-
-    private void showAlert(Alert.AlertType type, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(type == Alert.AlertType.ERROR ? "Lỗi" : "Thông báo");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 }

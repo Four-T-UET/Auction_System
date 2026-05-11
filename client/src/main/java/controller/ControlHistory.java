@@ -35,15 +35,7 @@ public class ControlHistory implements Initializable {
     //_______________________
     // FOR PURCHASES
     //_______________________
-    /*
-    Cách thông tin được chạy trong TableView:
-        + Đầu tiên: chạy gọi initialized() -> mục đich để nạp các nut bấm, ... vào
-    trong bộ nhớ. setDataForColumn(), được gọi đó chính là hướng dẫn cho các data sau
-    này được ghi như thế nào?
-           -------> NOTE: lúc này dữ liệu trong bảng vẫn trống
 
-        +Tiếp theo: mới nhận data từ MainBoard || Database rồi mới gọi loadDataForPurchases();
-     */
     private List<Auction> auctionList = new ArrayList<>();
     public void setAuctionList(List<Auction> auctionList){
         this.auctionList = auctionList;
@@ -87,8 +79,8 @@ public class ControlHistory implements Initializable {
         categoryColPurchases.setCellValueFactory(cellData -> {
             Item product = cellData.getValue().getItem();
             String category = (product != null && product.getCategory() != null)
-                    ? product.getCategory().name()
-                    : "Unknown!";
+                ? product.getCategory().name()
+                : "Unknown!";
             return new SimpleStringProperty(category);
         });
 
@@ -107,19 +99,7 @@ public class ControlHistory implements Initializable {
         });
     }
     //
-    //
-    public void loadImage(String path){
-        if (path == null || imagePurchaseIcon == null) {
-            return;
-        }
-        var stream = getClass().getResourceAsStream(path);
-        if (stream != null) {
-            Image image = new Image(stream);
-            imagePurchaseIcon.setImage(image);
-        }
-    }
-    //
-    public void loadPieChart(){
+    private void loadPieChart(){
         Map<ItemCategory,Integer> count = new HashMap<>();
         for(Auction auction: auctionList){
             Item product = auction.getItem();
@@ -139,11 +119,7 @@ public class ControlHistory implements Initializable {
         }
         //load data
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
-        //-> PieChart.Data là 1 lát trong biểu đồ tròn
-        // VD:
-        //PieChart.Data data = new PieChart.Data("ELECTRONICS", 5);
-        // ý nghĩa là lượng Electronics là 5
-        // tạo các List chứa PieChart.Data -> chứa những lát cắt
+
         for(Map.Entry<ItemCategory,Integer> entry: count.entrySet()){
             double percent = (double) entry.getValue() / total * 100;
             String label = entry.getKey().name() + " (" + String.format("%.1f", percent) + "%)";
@@ -178,11 +154,11 @@ public class ControlHistory implements Initializable {
 
     public void setDataForSelling(){
         itemColSelling.setCellValueFactory(cellData ->{
-             Item item = cellData.getValue().getItem();
-             String name = (item != null) ? item.getName() : "Unknown";
+            Item item = cellData.getValue().getItem();
+            String name = (item != null) ? item.getName() : "Unknown";
             return new SimpleStringProperty(name);
         });
-        
+
         indexColSelling.setCellValueFactory(cellData -> {
             return new SimpleStringProperty(cellData.getValue().getId());
         });
@@ -190,17 +166,17 @@ public class ControlHistory implements Initializable {
         currentbidColSelling.setCellValueFactory(cellData -> {
             return cellData.getValue().currentPriceProperty().asObject();
         });
-        
+
         enddateColSelling.setCellValueFactory(cellData -> {
             return new SimpleObjectProperty<>(cellData.getValue().getFinishTime());
         });
 
         enddateColSelling.setCellFactory(getCountdownCellFactory());
-        
+
         statusColSelling.setCellValueFactory(cellData -> {
             return new SimpleObjectProperty<>(cellData.getValue().getStatus());
         });
-        
+
     }
     public void setScatterChart(Auction sellingData){
         CategoryAxis xAxis = new CategoryAxis(); // category axis for String
@@ -219,28 +195,26 @@ public class ControlHistory implements Initializable {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                } else {
-                    LocalDateTime now = LocalDateTime.now();
-                    if (now.isAfter(item)) {
-                        setText("Ended");
-                    } else {
-                        Duration duration = Duration.between(now, item);
-                        long days = duration.toDays();
-                        long hours = duration.toHoursPart();
-                        long minutes = duration.toMinutesPart();
-                        long seconds = duration.toSecondsPart();
+                    return;
+                }
 
-                        if (days > 0) {
-                            setText(String.format("%d ngày %02d:%02d:%02d", days, hours, minutes, seconds));
-                        } else {
-                            setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-                        }
-                    }
+                if (LocalDateTime.now().isAfter(item)) {
+                    setText("Ended");
+                } else {
+                    Duration duration = Duration.between(LocalDateTime.now(), item);
+                    long days = duration.toDays();
+                    long hours = duration.toHoursPart();
+                    long minutes = duration.toMinutesPart();
+                    long seconds = duration.toSecondsPart();
+
+                    String format = days > 0
+                        ? String.format("%d ngày %02d:%02d:%02d", days, hours, minutes, seconds)
+                        : String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                    setText(format);
                 }
             }
         };
     }
-
     //khởi tạo
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -248,12 +222,10 @@ public class ControlHistory implements Initializable {
         setDataForColumn();
         setDataForSelling();
         setDataForCategory();
-        
+
         loadDataForPurchases();
         loadDataForSelling();
-        
         loadPieChart();
-        loadImage("/controller/etrade/loginImage.jpg");
 
         // --- CHẠY ĐỒNG HỒ ĐẾM NGƯỢC ---
         Timeline clock = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), e -> {
@@ -278,8 +250,6 @@ public class ControlHistory implements Initializable {
 
     public void setDataForCategory(){
         ObservableList<ItemCategory> itemCategories = FXCollections.observableArrayList(ItemCategory.values());
-        //ItemCategory.value() trả về tất cả các giá trị
-        //ta không cần phải liệt kê thủ công ARTS,VEHICLE,ELECTRONICS
         categoryComboPurchases.setItems(itemCategories);
         if(typeComboSelling != null) {
             typeComboSelling.setItems(itemCategories);

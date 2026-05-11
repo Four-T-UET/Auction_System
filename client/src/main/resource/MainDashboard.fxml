@@ -5,10 +5,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -54,7 +52,7 @@
                   <Insets left="30.0" />
                </padding>
             </Button>
-            <Button fx:id="acountBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: #ecf0f1; -fx-cursor: hand;" text="User Account">
+            <Button fx:id="acountBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#changeToAccount" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: #ecf0f1; -fx-cursor: hand;" text="User Account">
                <font>
                   <Font size="16.0" />
                </font>
@@ -70,7 +68,7 @@
                   <Insets left="30.0" />
                </padding>
             </Button>
-            <Button fx:id="walletBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: #ecf0f1; -fx-cursor: hand;" text="My Wallet">
+            <Button fx:id="walletBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chageToWallet" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: #ecf0f1; -fx-cursor: hand;" text="My Wallet">
                <font>
                   <Font size="16.0" />
                </font>
@@ -78,7 +76,7 @@
                   <Insets left="30.0" />
                </padding>
             </Button>
-            <Button fx:id="sellingBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: #ecf0f1; -fx-cursor: hand;" text="Start Selling">
+            <Button fx:id="sellingBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chageToSelling" prefHeight="45.0" style="-fx-background-color: transparent; -fx-text-fill: #ecf0f1; -fx-cursor: hand;" text="Start Selling">
                <font>
                   <Font size="16.0" />
                </font>
@@ -105,6 +103,6 @@
       </VBox>
    </left>
    <center>
-       <Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER" />
+      <Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

@@ -19,10 +19,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
+
+import static controller.AlertShow.showAlert;
 
 public class ControlSelling implements Initializable {
     @FXML
@@ -40,9 +45,7 @@ public class ControlSelling implements Initializable {
     @FXML
     private ComboBox<ItemCategory> categoryBox;
     @FXML
-        private Button imageChoose;
-    @FXML
-    private Button Selling;
+    private Button imageChoose;
     @FXML
     private Label StatusFile;
     private File selectFile;
@@ -58,16 +61,26 @@ public class ControlSelling implements Initializable {
         double minStepValue = Double.parseDouble(step.getText().trim());
         int durationDays = Integer.parseInt(timeBid.getText().trim());
         ItemCategory category = categoryBox.getValue();
-
         LocalDateTime customStartTime = parseStartTime(startTime.getText().trim());
-        Item newItem = createItem(category, name, description);
+
+        ItemFactory factory;
+        switch (category) {
+            case VEHICLE -> factory = new RealEstateFactory();
+            case ARTS ->  factory = new ArtFactory();
+            case REAL_ESTATE ->  factory = new RealEstateFactory();
+            case ELECTRONICS -> factory = new ElectronicsFactory();
+            default -> factory = new RealEstateFactory();
+        }
+        Item newItem = factory.createItem(name,description);
         return new Auction(newItem, startPriceValue, minStepValue, durationDays);
     }
 
     private LocalDateTime parseStartTime(String timeStart) {
         if (!timeStart.isEmpty()) {
             try {
-                return LocalDate.parse(timeStart).atStartOfDay();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy H:m:s");
+                LocalDateTime time = LocalDateTime.parse(timeStart, formatter);
+                return time;
             } catch (DateTimeParseException e) {
                 showAlert(Alert.AlertType.ERROR,"Error","Invaid input for date!");
             }
@@ -75,29 +88,6 @@ public class ControlSelling implements Initializable {
         return null;
     }
 
-    private Item createItem(ItemCategory category, String name, String description) {
-        ItemFactory factory;
-        switch (category) {
-            case ARTS:
-                factory = new ArtFactory();
-                break;
-            case REAL_ESTATE:
-                factory = new RealEstateFactory();
-                break;
-            case ELECTRONICS:
-                factory = new ElectronicsFactory();
-                break;
-            case VEHICLE:
-                factory = new VehicleFactory();
-                break;
-            default:
-                factory = new ElectronicsFactory();
-                break;
-        }
-
-        String imagePathStr = selectFile != null ? selectFile.getAbsolutePath() : null;
-        return factory.createItem(name, description, imagePathStr);
-    }
 
     private boolean checkValid(){
         // Logic kiểm tra rỗng / null / kiểu dữ liệu cho phiên bản đầy đủ
@@ -109,18 +99,11 @@ public class ControlSelling implements Initializable {
 
         return true;
     }
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         StatusFile.setText("Not Found");
         categoryBox.getItems().setAll(ItemCategory.values());
-        categoryBox.getSelectionModel().select(ItemCategory.NOT_DEFINE);
+        categoryBox.getSelectionModel().select(ItemCategory.REAL_ESTATE);
         imageChoose.setOnAction(e -> {
             getImageChoose(e);
         });
@@ -131,10 +114,10 @@ public class ControlSelling implements Initializable {
     public void getImageChoose(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
+            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
         );
 
-        Stage stage = (Stage)  imageChoose.getScene().getWindow();
+        Stage stage = (Stage) imageChoose.getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             this.selectFile = file;
@@ -143,31 +126,32 @@ public class ControlSelling implements Initializable {
     }
     @FXML
     public void setSelling(ActionEvent event) {
-        Auction auction = getData();
-        if (auction == null) {
-            // Dừng hàm nếu nhập liệu không hợp lệ
-            return;
-        }
-        if(selectFile != null){
-            try{
-                byte[] imageBytes = Files.readAllBytes(selectFile.toPath());
-                auction.getItem().setImageBytes(imageBytes);
-            }catch (IOException e){
-                e.printStackTrace();
-                showAlert(Alert.AlertType.ERROR,"Error","Image error");
+        try {
+            Auction auction = getData();
+            if (auction == null) {
+                // Dừng hàm nếu nhập liệu không hợp lệ
                 return;
             }
-        }
-        else{
-            StatusFile.setText("Not Found");
-        }
-
-        // Lưu data vào Database thông qua DAO (Data Access Object) mà tôi vừa tạo
-        boolean isSuccess = AuctionDB.insertAuction(auction);
-        if (isSuccess) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Sản phẩm đã được đăng đấu giá thành công!");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Lỗi lưu trữ! Hãy kiểm tra kết nối Database.");
+            if (selectFile != null) {
+                try {
+                    byte[] imageBytes = Files.readAllBytes(selectFile.toPath());
+                    auction.getItem().setImageBytes(imageBytes);
+                } catch (IOException e) {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Image error");
+                    return;
+                }
+            } else {
+                Path path = Paths.get("loginImage.jpg");
+                byte[] imageBytes = Files.readAllBytes(path);
+                auction.getItem().setImageBytes(imageBytes);
+                StatusFile.setText("Not Found");
+            }
+            System.out.println(auction.getItem().getName());
+            System.out.println(auction.getCurrentPrice());
+            System.out.println(auction.getItem().getImageBytes().length);
+            //TODO: Lưu thông tin vào database
+        }catch (IOException e){
+            showAlert(Alert.AlertType.ERROR, "Error", "Khong the tao phien");
         }
     }
 
