@@ -15,12 +15,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import auction.logic.model.Auction;
+import service.ClientSocket;
 
 import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ResourceBundle;
 
 public class ControlProductCard{
@@ -58,17 +59,21 @@ public class ControlProductCard{
         }
         this.currentAuction = auction;
         if (auction == null || auction.getItem() == null) {
+            itemName.setText("");
+            itemType.setText("");
+            itemCurrentBid.setText("0.00");
+            itemTimeLeft.setText("N/A");
             return;
         }
 
         itemName.setText(auction.getItem().getName());
         itemType.setText(auction.getItem().getCategory() != null ? auction.getItem().getCategory().toString() : "Unknown");
-        itemCurrentBid.textProperty().bind(auction.currentPriceProperty().asString("%.2f"));
         loadImage(auction);
         if(countdownTimeline != null){
             countdownTimeline.stop();
             countdownTimeline = null;
         }
+        refreshDisplay();
         startRealtimeUpdate();
     }
 
@@ -79,7 +84,7 @@ public class ControlProductCard{
                 itemImageView.setImage(image);
             }
         } catch (Exception e) {
-            AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Co loi trong viec load anh");
+            e.printStackTrace();
         }
     }
 
@@ -94,38 +99,89 @@ public class ControlProductCard{
             controlProductCard.setData(myAuction);
             return cardBox;
         }catch (IOException e){
-            AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Co loi trong viec renderCard");
+            System.out.println("Error loading FXML");
+            e.printStackTrace();
             return null;
         }
     }
 
-    private Image resolveImage(Auction auction) {
+//    private Image resolveImage(Auction auction) {
+//        if (auction.getItem().getImageBytes() != null && auction.getItem().getImageBytes().length > 0) {
+//            return new Image(new ByteArrayInputStream(auction.getItem().getImageBytes()));
+//        }
+//        return new Image(ClassLoader.getSystemResourceAsStream("resource/loginImage.jpg"));
+//    }
+private Image resolveImage(Auction auction) {
+    try {
+        //  Thử load từ bytes trước
         if (auction.getItem().getImageBytes() != null && auction.getItem().getImageBytes().length > 0) {
             return new Image(new ByteArrayInputStream(auction.getItem().getImageBytes()));
         }
-        return new Image(ClassLoader.getSystemResourceAsStream("resource/loginImage.jpg"));
+    } catch (Exception e) {
+        System.err.println("Error loading image from bytes: " + e.getMessage());
     }
+
+    //  Thử load default image
+    try {
+        java.io.InputStream stream = ClassLoader.getSystemResourceAsStream("resource/loginImage.jpg");
+        if (stream != null) {
+            return new Image(stream);
+        }
+    } catch (Exception e) {
+        System.err.println("Error loading default image from resources: " + e.getMessage());
+    }
+    //  Nếu không có, dùng file path tuyệt đối
+    try {
+        File defaultFile = new File("client/src/main/resource/loginImage.jpg");
+        if (defaultFile.exists()) {
+            return new Image(defaultFile.toURI().toString());
+        }
+    } catch (Exception e) {
+        System.err.println("Error loading default image from file: " + e.getMessage());
+    }
+
+    //  Nếu fail hết, trả về null
+    System.err.println("Warning: No image available for auction");
+    return null;
+}
 
     // chage time
     private void startRealtimeUpdate(){
         if (countdownTimeline != null) countdownTimeline.stop();
         countdownTimeline = new Timeline(
+            new KeyFrame(javafx.util.Duration.ZERO, e -> refreshDisplay()),
             new KeyFrame(javafx.util.Duration.seconds(1), e -> {
-                itemTimeLeft.setText(formatRemaining(currentAuction));
+                refreshDisplay();
             })
         );
         countdownTimeline.setCycleCount(Timeline.INDEFINITE);
         countdownTimeline.play();
     }
+
+    private void refreshDisplay() {
+        if (currentAuction == null) {
+            itemCurrentBid.setText("0.00");
+            itemTimeLeft.setText("N/A");
+            return;
+        }
+
+        itemCurrentBid.setText(String.format("%.2f", currentAuction.getCurrentPrice()));
+        itemTimeLeft.setText(formatRemaining(currentAuction));
+    }
+
     private String formatRemaining(Auction auction){
         if(auction == null || auction.getFinishTime() == null){
             return "N/A";
         }
-        java.time.Duration dur = java.time.Duration.between(java.time.LocalDateTime.now(),auction.getFinishTime());
+        ClientSocket clientSocket = ClientSocket.getInstance();
+        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
 
-        if(dur.isNegative() || dur.isZero()){
+        if(remainingMillis <= 0){
             return "END";
         }
+
+        Duration dur = Duration.ofMillis(remainingMillis);
         long hours = dur.toHours();
         long minutes = dur.toMinutes() % 60;
         long seconds = dur.getSeconds() % 60;

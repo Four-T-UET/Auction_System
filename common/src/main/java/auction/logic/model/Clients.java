@@ -23,9 +23,6 @@ public class Clients extends User implements Bidder, Seller{
     }
 
     @Override
-    public void addItem(Item temp) {inventory.put(temp.getId(), temp);
-    }
-    @Override
     public void removeItem(Item temp) {
         inventory.remove(temp.getId());
     }

@@ -1,22 +1,18 @@
 
 package sever.handler;
 
+import auction.logic.RequestDTO.RegisterDTO;
 import auction.logic.model.User;
 import java.io.ObjectOutputStream;
 import sever.dao.UserDAO;
 
-public class RegisterHandler implements AuthHandler {
+public class RegisterHandler {
     private UserDAO userDAO = new UserDAO();
 
-    @Override
-    public void handle(String[] parts, ObjectOutputStream out) {
+    public void handle(RegisterDTO registerDTO, ObjectOutputStream out) {
         try {
-            // parts[0] = "REGISTER"
-            // parts[1] = username
-            // parts[2] = password
-
-            String username = parts[1];
-            String password = parts[2];
+            String username =  registerDTO.getUsername();
+            String password = registerDTO.getPassword();
 
             // Kiểm tra user đã tồn tại chưa
             if (userDAO.getUser(username) != null) {

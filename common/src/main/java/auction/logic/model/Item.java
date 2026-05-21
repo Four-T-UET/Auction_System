@@ -1,18 +1,20 @@
 package auction.logic.model;
 
 import auction.logic.enums.ItemCategory;
+import java.io.Serializable;
 
-public abstract class Item extends Entity {
+public abstract class Item extends Entity implements Serializable {
     private String name;
     private String description;
     private byte[] imageBytes;
     private ItemCategory category;
 
-    public Item(String name, String description){
+    public Item(String name, String description, ItemCategory category){
         super();
         this.name = name;
         this.description = description;
         this.imageBytes = null;
+        this.category=category;
     }
 
     // Getter - setter

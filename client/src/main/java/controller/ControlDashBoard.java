@@ -1,8 +1,12 @@
 package controller;
 
 import auction.logic.enums.ItemCategory;
+import auction.logic.manager.AuctionManager;
+import auction.logic.manager.AuctionUpdateListener;
 import auction.logic.model.Auction;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +25,8 @@ import java.util.ResourceBundle;
 
 
 public class ControlDashBoard implements Initializable {
-    private List<Auction> allAuctions;
+    private ObservableList<Auction> allAuctions;
+    private AuctionUpdateListener updateListener;
 
     @FXML
     private BorderPane mainPane;
@@ -42,14 +47,15 @@ public class ControlDashBoard implements Initializable {
     public void Find(ActionEvent event) {
         ItemCategory type = categoryComBox.getValue();
         String searchData = searchField.getText().toLowerCase();
-        //TODO: request đến server, lọc dữu liệu.
+        //TODO: lọc dư liệu từ allAuctions
     }
 
     @FXML
     private void returnToMain(ActionEvent event) {
         try {
-            //TODO: Tạo request đến server pull dữ liệu về, các auction có
-            // sẽ load lại mainPane
+            // Hủy đăng ký listener trước khi về
+            unregisterAuctionListener();
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainDashboard.fxml"));
             Parent root = loader.load();
             Scene scene = mainPane.getScene();
@@ -60,9 +66,13 @@ public class ControlDashBoard implements Initializable {
             e.printStackTrace();
         }
     }
-    // list<auction> này đã được lọc qua
-    public void setAuctions(List<Auction> AuctionsDB) {
-        this.allAuctions = AuctionsDB;
+    /**
+     * * Cập nhật auction list (gọi từ parent scene)
+     * */
+    public void setAuctions(List<Auction> auctionsDB) {
+        if (auctionsDB != null) {
+            allAuctions.setAll(auctionsDB);
+        }
     }
 
     /**
@@ -83,6 +93,7 @@ public class ControlDashBoard implements Initializable {
     @FXML
     private void chageToHistory(ActionEvent event) {
         try {
+            unregisterAuctionListener();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardTOHistory.fxml"));
             Parent root = loader.load();
             mainPane.setCenter(root);
@@ -93,6 +104,7 @@ public class ControlDashBoard implements Initializable {
     @FXML
     private void chageToWallet(ActionEvent event) {
         try{
+            unregisterAuctionListener();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardTOWallet.fxml"));
             Parent root = loader.load();
             mainPane.setCenter(root);
@@ -103,6 +115,7 @@ public class ControlDashBoard implements Initializable {
     @FXML
     private void chageToSelling(ActionEvent event) {
         try{
+            unregisterAuctionListener();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardTOSelling.fxml"));
             Parent root = loader.load();
             mainPane.setCenter(root);
@@ -114,6 +127,7 @@ public class ControlDashBoard implements Initializable {
     @FXML
     private void changeToAccount(ActionEvent event) {
         try{
+            unregisterAuctionListener();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/DashBoardTOAccount.fxml"));
             Parent root = loader.load();
             mainPane.setCenter(root);
@@ -130,17 +144,61 @@ public class ControlDashBoard implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+
         categoryComBox.setItems(FXCollections.observableArrayList(ItemCategory.values()));
         categoryComBox.getSelectionModel().select(ItemCategory.REAL_ESTATE);
-        // Load auctions từ config
-        //TODO: tạo request đến server để có thể lấy dữ liệu
-//        dividePage(allAuctions);
-
+        allAuctions = AuctionManager.getInstance().getMasterAuctionList();
+        if(!allAuctions.isEmpty()){
+            dividePage(allAuctions);
+        }
+        // Đăng ký listener để tự động cập nhật khi có realtime updates từ server
+        registerAuctionListener();
     }
 
+    private void registerAuctionListener() {
+        updateListener = new AuctionUpdateListener() {
+            @Override
+            public void onAuctionAdded(Auction auction) {
+                // Server thêm auction mới → refresh danh sách
+                Platform.runLater(() -> dividePage(allAuctions));
+            }
+
+            @Override
+            public void onAuctionUpdated(Auction auction) {
+                // Server update giá/winner → refresh danh sách
+                Platform.runLater(() -> dividePage(allAuctions));
+            }
+
+            @Override
+            public void onAuctionsReplaced(List<Auction> auctions) {
+                // Server gửi snapshot mới → refresh danh sách
+                Platform.runLater(() -> dividePage(allAuctions));
+            }
+
+            @Override
+            public void onAuctionRemoved(String auctionId) {
+                // Server xóa auction → refresh danh sách
+                Platform.runLater(() -> dividePage(allAuctions));
+            }
+        };
+
+        AuctionManager.getInstance().registerListener(updateListener);
+    }
+    /**     * Hủy đăng ký listener khi scene đóng (tránh memory leak)     */
+    private void unregisterAuctionListener() {
+        if (updateListener != null) {
+            AuctionManager.getInstance().unregisterListener(updateListener);
+            updateListener = null;
+        }
+    }
     private void dividePage(List<Auction> listAuctions) {
         final int NUM_ITEM = 6;
         int pageCount = (int) Math.ceil((double) listAuctions.size() / NUM_ITEM);
+        if (listAuctions.isEmpty()) {
+            pagination.setPageCount(1);
+            pagination.setPageFactory((pageIndex) -> new ScrollPane(new FlowPane()));
+            return;
+        }
         pagination.setPageCount(pageCount);
         pagination.setPageFactory((pageIndex) -> createPage(listAuctions, pageIndex, NUM_ITEM));
     }
@@ -150,19 +208,41 @@ public class ControlDashBoard implements Initializable {
         int end = Math.min(start + itemsPerPage, auctions.size());
 
         FlowPane page = new FlowPane();
+        page.setOrientation(javafx.geometry.Orientation.HORIZONTAL);
+        page.setHgap(30);
+        page.setVgap(12);
+        // Bind wrap length to pagination width so cards wrap when window resizes
+        page.prefWrapLengthProperty().bind(pagination.widthProperty().subtract(20));
+
         for (int i = start; i < end; i++) {
-            page.getChildren().add(createAuctionCard(auctions.get(i)));
+            VBox card = createAuctionCard(auctions.get(i));
+            if (card != null) {
+                page.getChildren().add(card);
+            }
         }
 
-        return new ScrollPane(page);
+        ScrollPane sp = new ScrollPane(page);
+        sp.setFitToWidth(true);  // IMPORTANT: let FlowPane use pagination width
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        return sp;
     }
 
     private VBox createAuctionCard(Auction auction) {
         try {
-            return ControlProductCard.renderCard(auction,false);
+            VBox card = ControlProductCard.renderCard(auction, false);
+            if (card != null) {
+                Button bidBtn = (Button) card.lookup("#bidBut");
+                if (bidBtn != null) {
+                    bidBtn.setOnAction(e -> openBiddingScreen(auction));
+                }
+            }
+            return card;
         } catch (Exception e) {
+            System.err.println("Error creating auction card: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
+
 }

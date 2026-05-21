@@ -1,16 +1,18 @@
-D:\Testing_SeverandDtbase\client\src\main\java\controller\AppTrade.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\AuctionDB.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ChangeScene.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlAccount.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlBidding.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlDashBoard.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlHistory.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlProductCard.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlRegister.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlSelling.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\ControlWallet.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\Login.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\LoginDB.java
-D:\Testing_SeverandDtbase\client\src\main\java\controller\UserSession.java
-D:\Testing_SeverandDtbase\client\src\main\java\service\AuthService.java
-D:\Testing_SeverandDtbase\client\src\main\java\service\ClientSocket.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\AlertShow.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\AppTrade.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ChangeScene.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlAccount.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlBidding.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlDashBoard.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlHistory.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlProductCard.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlRegister.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlSelling.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\ControlWallet.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\Login.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\controller\UserSession.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\service\AuctionService.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\service\AuthService.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\service\ClientSocket.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\service\ItemService.java
+C:\Users\Admin\Downloads\Tung\Duan - Copy\Testing_SeverandDtbase\client\src\main\java\service\UpdateClient.java

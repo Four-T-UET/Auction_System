@@ -21,8 +21,8 @@ public class AppTrade extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/loginScene.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
-        stage.setWidth(1100);
-        stage.setHeight(700);
+        stage.setWidth(1280);
+        stage.setHeight(720);
         stage.setScene(scene);
         stage.setTitle("ETrade");
         stage.show();

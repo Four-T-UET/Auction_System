@@ -3,8 +3,9 @@ package auction.logic.manager;
 import auction.logic.enums.AuctionEvent;
 import auction.logic.enums.AuctionStatus;
 import auction.logic.model.Auction;
+import java.io.Serializable;
 
-public class AuctionStateManagement {
+public class AuctionStateManagement implements Serializable {
     public synchronized void startAuction(Auction auction){
         if(auction.getStatus() == AuctionStatus.PENDING){
             auction.setStatus(AuctionStatus.RUNNING);

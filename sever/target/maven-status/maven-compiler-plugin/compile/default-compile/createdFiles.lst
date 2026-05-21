@@ -1,7 +1,3 @@
-sever\handler\ClientHandler.class
-sever\Server.class
-sever\handler\LoginHandler.class
-sever\Main.class
-sever\dao\UserDAO.class
-sever\handler\AuthHandler.class
-sever\config\DatabaseConnection.class
+sever\handler\WalletHandler.class
+sever\dao\WalletDAO.class
+sever\dao\WalletDAO$WalletSnapshot.class

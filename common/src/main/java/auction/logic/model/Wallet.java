@@ -21,6 +21,9 @@ public class Wallet extends Entity implements Serializable {
 
     //Methods
     public synchronized void deposit(double amount){
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
         balance += amount;
     }
     public synchronized void lockWallet(Auction auction,double amount){
@@ -54,6 +57,12 @@ public class Wallet extends Entity implements Serializable {
         }
     }
     public void withdraw(double money) {
+        if (money <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        if (this.balance < money) {
+            throw new IllegalStateException("Insufficient balance");
+        }
         this.balance -= money;
     }
 

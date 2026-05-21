@@ -10,11 +10,13 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 import auction.logic.model.Clients;
+import auction.logic.ResponseDTO.WalletResponseDTO;
+import service.WalletService;
 
 import static controller.AlertShow.showAlert;
 
 public class ControlWallet implements Initializable {
-    private Clients client = new Clients("tung","123");
+    private Clients client;
     @FXML
     private Label balanceLabel;
     @FXML
@@ -38,9 +40,16 @@ public class ControlWallet implements Initializable {
                 showAlert(Alert.AlertType.ERROR,"Error" ,"User not logged in");
                 return;
             }
-            this.client.getWallet().deposit(money);
-            double balance = this.client.getWallet().getBalance();
-            balanceLabel.setText(String.format("$ %.2f", balance));
+            Object response = WalletService.deposit(this.client.getId(), money);
+            if (response instanceof WalletResponseDTO walletResponse) {
+                this.client.getWallet().setBalance(walletResponse.getBalance());
+                this.client.getWallet().settotalLockBalance(walletResponse.getLockedBalance());
+                updateWalletLabels();
+            } else if (response instanceof String message) {
+                showAlert(Alert.AlertType.ERROR, "Error", message);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Wallet update failed");
+            }
             depositField.clear();
         }catch(NumberFormatException e){
             showAlert(Alert.AlertType.ERROR,"Error" ,"Invaild input");
@@ -57,10 +66,21 @@ public class ControlWallet implements Initializable {
         try{
             String withdrawMoney = withdrawField.getText().trim();
             double money = Double.parseDouble(withdrawMoney);
+            if (this.client == null) {
+                showAlert(Alert.AlertType.ERROR,"Error" ,"User not logged in");
+                return;
+            }
 
-            this.client.getWallet().withdraw(money);
-            double balance = this.client.getWallet().getBalance();
-            balanceLabel.setText(String.format("$ %.2f", balance));
+            Object response = WalletService.withdraw(this.client.getId(), money);
+            if (response instanceof WalletResponseDTO walletResponse) {
+                this.client.getWallet().setBalance(walletResponse.getBalance());
+                this.client.getWallet().settotalLockBalance(walletResponse.getLockedBalance());
+                updateWalletLabels();
+            } else if (response instanceof String message) {
+                showAlert(Alert.AlertType.ERROR, "Error", message);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Wallet update failed");
+            }
         }catch(NumberFormatException e){
             showAlert(Alert.AlertType.ERROR,"Error" ,"Invaild input");
         }catch (IllegalArgumentException e){
@@ -78,15 +98,15 @@ public class ControlWallet implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.client = UserSession.getCurrentUser();
-        balanceLabel.setText(String.format("$ %.2f", this.client.getWallet().getBalance()));
-        frozenLabel.setText("%.2f".formatted(this.client.getWallet().getLockBalance()));
         if (this.client == null) {
-            // For testing if bypassed Login
-            this.client = new Clients("test", "123");
+            showAlert(Alert.AlertType.ERROR, "Error", "User not logged in");
+            balanceLabel.setText("$ 0.00");
+            frozenLabel.setText("$ 0.00");
+            depositBtn.setDisable(true);
+            withdrawBtn.setDisable(true);
+            return;
         }
-
-        balanceLabel.setText(String.format("$ %.2f", this.client.getWallet().getBalance()));
-        frozenLabel.setText(String.format("$ %.2f", this.client.getWallet().getLockBalance()));
+        updateWalletLabels();
 
         depositBtn.setOnAction(event -> {
             handleDeposit(event);
@@ -94,5 +114,10 @@ public class ControlWallet implements Initializable {
         withdrawBtn.setOnAction(event -> {
             handleWithdraw(event);
         });
+    }
+
+    private void updateWalletLabels() {
+        balanceLabel.setText(String.format("$ %.2f", this.client.getWallet().getBalance()));
+        frozenLabel.setText(String.format("$ %.2f", this.client.getWallet().getLockBalance()));
     }
 }

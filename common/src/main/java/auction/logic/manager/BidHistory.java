@@ -5,9 +5,10 @@ import auction.logic.model.BidTransaction;
 import auction.logic.model.Bidder;
 import auction.logic.model.Clients;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class BidHistory {
+public class BidHistory implements Serializable {
     private HashMap<String, BidTransaction> bidHistory = new HashMap<>();
 
     public void addingTransaction(Clients bidder, double price){

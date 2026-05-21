@@ -1,11 +1,7 @@
 package controller;
 
 import auction.logic.enums.ItemCategory;
-import auction.logic.factory.ArtFactory;
-import auction.logic.factory.ElectronicsFactory;
-import auction.logic.factory.ItemFactory;
-import auction.logic.factory.RealEstateFactory;
-import auction.logic.factory.VehicleFactory;
+import auction.logic.manager.AuctionManager;
 import auction.logic.model.Auction;
 import auction.logic.model.Item;
 import javafx.event.ActionEvent;
@@ -21,11 +17,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
+import service.AuctionService;
+import service.ItemService;
 
 import static controller.AlertShow.showAlert;
 
@@ -39,9 +33,9 @@ public class ControlSelling implements Initializable {
     @FXML
     private TextField step;
     @FXML
-    private TextField startTime;
+    private TextField hours;
     @FXML
-    private TextField timeBid;
+    private TextField minutes;
     @FXML
     private ComboBox<ItemCategory> categoryBox;
     @FXML
@@ -50,43 +44,6 @@ public class ControlSelling implements Initializable {
     private Label StatusFile;
     private File selectFile;
 
-    public Auction getData() {
-        if (!checkValid()) {
-            return null;
-        }
-
-        String name = nameSelling.getText().trim();
-        String description = descriptionSelling.getText().trim();
-        double startPriceValue = Double.parseDouble(firstPrice.getText().trim());
-        double minStepValue = Double.parseDouble(step.getText().trim());
-        int durationDays = Integer.parseInt(timeBid.getText().trim());
-        ItemCategory category = categoryBox.getValue();
-        LocalDateTime customStartTime = parseStartTime(startTime.getText().trim());
-
-        ItemFactory factory;
-        switch (category) {
-            case VEHICLE -> factory = new RealEstateFactory();
-            case ARTS ->  factory = new ArtFactory();
-            case REAL_ESTATE ->  factory = new RealEstateFactory();
-            case ELECTRONICS -> factory = new ElectronicsFactory();
-            default -> factory = new RealEstateFactory();
-        }
-        Item newItem = factory.createItem(name,description);
-        return new Auction(newItem, startPriceValue, minStepValue, durationDays);
-    }
-
-    private LocalDateTime parseStartTime(String timeStart) {
-        if (!timeStart.isEmpty()) {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy H:m:s");
-                LocalDateTime time = LocalDateTime.parse(timeStart, formatter);
-                return time;
-            } catch (DateTimeParseException e) {
-                showAlert(Alert.AlertType.ERROR,"Error","Invaid input for date!");
-            }
-        }
-        return null;
-    }
 
 
     private boolean checkValid(){
@@ -104,17 +61,18 @@ public class ControlSelling implements Initializable {
         StatusFile.setText("Not Found");
         categoryBox.getItems().setAll(ItemCategory.values());
         categoryBox.getSelectionModel().select(ItemCategory.REAL_ESTATE);
-        imageChoose.setOnAction(e -> {
-            getImageChoose(e);
-        });
+        imageChoose.setOnAction(this::getImageChoose);
 
+        // Set prompt text for hours and minutes
+        hours.setPromptText("0-100");
+        minutes.setPromptText("0-59");
     }
 
     @FXML
     public void getImageChoose(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
         );
 
         Stage stage = (Stage) imageChoose.getScene().getWindow();
@@ -124,36 +82,88 @@ public class ControlSelling implements Initializable {
             StatusFile.setText(file.getName());
         }
     }
+
+
     @FXML
-    public void setSelling(ActionEvent event) {
+    public void setSelling() {
+        // Kiểm tra dữ liệu đầu vào (Validation)
+        if (!checkValid()) {
+            return;
+        }
+
+        // Kiểm tra kết nối tới server trước khi tiếp tục
+
         try {
-            Auction auction = getData();
-            if (auction == null) {
-                // Dừng hàm nếu nhập liệu không hợp lệ
+            // Thu thập dữ liệu từ các TextField
+            String name = nameSelling.getText().trim();
+            String description = descriptionSelling.getText().trim();
+            double startPriceValue = Double.parseDouble(firstPrice.getText().trim());
+            double minStepValue = Double.parseDouble(step.getText().trim());
+
+            // Lấy giờ và phút từ TextField
+            int hoursValue = Integer.parseInt(hours.getText().isEmpty() ? "0" : hours.getText().trim());
+            int minutesValue = Integer.parseInt(minutes.getText().isEmpty() ? "0" : minutes.getText().trim());
+
+            // Validate values
+            if (hoursValue < 0 || hoursValue > 100) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Giờ phải nằm trong khoảng 0-100!");
                 return;
             }
-            if (selectFile != null) {
-                try {
-                    byte[] imageBytes = Files.readAllBytes(selectFile.toPath());
-                    auction.getItem().setImageBytes(imageBytes);
-                } catch (IOException e) {
-                    showAlert(Alert.AlertType.ERROR, "Error", "Image error");
-                    return;
-                }
-            } else {
-                Path path = Paths.get("loginImage.jpg");
-                byte[] imageBytes = Files.readAllBytes(path);
-                auction.getItem().setImageBytes(imageBytes);
-                StatusFile.setText("Not Found");
+            if (minutesValue < 0 || minutesValue > 59) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Phút phải nằm trong khoảng 0-59!");
+                return;
             }
-            System.out.println(auction.getItem().getName());
-            System.out.println(auction.getCurrentPrice());
-            System.out.println(auction.getItem().getImageBytes().length);
-            //TODO: Lưu thông tin vào database
-        }catch (IOException e){
-            showAlert(Alert.AlertType.ERROR, "Error", "Khong the tao phien");
+
+            ItemCategory category = categoryBox.getValue();
+
+            // Xử lý hình ảnh
+            byte[] imageBytes;
+            if (selectFile != null) {
+                imageBytes = Files.readAllBytes(selectFile.toPath());
+            } else {
+                Path defaultPath = Paths.get("loginImage.jpg");
+                imageBytes = Files.exists(defaultPath) ? Files.readAllBytes(defaultPath) : new byte[0];
+            }
+            Item newItem = (Item)ItemService.addItem(name, category, description);
+            if (newItem == null) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Không tạo được sản phẩm!");
+                return;
+            }
+            newItem.setImageBytes(imageBytes);
+
+            // Tính tổng số phút (hours * 60 + minutes)
+            int totalMinutes = hoursValue * 60 + minutesValue;
+            if (totalMinutes <= 0) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Thời gian phải lớn hơn 0 phút!");
+                return;
+            }
+            //Gọi Service để gửi dữ liệu lên Server
+            Object response = AuctionService.addAuction(newItem, startPriceValue, minStepValue, totalMinutes);
+            // Debug: log response class and content
+            System.out.println("[ControlSelling] Server response class: " + (response == null ? "null" : response.getClass().getName()));
+            System.out.println("[ControlSelling] Server response toString: " + (response == null ? "null" : response.toString()));
+            // Xử lý kết quả trả về từ Server
+            if (response instanceof Auction finalAuction) {
+                AuctionManager.getInstance().addOrUpdate(finalAuction);
+                showAlert(Alert.AlertType.INFORMATION, "Thành công",
+                        "Đã tạo phiên đấu giá thành công cho mục: " + finalAuction.getItem().getName() +
+                        " - Thời gian: " + hoursValue + " giờ " + minutesValue + " phút");
+
+                // Tùy chọn: Reset form sau khi thành công
+                // clearFields();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Server không thể tạo phiên đấu giá. Vui lòng thử lại.");
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi định dạng", "Giá, bước giá phải là số hợp lệ!");
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi file", "Không thể xử lý hình ảnh: " + e.getMessage());
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", "Có lỗi xảy ra: " + e.getMessage());
         }
     }
+
 
 
 }

@@ -8,8 +8,10 @@ import java.sql.*;
 import sever.config.DatabaseConnection;
 
 public class UserDAO {
+  private final WalletDAO walletDAO = new WalletDAO();
+
   public User getUser(String user) {
-    String query = "SELECT username, password FROM users WHERE username = ?";
+    String query = "SELECT id, username, password FROM users WHERE username = ?";
 
     if (user == null) {
       return null;
@@ -18,11 +20,17 @@ public class UserDAO {
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement ps = conn.prepareStatement(query)) {
       ps.setString(1, user); // gán tham số thứ 1 username = user
-//      ps.setString(2, pass); // gán tham số thứ 2 password = pass   --> ps thực hiện query
 
       ResultSet res = ps.executeQuery();
       if (res.next()) {
-        return new Clients(res.getString("username"), res.getString("password"));
+        Clients client = new Clients(res.getString("username"), res.getString("password"));
+        client.setId(res.getString("id"));
+        WalletDAO.WalletSnapshot snapshot = walletDAO.getWalletByClientId(client.getId());
+        if (snapshot != null) {
+          client.getWallet().setBalance(snapshot.getBalance());
+          client.getWallet().settotalLockBalance(snapshot.getLocked());
+        }
+        return client;
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -30,25 +38,39 @@ public class UserDAO {
     return null;
   }
 
-
   public static User insertUser(String userName, String password) {
-    String insertSQL = "INSERT INTO users (id ,username, password) VALUES (?,?,?)";
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+    String insertUserSQL = "INSERT INTO users (id ,username, password) VALUES (?,?,?)";
+    String insertWalletSQL = "INSERT INTO wallets (client_id, balance, locked_balance) VALUES (?,?,?)";
+    try (Connection conn = DatabaseConnection.getConnection()) {
+      conn.setAutoCommit(false);
+      try (PreparedStatement userStmt = conn.prepareStatement(insertUserSQL);
+           PreparedStatement walletStmt = conn.prepareStatement(insertWalletSQL)) {
 
-      Clients clients = new Clients(userName, password);
-      pstmt.setString(1,clients.getId());
-      pstmt.setString(2, userName.trim());
-      pstmt.setString(3, password);
+        Clients clients = new Clients(userName, password);
+        userStmt.setString(1, clients.getId());
+        userStmt.setString(2, userName.trim());
+        userStmt.setString(3, password);
+        userStmt.executeUpdate();
 
-      int rowsAffected = pstmt.executeUpdate();//
-      System.out.println(" Đã INSERT user '" + userName + "' thành công!");
-      return clients;
+        walletStmt.setString(1, clients.getId());
+        walletStmt.setDouble(2, 0.0);
+        walletStmt.setDouble(3, 0.0);
+        walletStmt.executeUpdate();
 
+        conn.commit();
+        System.out.println(" Đã INSERT user '" + userName + "' thành công!");
+        return clients;
+      } catch (SQLException e) {
+        conn.rollback();
+        throw e;
+      } finally {
+        conn.setAutoCommit(true);
+      }
     } catch (SQLException e) {
       System.err.println(" Lỗi khi INSERT user:");
       e.printStackTrace();
       return null;
     }
   }
+
 }
