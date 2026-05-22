@@ -2,6 +2,7 @@ package sever.manager;
 
 import auction.logic.ResponseDTO.BroadcastMessage;
 import java.io.ObjectOutputStream;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.time.ZoneId;
 
@@ -9,11 +10,10 @@ import java.time.ZoneId;
  * Server-side: Quản lý tất cả connected clients
  * Chịu trách nhiệm broadcast message tới tất cả clients
  */
-
-// Observer Pattern
 public class ServerClientManager {
     private static ServerClientManager instance;
     private final CopyOnWriteArrayList<ClientInfo> connectedClients = new CopyOnWriteArrayList<>();
+    private final ConcurrentHashMap<String, ObjectOutputStream> userIdToStream = new ConcurrentHashMap<>();
 
     private ServerClientManager() {}
 
@@ -36,12 +36,48 @@ public class ServerClientManager {
     }
 
     /**
+     * Đăng ký mapping userId -> output stream sau khi login thành công
+     */
+    public void registerUserId(String userId, ObjectOutputStream out) {
+        if (userId != null && out != null) {
+            userIdToStream.put(userId, out);
+            System.out.println("[SERVER MANAGER] Registered user: " + userId);
+        }
+    }
+
+    /**
      * Hủy đăng ký client khi ngắt kết nối
      */
     public synchronized void unregisterClient(ObjectOutputStream out) {
+        // Remove from connectedClients
         boolean removed = connectedClients.removeIf(client -> client.getOut() == out);
+        // Remove from userIdToStream (find by stream value)
+        userIdToStream.entrySet().removeIf(entry -> entry.getValue() == out);
         if (removed) {
             System.out.println("[SERVER MANAGER] Client unregistered. Total clients: " + connectedClients.size());
+        }
+    }
+
+    /**
+     * Gửi message đến một user cụ thể
+     */
+    public void sendToUser(String userId, Object message) {
+        ObjectOutputStream out = userIdToStream.get(userId);
+        if (out == null) {
+            System.err.println("[SERVER MANAGER] User not found or not connected: " + userId);
+            return;
+        }
+        try {
+            synchronized (out) {
+                out.reset();
+                out.writeObject(message);
+                out.flush();
+                out.reset();
+            }
+            System.out.println("[SERVER MANAGER] Sent to user " + userId);
+        } catch (Exception e) {
+            System.err.println("[SERVER MANAGER] Failed to send to user " + userId + ": " + e.getMessage());
+            unregisterClient(out);
         }
     }
 
@@ -66,7 +102,6 @@ public class ServerClientManager {
                 System.out.println("[SERVER MANAGER] ✓ Sent to client");
             } catch (Exception e) {
                 System.err.println("[SERVER MANAGER] ✗ Failed to broadcast to client: " + e.getMessage());
-                // Nếu fail, unregister client này
                 unregisterClient(client.getOut());
             }
         }
@@ -94,7 +129,6 @@ public class ServerClientManager {
         }
     }
 
-
     /**
      * Inner class để wrap client connection
      */
@@ -118,4 +152,3 @@ public class ServerClientManager {
         message.setServerZoneId(ZoneId.systemDefault().getId());
     }
 }
-

@@ -173,13 +173,17 @@ public class ControlHistory implements Initializable {
         ClientSocket clientSocket = ClientSocket.getInstance();
         long endMillis = clientSocket.toServerEpochMillis(endTime);
         long remainingMillis = endMillis - clientSocket.getServerTimeMillis();
-        if (remainingMillis <= 0) return "Ended";
+        if (remainingMillis <= 0) return "Auction ended";
 
         Duration d = Duration.ofMillis(remainingMillis);
-        long days = d.toDays();
+        long totalSeconds = Math.max(0, d.getSeconds());
+        long days = totalSeconds / (24 * 3600);
+        long hours = (totalSeconds % (24 * 3600)) / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
         return days > 0
-                ? String.format("%d ngày %02d:%02d:%02d", days, d.toHoursPart(), d.toMinutesPart(), d.toSecondsPart())
-                : String.format("%02d:%02d:%02d", d.toHoursPart(), d.toMinutesPart(), d.toSecondsPart());
+                ? String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                : String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     private void startCountdownClock() {

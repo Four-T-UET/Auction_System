@@ -192,7 +192,7 @@ public class ControlDashBoard implements Initializable {
         }
     }
     private void dividePage(List<Auction> listAuctions) {
-        final int NUM_ITEM = 6;
+        final int NUM_ITEM = 8;
         int pageCount = (int) Math.ceil((double) listAuctions.size() / NUM_ITEM);
         if (listAuctions.isEmpty()) {
             pagination.setPageCount(1);

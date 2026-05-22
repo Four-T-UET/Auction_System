@@ -165,5 +165,61 @@ public class ControlSelling implements Initializable {
     }
 
 
-
+//    public Auction getData() {
+//        if (!checkValid()) {
+//            return null;
+//        }
+//
+//        String name = nameSelling.getText().trim();
+//        String description = descriptionSelling.getText().trim();
+//        double startPriceValue = Double.parseDouble(firstPrice.getText().trim());
+//        double minStepValue = Double.parseDouble(step.getText().trim());
+//        int durationDays = Integer.parseInt(timeBid.getText().trim());
+//        ItemCategory category = categoryBox.getValue();
+//        LocalDateTime customStartTime = parseStartTime(startTime.getText().trim());
+//
+//        ItemFactory factory;
+//        switch (category) {
+//            case VEHICLE -> factory = new RealEstateFactory();
+//            case ARTS ->  factory = new ArtFactory();
+//            case ELECTRONICS -> factory = new ElectronicsFactory();
+//            default -> factory = new RealEstateFactory();
+//        }
+//        Item newItem = factory.createItem(name,description);
+//        Object auction = AuctionService.addAuction(newItem, startPriceValue,minStepValue, durationDays);
+//
+//    }
+//    @FXML
+//    public void setSelling(ActionEvent event) {
+//        try {
+//            Auction auction = getData();
+//            if (auction == null) {
+//                // Dừng hàm nếu nhập liệu không hợp lệ
+//                return;
+//            }
+//            if (selectFile != null) {
+//                try {
+//                    byte[] imageBytes = Files.readAllBytes(selectFile.toPath());
+//                    auction.getItem().setImageBytes(imageBytes);
+//                } catch (IOException e) {
+//                    showAlert(Alert.AlertType.ERROR, "Error", "Image error");
+//                    return;
+//                }
+//            } else {
+//                Path path = Paths.get("loginImage.jpg");
+//                byte[] imageBytes = Files.readAllBytes(path);
+//                auction.getItem().setImageBytes(imageBytes);
+//                StatusFile.setText("Not Found");
+//            }
+//
+//            // Kiểm tra và đưa Auction lên mainDashboard
+//            if(ItemService.addItem() instanceof  Item){
+//                Object auction1 = AuctionService.addAuction();
+//
+//
+//            }
+//            //TODO: Lưu thông tin vào database
+//        }catch (IOException e){
+//            showAlert(Alert.AlertType.ERROR, "Error", "Khong the tao phien");
+//        }
 }

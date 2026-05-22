@@ -66,6 +66,20 @@ public class WalletDAO {
         }
     }
 
+    public void updateWalletSnapshot(String clientId, double balance, double lockedBalance) throws SQLException {
+        if (clientId == null || clientId.isBlank()) {
+            throw new IllegalArgumentException("Client id is required");
+        }
+        String updateSql = "UPDATE wallets SET balance = ?, locked_balance = ? WHERE client_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(updateSql)) {
+            ps.setDouble(1, balance);
+            ps.setDouble(2, lockedBalance);
+            ps.setString(3, clientId);
+            ps.executeUpdate();
+        }
+    }
+
     public static class WalletSnapshot {
         private final double balance;
         private final double locked;
@@ -84,4 +98,3 @@ public class WalletDAO {
         }
     }
 }
-

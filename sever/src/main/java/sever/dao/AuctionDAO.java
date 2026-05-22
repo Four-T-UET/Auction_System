@@ -61,7 +61,7 @@ public class AuctionDAO {
         raw.startPrice = rs.getDouble("startPrice");
         raw.minStep = rs.getDouble("minStep");
         raw.duration = rs.getLong("duration");
-        //  Lấy finishTime từ database
+        // ✅ Lấy finishTime từ database
         raw.finishTime = rs.getObject("finish_time", java.time.LocalDateTime.class);
         raw.status = rs.getString("status");
         raw.itemName = rs.getString("name");

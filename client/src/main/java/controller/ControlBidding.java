@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,8 +14,11 @@ import auction.logic.model.Auction;
 import auction.logic.manager.AuctionManager;
 import auction.logic.manager.AuctionUpdateListener;
 import service.AuctionService;
+import service.ClientSocket;
+import javafx.animation.KeyFrame;
 
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -45,6 +49,7 @@ public class ControlBidding implements Initializable {
     private TextField fieldPrice;
     @FXML
     private Label winnerLabel;
+    private Timeline countdownTimeline;
 
     public void setAuction(Auction auction) {
         this.auction = auction;
@@ -53,12 +58,12 @@ public class ControlBidding implements Initializable {
             priceCurrent.setText(String.format("%.2f", auction.getCurrentPrice()));
             step.setText(String.format("%.2f", auction.getMiniumStep()));
             if (auction.getCurrentWinner() != null) {
-                winnerLabel.setText(auction.getCurrentWinner().getId());
+                winnerLabel.setText(auction.getCurrentWinner().getUsername());
             } else {
                 winnerLabel.setText("No winner yet");
             }
-
-            // Đăng ký listener cho auction này
+            // Apply time style immediately
+            applyTimeLeftStyle(auction);
             registerAuctionListener();
         }
     }
@@ -84,7 +89,7 @@ public class ControlBidding implements Initializable {
         productStartPrice.setText(String.format("$%.2f", auction.getCurrentPrice()));
 
         // Cập nhật thời gian còn lại
-        productTimeLeft.setText(formatTimeLeft(auction.getFinishTime()));
+        productTimeLeft.setText(formatTimeLeft(auction));
 
         // Cập nhật hình ảnh
         if (auction.getItem().getImageBytes() != null && auction.getItem().getImageBytes().length > 0) {
@@ -100,36 +105,78 @@ public class ControlBidding implements Initializable {
     /**
      * Format thời gian còn lại thành chuỗi dễ đọc
      */
-    private String formatTimeLeft(LocalDateTime finishTime) {
-        if (finishTime == null) return "N/A";
+    private String formatTimeLeft(Auction auction){
+        if(auction == null || auction.getFinishTime() == null){
+            return "N/A";
+        }
+        ClientSocket clientSocket = ClientSocket.getInstance();
+        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
 
-        LocalDateTime now = LocalDateTime.now();
-        if (finishTime.isBefore(now)) {
+        if(remainingMillis <= 0){
             return "Auction ended";
         }
 
-        java.time.Duration duration = java.time.Duration.between(now, finishTime);
-        long totalSeconds = duration.getSeconds();
+        Duration dur = Duration.ofMillis(remainingMillis);
+        long totalSeconds = Math.max(0, dur.getSeconds());
         long days = totalSeconds / (24 * 3600);
         long hours = (totalSeconds % (24 * 3600)) / 3600;
         long minutes = (totalSeconds % 3600) / 60;
-
-        if (days > 0) {
-            return days + "d " + hours + "h";
-        } else if (hours > 0) {
-            return hours + "h " + minutes + "m";
-        } else {
-            return minutes + "m";
+        long seconds = totalSeconds % 60;
+        return days > 0
+                ? String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                : String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+    /**     * Apply style: red if ended, green if active     */
+    private void applyTimeLeftStyle(Auction auction) {
+        if (productTimeLeft == null) return;
+        if (auction == null) {
+            productTimeLeft.setText("N/A");
+            productTimeLeft.setTextFill(javafx.scene.paint.Color.GRAY);
+            return;
         }
+        productTimeLeft.setText(formatTimeLeft(auction));
+        boolean ended = isAuctionEnded(auction);
+        productTimeLeft.setTextFill(ended ? javafx.scene.paint.Color.RED : javafx.scene.paint.Color.LIMEGREEN);
     }
 
+    private boolean isAuctionEnded(Auction auction) {
+        if (auction == null || auction.getFinishTime() == null) return false;
+        ClientSocket clientSocket = ClientSocket.getInstance();
+        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+        return remainingMillis <= 0;
+    }
 
     /**
      * Được gọi khi FXML được load
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Có thể add initialization logic tại đây nếu cần
+        // Start per-second countdown
+        startRealtimeCountdown();
+    }
+
+    /**
+     * Start per-second countdown update
+     */
+    private void startRealtimeCountdown() {
+        if (countdownTimeline != null) countdownTimeline.stop();
+        countdownTimeline = new Timeline(
+                new KeyFrame(javafx.util.Duration.ZERO, e -> refreshTimeDisplay()),
+                new KeyFrame(javafx.util.Duration.seconds(1), e -> refreshTimeDisplay())
+        );
+        countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+        countdownTimeline.play();
+    }
+
+    /**
+     * Refresh time display every second with color
+     */
+    private void refreshTimeDisplay() {
+        if (auction != null) {
+            applyTimeLeftStyle(auction);
+        }
     }
 
     /**
@@ -196,7 +243,7 @@ public class ControlBidding implements Initializable {
         step.setText(String.format("%.2f", updatedAuction.getMiniumStep()));
 
         if (updatedAuction.getCurrentWinner() != null) {
-            winnerLabel.setText(updatedAuction.getCurrentWinner().getId());
+            winnerLabel.setText(updatedAuction.getCurrentWinner().getUsername());
         } else {
             winnerLabel.setText("No winner yet");
         }
@@ -215,16 +262,26 @@ public class ControlBidding implements Initializable {
     @FXML
     public void handleBid(ActionEvent ignored) {
         try {
-            String price = fieldPrice.getText().trim();
+            // Prevent bidding if auction already finished (use server-synced clock)
             if (auction == null) {
                 AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không tìm thấy phiên đấu giá!");
                 return;
             }
+            ClientSocket clientSocket = ClientSocket.getInstance();
+            if (auction.getFinishTime() != null) {
+                long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
+                long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+                if (remainingMillis <= 0) {
+                    AlertShow.showAlert(Alert.AlertType.WARNING, "Đã kết thúc", "Phiên đấu giá đã kết thúc, không thể đặt giá.");
+                    return;
+                }
+            }
+            String price = fieldPrice.getText().trim();
             // Parse input
             double bidPrice = Double.parseDouble(price);
 
             // send bid to server
-            Object resp = AuctionService.placeBid(auction.getId(), bidPrice);
+            Object resp = AuctionService.placeBid(auction.getId(),UserSession.getCurrentUser().getId(), bidPrice);
 
             if (resp == null) {
                 AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không nhận được phản hồi từ server");
@@ -243,7 +300,7 @@ public class ControlBidding implements Initializable {
                 priceCurrent.setText(String.format("%.2f", updated.getCurrentPrice()));
                 step.setText(String.format("%.2f", updated.getMiniumStep()));
                 if (updated.getCurrentWinner() != null) {
-                    winnerLabel.setText(updated.getCurrentWinner().getId());
+                    winnerLabel.setText(updated.getCurrentWinner().getUsername());
                 } else {
                     winnerLabel.setText("No winner yet");
                 }
@@ -259,5 +316,12 @@ public class ControlBidding implements Initializable {
         }finally {
             fieldPrice.clear();
         }
+    }
+    public void dispose() {
+        if (countdownTimeline != null) {
+            countdownTimeline.stop();
+            countdownTimeline = null;
+        }
+        unregisterAuctionListener();
     }
 }

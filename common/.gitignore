@@ -1,14 +1,6 @@
 # Compiled class file
 *.class
 
-# --- Thư mục build của các công cụ quản lý ---
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.next
-pom.xml.sonarDeps
-pom.xml.versionsBackup
 # Log file
 *.log
 

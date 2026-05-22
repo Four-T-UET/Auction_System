@@ -44,7 +44,7 @@ public class AuctionService {
         // 3. Khởi tạo thực thể Auction theo đúng Constructor của bạn
         Auction auction = new Auction(item, startPrice, minStep, duration);
         
-        //  Chuyển trạng thái từ PENDING → RUNNING ngay sau khi tạo
+        // ✅ Chuyển trạng thái từ PENDING → RUNNING ngay sau khi tạo
         auction.startAuction();
 
         // 4. Đẩy sang AuctionDAO lưu xuống database

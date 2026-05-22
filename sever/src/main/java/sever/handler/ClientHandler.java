@@ -24,7 +24,7 @@ public class ClientHandler implements Runnable {
          ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
       out = outStream;
-      //  REGISTER client vào ServerClientManager khi connect
+      // ✅ REGISTER client vào ServerClientManager khi connect
       ServerClientManager.getInstance().registerClient(out);
       System.out.println("[ClientHandler] ✓ Client registered for broadcasting");
 
@@ -54,6 +54,9 @@ public class ClientHandler implements Runnable {
         }else if(received instanceof WalletDTO walletDTO){
           WalletHandler handler = new WalletHandler();
           handler.handle(walletDTO, out);
+        }else if(received instanceof BidDTO bidDTO){
+          BidHandler handler = new BidHandler();
+          handler.handle(bidDTO, out);
         }
         else if(received instanceof PullDTO ){
           AuctionHandler handler = new AuctionHandler();
@@ -67,12 +70,12 @@ public class ClientHandler implements Runnable {
     }
     // ====================== PHẦN SỬA Ở ĐÂY ======================
     catch (EOFException e) {
-      System.out.println(" Client đã ngắt kết nối bình thường (EOF).");
+      System.out.println("✅ Client đã ngắt kết nối bình thường (EOF).");
     }
     catch (SocketException e) {
       String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
       if (msg.contains("connection reset") || msg.contains("reset by peer") || msg.contains("socket closed")) {
-        System.out.println(" Client đã ngắt kết nối đột ngột (Connection reset).");
+        System.out.println("✅ Client đã ngắt kết nối đột ngột (Connection reset).");
       } else {
         System.err.println("SocketException: " + e.getMessage());
       }
@@ -83,12 +86,12 @@ public class ClientHandler implements Runnable {
     }
     catch (Exception e) {
       // Các lỗi khác mới in stack trace
-      System.err.println(" Lỗi xử lý client không mong muốn:");
+      System.err.println("❌ Lỗi xử lý client không mong muốn:");
       e.printStackTrace();
     }
     // ===========================================================
     finally {
-      //  UNREGISTER client khỏi ServerClientManager khi disconnect
+      // ✅ UNREGISTER client khỏi ServerClientManager khi disconnect
       if (out != null) {
         ServerClientManager.getInstance().unregisterClient(out);
         System.out.println("[ClientHandler] ✓ Client unregistered from broadcasting");

@@ -69,6 +69,11 @@ public class ControlProductCard{
         itemName.setText(auction.getItem().getName());
         itemType.setText(auction.getItem().getCategory() != null ? auction.getItem().getCategory().toString() : "Unknown");
         loadImage(auction);
+        // Disable bid button if auction already ended
+        try {
+            boolean ended = isAuctionEnded(auction);
+            setBidButVisible(!ended);
+        } catch (Exception ignored) {}
         if(countdownTimeline != null){
             countdownTimeline.stop();
             countdownTimeline = null;
@@ -168,6 +173,13 @@ private Image resolveImage(Auction auction) {
         itemCurrentBid.setText(String.format("%.2f", currentAuction.getCurrentPrice()));
         itemTimeLeft.setText(formatRemaining(currentAuction));
     }
+    private boolean isAuctionEnded(Auction auction) {
+        if (auction == null || auction.getFinishTime() == null) return false;
+        ClientSocket clientSocket = ClientSocket.getInstance();
+        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+        return remainingMillis <= 0;  // TRUE = hết giờ → nút biến mất
+    }
 
     private String formatRemaining(Auction auction){
         if(auction == null || auction.getFinishTime() == null){
@@ -178,14 +190,18 @@ private Image resolveImage(Auction auction) {
         long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
 
         if(remainingMillis <= 0){
-            return "END";
+            return "Auction ended";
         }
 
         Duration dur = Duration.ofMillis(remainingMillis);
-        long hours = dur.toHours();
-        long minutes = dur.toMinutes() % 60;
-        long seconds = dur.getSeconds() % 60;
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        long totalSeconds = Math.max(0, dur.getSeconds());
+        long days = totalSeconds / (24 * 3600);
+        long hours = (totalSeconds % (24 * 3600)) / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        return days > 0
+                ? String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                : String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     public void dispose(){

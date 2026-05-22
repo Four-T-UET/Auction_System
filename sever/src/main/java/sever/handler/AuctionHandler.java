@@ -9,6 +9,7 @@ import java.util.List;
 import sever.dao.AuctionDAO;
 import sever.service.AuctionService;
 import sever.manager.ServerClientManager;
+import sever.manager.AuctionRuntimeManager;
 
 public class AuctionHandler {
   public void handle(AuctionDTO auctionDTO, ObjectOutputStream out) {
@@ -27,7 +28,8 @@ public class AuctionHandler {
         response = auction; // gán phản hồi là User đó ( là một Object ) vì đã implements Serializable
         System.out.println("[AuctionHandler] ✓ Tạo phiên đấu giá thành công: " + auction.getId());
 
-        //  BROADCAST AUCTION MỚI tới TẤT CẢ OTHER CLIENTS
+        AuctionRuntimeManager.getInstance().addOrUpdate(auction);
+        // ✅ BROADCAST AUCTION MỚI tới TẤT CẢ OTHER CLIENTS
         BroadcastMessage broadcastMsg = new BroadcastMessage(
             BroadcastMessage.EventType.AUCTION_CREATED,
             auction

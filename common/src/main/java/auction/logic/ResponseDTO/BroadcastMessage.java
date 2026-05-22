@@ -9,13 +9,14 @@ import java.time.ZoneId;
  * Khi có auction mới được tạo
  */
 public class BroadcastMessage implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L; // Changed version due to new field
 
     public enum EventType {
         AUCTION_CREATED,     // Auction mới được tạo
         AUCTION_UPDATED,     // Auction được update (price, bid, v.v)
         AUCTION_REMOVED,     // Auction bị xóa
-        AUCTION_FINISHED     // Auction đã kết thúc
+        AUCTION_FINISHED,    // Auction đã kết thúc
+        WALLET_UPDATED       // Wallet balance/locked changed
     }
 
     private EventType eventType;
@@ -23,6 +24,7 @@ public class BroadcastMessage implements Serializable {
     private String auctionId;  // dùng khi type = REMOVED
     private long serverNowMillis;
     private String serverZoneId;
+    private Object data;       // Generic payload, e.g., WalletResponseDTO for WALLET_UPDATED
 
     public BroadcastMessage() {}
 
@@ -34,6 +36,11 @@ public class BroadcastMessage implements Serializable {
     public BroadcastMessage(EventType eventType, String auctionId) {
         this.eventType = eventType;
         this.auctionId = auctionId;
+    }
+
+    public BroadcastMessage(EventType eventType, Object data) {
+        this.eventType = eventType;
+        this.data = data;
     }
 
     public long getServerNowMillis() {
@@ -87,15 +94,23 @@ public class BroadcastMessage implements Serializable {
         this.auctionId = auctionId;
     }
 
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "BroadcastMessage{" +
                 "eventType=" + eventType +
                 ", auction=" + (auction != null ? auction.getId() : "null") +
                 ", auctionId='" + auctionId + '\'' +
+                ", data=" + data +
                 ", serverNowMillis=" + serverNowMillis +
                 ", serverZoneId='" + serverZoneId + '\'' +
                 '}';
     }
 }
-

@@ -3,8 +3,10 @@ package sever.handler;
 import auction.logic.RequestDTO.WalletDTO;
 import auction.logic.ResponseDTO.WalletResponseDTO;
 import auction.logic.enums.WalletAction;
+import auction.logic.model.Clients;
 import java.io.ObjectOutputStream;
 import sever.dao.WalletDAO;
+import sever.manager.ClientRuntimeManager;
 
 public class WalletHandler {
     private final WalletDAO walletDAO = new WalletDAO();
@@ -25,6 +27,13 @@ public class WalletHandler {
             if (snapshot == null) {
                 out.writeObject("FAILED: User not found");
             } else {
+                // Update in-memory cache
+                Clients client = ClientRuntimeManager.getInstance().getOrLoad(userId);
+                if (client != null) {
+                    client.getWallet().setBalance(snapshot.getBalance());
+                    client.getWallet().settotalLockBalance(snapshot.getLocked());
+                    ClientRuntimeManager.getInstance().addOrUpdate(client);
+                }
                 out.writeObject(new WalletResponseDTO(snapshot.getBalance(), snapshot.getLocked()));
             }
             out.flush();

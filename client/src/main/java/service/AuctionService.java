@@ -3,6 +3,7 @@ package service;
 import auction.logic.RequestDTO.AuctionDTO;
 import auction.logic.RequestDTO.ItemDTO;
 import auction.logic.RequestDTO.PullDTO;
+import auction.logic.RequestDTO.BidDTO;
 import auction.logic.manager.AuctionManager;
 import auction.logic.model.Auction;
 import auction.logic.model.Clients;
@@ -22,10 +23,11 @@ public class AuctionService {
       return null;
     }
   }
-  public static Object placeBid(String auctionId, double price) {
+  public static Object placeBid(String auctionId, String bidderId, double price) {
     try{
       ClientSocket clientSocket = ClientSocket.getInstance();
-
+      BidDTO bidDTO = new BidDTO(auctionId, bidderId, price);
+      clientSocket.send(bidDTO);
       Object response = clientSocket.receive();
       // If server returns updated Auction, update AuctionManager
       if (response instanceof Auction) {

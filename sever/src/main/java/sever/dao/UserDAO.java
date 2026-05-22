@@ -38,6 +38,29 @@ public class UserDAO {
     return null;
   }
 
+  public Clients getUserById(String userId) throws SQLException {
+    String query = "SELECT id, username, password FROM users WHERE id = ?";
+    if (userId == null || userId.isBlank()) {
+      return null;
+    }
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+      ps.setString(1, userId);
+      ResultSet res = ps.executeQuery();
+      if (res.next()) {
+        Clients client = new Clients(res.getString("username"), res.getString("password"));
+        client.setId(res.getString("id"));
+        WalletDAO.WalletSnapshot snapshot = walletDAO.getWalletByClientId(client.getId());
+        if (snapshot != null) {
+          client.getWallet().setBalance(snapshot.getBalance());
+          client.getWallet().settotalLockBalance(snapshot.getLocked());
+        }
+        return client;
+      }
+    }
+    return null;
+  }
+
   public static User insertUser(String userName, String password) {
     String insertUserSQL = "INSERT INTO users (id ,username, password) VALUES (?,?,?)";
     String insertWalletSQL = "INSERT INTO wallets (client_id, balance, locked_balance) VALUES (?,?,?)";
