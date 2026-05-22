@@ -29,7 +29,7 @@ public class AuctionService {
       if (rawItem != null) {
         // 2. Sử dụng Factory dựng đối tượng Item đa hình thực tế
         ItemFactory factory = getFactory(rawItem.categoryStr);
-        Item item = factory.createItem(rawItem.name, rawItem.description);
+        Item item = factory.createItem(rawItem.name, rawItem.description, rawItem.imageByte);
         item.setId(itemID);
 
         // Chuẩn hóa Enum an toàn
@@ -44,7 +44,7 @@ public class AuctionService {
         // 3. Khởi tạo thực thể Auction theo đúng Constructor của bạn
         Auction auction = new Auction(item, startPrice, minStep, duration);
         
-        // ✅ Chuyển trạng thái từ PENDING → RUNNING ngay sau khi tạo
+        //  Chuyển trạng thái từ PENDING → RUNNING ngay sau khi tạo
         auction.startAuction();
 
         // 4. Đẩy sang AuctionDAO lưu xuống database
@@ -102,7 +102,7 @@ public class AuctionService {
    */
   private Auction convertRawDataToAuction(AuctionRawData raw) {
     ItemFactory factory = getFactory(raw.itemCategoryStr);
-    Item polymorphicItem = factory.createItem(raw.itemName, raw.itemDescription);
+    Item polymorphicItem = factory.createItem(raw.itemName, raw.itemDescription, raw.itemImageByte);
     polymorphicItem.setId(raw.itemId);
 
     if (raw.itemCategoryStr != null) {

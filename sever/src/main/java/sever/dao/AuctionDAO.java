@@ -45,7 +45,7 @@ public class AuctionDAO {
 
     String query = "SELECT a.id AS auction_id, a.item_id, a.startPrice, a.minStep, a.duration, " +
             "a.finish_time, a.status, " +
-            "i.name, i.description, i.category " +
+            "i.name, i.description, i.category, i.image_byte " +
             "FROM auctions a " +
             "JOIN items i ON a.item_id = i.id " +
             "ORDER BY a.duration DESC LIMIT 50";
@@ -61,12 +61,13 @@ public class AuctionDAO {
         raw.startPrice = rs.getDouble("startPrice");
         raw.minStep = rs.getDouble("minStep");
         raw.duration = rs.getLong("duration");
-        // ✅ Lấy finishTime từ database
+        //  Lấy finishTime từ database
         raw.finishTime = rs.getObject("finish_time", java.time.LocalDateTime.class);
         raw.status = rs.getString("status");
         raw.itemName = rs.getString("name");
         raw.itemDescription = rs.getString("description");
         raw.itemCategoryStr = rs.getString("category");
+        raw.itemImageByte = rs.getBytes("image_byte");
 
         list.add(raw);
       }
@@ -103,7 +104,7 @@ public class AuctionDAO {
   public AuctionRawData findRawAuctionById(String auctionId) throws SQLException {
     String query = "SELECT a.id AS auction_id, a.item_id, a.startPrice, a.minStep, a.duration, " +
             "a.finish_time, a.status, " +
-            "i.name, i.description, i.category " +
+            "i.name, i.description, i.category, i.image_byte " +
             "FROM auctions a " +
             "JOIN items i ON a.item_id = i.id " +
             "WHERE a.id = ?";
@@ -124,6 +125,7 @@ public class AuctionDAO {
           raw.itemName = rs.getString("name");
           raw.itemDescription = rs.getString("description");
           raw.itemCategoryStr = rs.getString("category");
+          raw.itemImageByte = rs.getBytes("image_byte");
           return raw;
         }
       }
@@ -147,5 +149,6 @@ public class AuctionDAO {
     public String itemName;
     public String itemDescription;
     public String itemCategoryStr;
+    public byte[] itemImageByte;
   }
 }

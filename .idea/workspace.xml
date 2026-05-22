@@ -4,114 +4,165 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/client/client.iml" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/AppTrade.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/AppTrade.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ChangeScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ChangeScene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlAccount.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlBidding.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlBidding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlDashBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlDashBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlProductCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlProductCard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlRegister.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlRegister.java" afterDir="false" />
+    <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="refactor controller UI">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlWallet.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlWallet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/Login.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/Login.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/UserSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/service/ClientSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/ClientSocket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resource/Bidding.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/Bidding.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/service/ItemService.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/ItemService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resource/MainDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/MainDashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resource/loginScene.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/loginScene.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resource/productCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/productCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resource/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/register.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/Bidding.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/Bidding.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/MainDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/MainDashboard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/loginScene.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/loginScene.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/productCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/productCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/register.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/common/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuctionResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuctionResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuthResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuthResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/ItemResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/ItemResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionStateManagement.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionStateManagement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/BidHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/BidHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/RequestDTO/ItemDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/RequestDTO/ItemDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ArtFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ArtFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ElectronicsFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ElectronicsFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ItemFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/RealEstateFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/RealEstateFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/VehicleFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/VehicleFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Art.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Art.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Auction.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Auction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/AuctionObservers.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/AuctionObservers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Clients.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Clients.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Electronics.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Electronics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Entity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Item.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/RealEstate.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/RealEstate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Seller.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Seller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Vehicle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Wallet.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Wallet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/enums/ItemCategory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/enums/ItemCategory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/Main.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ArtFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ArtFactory.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ElectronicsFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ElectronicsFactory.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ItemFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ItemFactory.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/RealEstateFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/RealEstateFactory.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/VehicleFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/VehicleFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionStateManagement.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionStateManagement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/BidHistory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/BidHistory.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Art.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Art.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Auction.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Auction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/AuctionObservers.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/AuctionObservers.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Clients.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Clients.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Electronics.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Electronics.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Entity.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Entity.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Item.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Item.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/RealEstate.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/RealEstate.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Seller.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Seller.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Vehicle.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Vehicle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Wallet.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Wallet.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sever/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/config/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/config/DatabaseConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/dao/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/dao/AuctionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/dao/AuctionDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/dao/ItemDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/dao/ItemDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/AuctionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/AuctionHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/LoginHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/LoginHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/RegisterHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/RegisterHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/Server.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/config/DatabaseConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/config/DatabaseConnection.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/dao/UserDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/dao/UserDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/handler/ClientHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/handler/ClientHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/handler/LoginHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/handler/LoginHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/handler/RegisterHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/handler/RegisterHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ItemHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ItemHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/service/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/service/AuctionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/service/ItemService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/service/ItemService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CopilotChats">
+    <option name="panelChat">
+      <chat>
+        <option name="activeSessionId" value="2b9ecde9-061f-4892-9057-0dfa7ebc0a1f" />
+        <option name="sessions">
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="1f93940a-f131-4017-8cd1-94b8cadf4370" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="status" value="Completed" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="3ed4d7e3-1ca4-457b-b446-6995ab20aae9" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="ccfd7cef-aa53-4728-8862-d8b0a9a956b3" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="5901af65-eb4c-4ea8-a99f-f0eb6714fd22" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="251925c4-7876-484f-8dc6-bda3d4bec7b6" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="ba07cf8f-941e-4fa8-b608-835e0042d800" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="status" value="Stopped" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="7ca6e650-d029-4be8-a05c-c0b35db8f425" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="2b9ecde9-061f-4892-9057-0dfa7ebc0a1f" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+        </option>
+        <option name="type" value="PANEL" />
+      </chat>
+    </option>
+  </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_C:/Users/Admin/Downloads/Tung/Duan - Copy/Testing_SeverandDtbase" value="3DyXPCsti2trFTJbIFnrAlwUHTO" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/Test/Testing_SeverandDtbase" value="3Dyli1hj6dHEBxjobHMurmx9snk" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/Testing_SeverandDtbase" value="3DpngcFhrvh7MqTpViXevWz0ByI" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/Testing_SeverandDtbase (3)/Testing_SeverandDtbase" value="3Dfd92iFsnCPlefSCCTRgWW0ANe" />
       <entry key="_C:/Users/PC/Documents/code/BaiTapLon/Auction_System" value="3DUUB06mxYIQkEEf4lxmc12mCw5" />
+      <entry key="_C:/Users/PC/Downloads/Duan - Copy/Testing_SeverandDtbase" value="3DyRv3tQknSClDpiJAZNGqYVbaz" />
+      <entry key="_C:/Users/PC/Downloads/Duan/Testing_SeverandDtbase" value="3DyGwSggCPwsR3M8rp0GbHT9WOE" />
+      <entry key="_C:/Users/PC/Downloads/Main/Testing_SeverandDtbase" value="3E1gpPVOFLz99qOq14pSqHhusU3" />
+      <entry key="_C:/Users/PC/Downloads/New folder (4)/Testing_SeverandDtbase" value="3DoSEAbB7v0Vmi9hobSRqxHRKPP" />
+      <entry key="_C:/Users/tungh/Downloads/Dowload/Testing_SeverandDtbase (3)/Testing_SeverandDtbase" value="3DfEyZL5LRixZnxiYfGSu1QFjTi" />
+      <entry key="_C:/Users/tungh/Downloads/New folder/Duan - Copy/Duan - Copy/Testing_SeverandDtbase" value="3DyiiXAZfuJwkVbpQPGfXvco8Zo" />
+      <entry key="_C:/Users/tungh/Downloads/dât/Testing_SeverandDtbase (1)/Testing_SeverandDtbase" value="3DwhM3zKa3G0nlhI2Tzku2b8xI1" />
+      <entry key="_C:/Users/tungh/Downloads/hahaa/AuctionSystem/auctionPlay/Auctionmake" value="3E3h7E0OveKmtZmPUw62DwYdGfR" />
+      <entry key="_C:/Users/tungh/Downloads/pro/Auction_System" value="3E3qsns5euuFoQ9oKqFLcyC2SA5" />
+      <entry key="_C:/Users/tungh/Downloads/pro/Bidding/Testing_SeverandDtbase" value="3E1J41GgdfBNaGsimlK84q6XG7c" />
       <entry key="_D:/Auction_Project/Auction_System" value="3DITvUe84OcuZNFlgo9DnymNlBm" />
       <entry key="_D:/Auction_Project/Auction_System/client" value="3DOWiorAo7bxNFJiHAkCD4XbbHk" />
       <entry key="_D:/Testing_SeverandDtbase" value="3DOlIz7VgN7EpQ0XTOBsLzayjrs" />
     </persistenceIdMap>
   </component>
+  <component name="CopilotUserSelectedChatMode">
+    <option name="chatModeId" value="Agent" />
+  </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="agent-panel" value="Auto" />
+      <entry key="chat-panel" value="Auto" />
+    </selectedModels>
+  </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="111" />
+    <option name="cachedIndexableFilesCount" value="153" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -132,17 +183,34 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Four-T-UET/Auction_System.git&quot;,
-    &quot;accountId&quot;: &quot;0e1fd155-d039-4743-a93f-a7fbac53fd91&quot;
+    &quot;accountId&quot;: &quot;af9249f8-e86f-4ecd-9842-441c9bd573a1&quot;
   }
 }</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="3DITvUe84OcuZNFlgo9DnymNlBm" />
+  <component name="ProjectSessionTemplates">
+    <option name="panelTemplate">
+      <template>
+        <option name="modeId" value="Agent" />
+        <option name="model">
+          <model>
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+          </model>
+        </option>
+        <option name="targetType" value="LOCAL" />
+      </template>
+    </option>
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -154,6 +222,10 @@
     "Application.Server.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JUnit.AuctionTest.executor": "Run",
+    "Maven.Etrade [clean,package].executor": "Run",
+    "Maven.Etrade [clean].executor": "Run",
+    "Maven.Etrade [package].executor": "Run",
+    "Maven.Etrade [validate].executor": "Run",
     "Maven.common [validate].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Repository.Attach.Annotations": "false",
@@ -167,11 +239,11 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "dev__Tien",
+    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/UET/HOC/YEAR 1/LTNC/big project/Auction_System/common/src/main/java/auction/logic",
+    "last_opened_file_path": "C:/Users/tungh/Downloads/pro/Auction_System",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -181,15 +253,12 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\UET\HOC\YEAR 1\LTNC\big project\Auction_System\common\src\main\java\auction\logic" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Auction_Project\Auction_System\client\src\main" />
       <recent name="D:\Auction_Project\Auction_System\client\src\main\java" />
@@ -210,8 +279,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.32098.37" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.32098.37" />
       </set>
     </attachedChunks>
   </component>
@@ -246,7 +315,49 @@
       <workItem from="1778336247279" duration="171000" />
       <workItem from="1778336543732" duration="5643000" />
       <workItem from="1778382376578" duration="311000" />
-      <workItem from="1779346168680" duration="316000" />
+      <workItem from="1778544811346" duration="123000" />
+      <workItem from="1778544989470" duration="798000" />
+      <workItem from="1778561905514" duration="164000" />
+      <workItem from="1778569360051" duration="13213000" />
+      <workItem from="1778664980689" duration="4509000" />
+      <workItem from="1778676904214" duration="847000" />
+      <workItem from="1778683911997" duration="3447000" />
+      <workItem from="1778687409118" duration="5066000" />
+      <workItem from="1778716911389" duration="5222000" />
+      <workItem from="1778726432924" duration="8756000" />
+      <workItem from="1778735856392" duration="648000" />
+      <workItem from="1778745008832" duration="6447000" />
+      <workItem from="1778769487463" duration="5449000" />
+      <workItem from="1778805267226" duration="3030000" />
+      <workItem from="1778825033139" duration="521000" />
+      <workItem from="1778827316069" duration="4390000" />
+      <workItem from="1778946806161" duration="2885000" />
+      <workItem from="1778950912259" duration="589000" />
+      <workItem from="1778951546619" duration="608000" />
+      <workItem from="1778981289499" duration="5521000" />
+      <workItem from="1778987991294" duration="2409000" />
+      <workItem from="1779003951068" duration="191000" />
+      <workItem from="1779004161114" duration="9822000" />
+      <workItem from="1779034521336" duration="1275000" />
+      <workItem from="1779074808100" duration="11564000" />
+      <workItem from="1779101353850" duration="1824000" />
+      <workItem from="1779114139423" duration="8682000" />
+      <workItem from="1779198989015" duration="1594000" />
+      <workItem from="1779247112699" duration="1258000" />
+      <workItem from="1779248395925" duration="2683000" />
+      <workItem from="1779251096526" duration="328000" />
+      <workItem from="1779252538476" duration="2747000" />
+      <workItem from="1779255257986" duration="966000" />
+      <workItem from="1779256570287" duration="1398000" />
+      <workItem from="1779260839056" duration="506000" />
+      <workItem from="1779262315270" duration="3659000" />
+      <workItem from="1779339948556" duration="3835000" />
+      <workItem from="1779350369111" duration="614000" />
+      <workItem from="1779351014971" duration="617000" />
+      <workItem from="1779351659974" duration="2633000" />
+      <workItem from="1779369955036" duration="1816000" />
+      <workItem from="1779412992687" duration="1484000" />
+      <workItem from="1779417810755" duration="396000" />
     </task>
     <task id="LOCAL-00001" summary="new branch">
       <option name="closed" value="true" />
@@ -283,7 +394,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="new branch" />
-    <option name="LAST_COMMIT_MESSAGE" value="new branch" />
+    <MESSAGE value="refactor controller UI" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor controller UI" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -295,6 +407,10 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

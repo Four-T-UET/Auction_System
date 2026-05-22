@@ -24,7 +24,7 @@ public class ItemDAO {
   }
 
   public void addItem(Item item) {
-    String insertSQL = "INSERT INTO items (id, name, description, category) VALUES (?,?,?,?)";
+    String insertSQL = "INSERT INTO items (id, name, description, category, image_byte) VALUES (?,?,?,?,?)";
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
 
@@ -32,6 +32,7 @@ public class ItemDAO {
       pstmt.setString(2, item.getName());
       pstmt.setString(3, item.getDescription());
       pstmt.setString(4,item.getCategory().toString());
+      pstmt.setBytes(5,item.getImageBytes());
       System.out.println(item.getId());
       pstmt.executeUpdate();
 
@@ -41,7 +42,7 @@ public class ItemDAO {
     }
   }
   public RawItemData findRawItemById(String itemID) throws SQLException {
-    String query = "SELECT name, description, category FROM items WHERE id = ?";
+    String query = "SELECT name, description, category, image_byte FROM items WHERE id = ?";
 
     // try-with-resources: conn và pstmt tự động đóng khi kết thúc khối lệnh
     try (Connection conn = DatabaseConnection.getConnection();
@@ -54,6 +55,7 @@ public class ItemDAO {
           raw.name = res.getString("name");
           raw.description = res.getString("description");
           raw.categoryStr = res.getString("category");
+          raw.imageByte = res.getBytes("image_byte");
           return raw;
         }
       }
@@ -65,6 +67,7 @@ public class ItemDAO {
     public String name;
     public String description;
     public String categoryStr;
+    public byte[] imageByte;
   }
 
 }

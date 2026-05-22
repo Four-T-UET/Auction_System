@@ -9,12 +9,12 @@ public abstract class Item extends Entity implements Serializable {
     private byte[] imageBytes;
     private ItemCategory category;
 
-    public Item(String name, String description, ItemCategory category){
+    public Item(String name, String description, ItemCategory category,byte[] imageBytes) {
         super();
         this.name = name;
         this.description = description;
-        this.imageBytes = null;
         this.category=category;
+        this.imageBytes = imageBytes;
     }
 
     // Getter - setter

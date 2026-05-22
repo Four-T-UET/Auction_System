@@ -29,7 +29,7 @@ public class AuctionHandler {
         System.out.println("[AuctionHandler] ✓ Tạo phiên đấu giá thành công: " + auction.getId());
 
         AuctionRuntimeManager.getInstance().addOrUpdate(auction);
-        // ✅ BROADCAST AUCTION MỚI tới TẤT CẢ OTHER CLIENTS
+        //  BROADCAST AUCTION MỚI tới TẤT CẢ OTHER CLIENTS
         BroadcastMessage broadcastMsg = new BroadcastMessage(
             BroadcastMessage.EventType.AUCTION_CREATED,
             auction

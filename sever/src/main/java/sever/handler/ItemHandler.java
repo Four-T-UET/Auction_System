@@ -14,8 +14,9 @@ public class ItemHandler {
       String name = itemDTO.getName();
       String description = itemDTO.getDescription();
       ItemCategory category = itemDTO.getCategory();
+      byte[] imageByte = itemDTO.getImageByte();
 
-      Item itemFromDB = itemService.createAndSaveItem(name, category, description);
+      Item itemFromDB = itemService.createAndSaveItem(name, category, description, imageByte);
 
       Object response;
 

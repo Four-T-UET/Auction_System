@@ -124,12 +124,11 @@ public class ControlSelling implements Initializable {
                 Path defaultPath = Paths.get("loginImage.jpg");
                 imageBytes = Files.exists(defaultPath) ? Files.readAllBytes(defaultPath) : new byte[0];
             }
-            Item newItem = (Item)ItemService.addItem(name, category, description);
+            Item newItem = (Item)ItemService.addItem(name, category, description, imageBytes);
             if (newItem == null) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Không tạo được sản phẩm!");
                 return;
             }
-            newItem.setImageBytes(imageBytes);
 
             // Tính tổng số phút (hours * 60 + minutes)
             int totalMinutes = hoursValue * 60 + minutesValue;

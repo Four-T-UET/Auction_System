@@ -21,10 +21,10 @@ public class ClientSocket {
   private volatile long serverTimeOffsetMillis;
   private volatile String serverZoneId = ZoneId.systemDefault().getId();
 
-  // ✅ Queue để lưu non-broadcast responses (login, register, auction, etc)
+  //  Queue để lưu non-broadcast responses (login, register, auction, etc)
   private final LinkedBlockingQueue<Object> responseQueue = new LinkedBlockingQueue<>();
 
-  // ✅ Listener callback nếu có broadcast
+  //  Listener callback nếu có broadcast
   private BroadcastListener broadcastListener;
 
   // Singleton: Đảm bảo cả ứng dụng chỉ có 1 kết nối duy nhất
@@ -36,7 +36,7 @@ public class ClientSocket {
       out.flush();
       in = new ObjectInputStream(socket.getInputStream()); // đọc dữ liệu sẽ được gửi lại từ sever: byte --> text
 
-      // ✅ START broadcast listener thread (non-blocking)
+      //  START broadcast listener thread (non-blocking)
       startBroadcastListener();
       syncServerClock();
     } catch (IOException e) {
@@ -63,15 +63,15 @@ public class ClientSocket {
     }
   }
 
-  // ✅ FIX: receive() sẽ lấy từ queue thay vì đọc trực tiếp
+  //  FIX: receive() sẽ lấy từ queue thay vì đọc trực tiếp
   public synchronized Object receive() {
     try {
-      // ✅ Wait for response from queue (put there by BroadcastListener)
+      //  Wait for response from queue (put there by BroadcastListener)
       Object response = responseQueue.poll();
       if (response != null) {
         return response;
       }
-      // ✅ If queue is empty, wait timeout 30 seconds
+      //  If queue is empty, wait timeout 30 seconds
       System.out.println("[ClientSocket] Waiting for response...");
       response = responseQueue.poll(30, java.util.concurrent.TimeUnit.SECONDS);
       if (response == null) {
@@ -102,22 +102,22 @@ public class ClientSocket {
     return dateTime.atZone(getServerZoneId()).toInstant().toEpochMilli();
   }
 
-  // ✅ Listener thread chạy background để lắng nghe từ server
+  //  Listener thread chạy background để lắng nghe từ server
   private void startBroadcastListener() {
     Thread listenerThread = new Thread(() -> {
       System.out.println("[ClientSocket] ✓ BroadcastListener started");
       while (true) {
         try {
-          // ✅ BroadcastListener là THE ONLY READER từ ObjectInputStream
+          //  BroadcastListener là THE ONLY READER từ ObjectInputStream
           Object obj = in.readObject();
 
           if (obj instanceof BroadcastMessage msg) {
-            // ✅ Đây là broadcast event → handle ngay
+            //  Đây là broadcast event → handle ngay
             System.out.println("[ClientSocket] ✓ Received broadcast: " + msg);
             updateServerClock(msg);
             handleBroadcast(msg);
           } else {
-            // ✅ Đây là response từ request (login, register, auction, etc)
+            //  Đây là response từ request (login, register, auction, etc)
             // Put vào queue để receive() xử lý
             System.out.println("[ClientSocket] ✓ Received response from server: " + (obj != null ? obj.getClass().getSimpleName() : "null"));
             responseQueue.put(obj);
@@ -150,7 +150,7 @@ public class ClientSocket {
       case AUCTION_CREATED:
         System.out.println("[ClientSocket] AUCTION_CREATED broadcast received");
         if (msg.getAuction() != null) {
-          // ✅ Add/Update auction vào AuctionManager
+          //  Add/Update auction vào AuctionManager
           // AuctionManager.addOrUpdate() sẽ trigger listener → UI auto update
           AuctionManager.getInstance().addOrUpdate(msg.getAuction());
           System.out.println("[ClientSocket] ✓ Added auction to AuctionManager: " + msg.getAuction().getId());
