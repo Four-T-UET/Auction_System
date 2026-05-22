@@ -2,257 +2,231 @@ package controller;
 
 import auction.logic.enums.AuctionStatus;
 import auction.logic.enums.ItemCategory;
+import auction.logic.manager.AuctionManager;
+import auction.logic.manager.AuctionUpdateListener;
 import auction.logic.model.Auction;
+import auction.logic.model.Clients;
 import auction.logic.model.Item;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-
-import java.time.Duration;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.util.Callback;
+import service.ClientSocket;
 
 import java.net.URL;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
-import javafx.util.Callback;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class ControlHistory implements Initializable {
-    //_______________________
-    // FOR PURCHASES
-    //_______________________
+    private final ObservableList<Auction> purchaseData = FXCollections.observableArrayList();
+    private final ObservableList<Auction> biddingData = FXCollections.observableArrayList();
+    private AuctionUpdateListener updateListener;
+    private Timeline clock;
+    private boolean cleanedUp;
 
-    private List<Auction> auctionList = new ArrayList<>();
-    public void setAuctionList(List<Auction> auctionList){
-        this.auctionList = auctionList;
-        loadDataForPurchases();
+    @FXML private TableView<Auction> tablePurchases;
+    @FXML private TableColumn<Auction, String> itemColPurchases;
+    @FXML private TableColumn<Auction, String> categoryColPurchases;
+    @FXML private TableColumn<Auction, Double> winpriceColPurchases;
+    @FXML private TableColumn<Auction, LocalDateTime> dateColPurchases;
+    @FXML private TableColumn<Auction, AuctionStatus> statusColPurchases;
+    @FXML private ComboBox<ItemCategory> categoryComboPurchases;
+    @FXML private PieChart piechartPurchases;
+
+    @FXML private TableView<Auction> tableSelling;
+    @FXML private TableColumn<Auction, String> itemColSelling;
+    @FXML private TableColumn<Auction, String> indexColSelling;
+    @FXML private TableColumn<Auction, Double> currentbidColSelling;
+    @FXML private TableColumn<Auction, LocalDateTime> enddateColSelling;
+    @FXML private TableColumn<Auction, AuctionStatus> statusColSelling;
+    @FXML private ComboBox<ItemCategory> typeComboSelling;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setupTables();
+        setupColumns();
+        setupCategories();
+        refreshDerivedLists();
+        registerAuctionListener();
+        bindCleanupToWindowClose();
+        startCountdownClock();
+    }
+
+    private void setupTables() {
+        tablePurchases.setItems(purchaseData);
+        tableSelling.setItems(biddingData);
+    }
+
+    private void setupColumns() {
+        bindString(itemColPurchases, a -> textOf(a.getItem(), Item::getName));
+        bindString(categoryColPurchases, a -> textOf(a.getItem(), i -> i.getCategory() == null ? "Unknown!" : i.getCategory().name()));
+        bindObject(winpriceColPurchases, Auction::getCurrentPrice);
+        bindObject(dateColPurchases, Auction::getFinishTime);
+        bindObject(statusColPurchases, Auction::getStatus);
+        dateColPurchases.setCellFactory(createCountdownCellFactory());
+
+        bindString(itemColSelling, a -> textOf(a.getItem(), Item::getName));
+        bindString(indexColSelling, Auction::getId);
+        bindObject(currentbidColSelling, Auction::getCurrentPrice);
+        bindObject(enddateColSelling, Auction::getFinishTime);
+        bindObject(statusColSelling, Auction::getStatus);
+        enddateColSelling.setCellFactory(createCountdownCellFactory());
+    }
+
+    private void setupCategories() {
+        ObservableList<ItemCategory> categories = FXCollections.observableArrayList(ItemCategory.values());
+        categoryComboPurchases.setItems(categories);
+        if (typeComboSelling != null) typeComboSelling.setItems(categories);
+    }
+
+    private void refreshDerivedLists() {
+        Clients currentUser = UserSession.getCurrentUser();
+        List<Auction> master = AuctionManager.getInstance().getMasterAuctionList();
+
+        purchaseData.setAll(master.stream().filter(a -> isPurchaseAuction(a, currentUser)).collect(Collectors.toList()));
+        biddingData.setAll(master.stream().filter(a -> isBiddingAuction(a, currentUser)).collect(Collectors.toList()));
         loadPieChart();
     }
 
-    @FXML
-    private TableView<Auction> tablePurchases;
-    @FXML
-    private TableColumn<Auction,String> itemColPurchases;
-    @FXML
-    private TableColumn<Auction,String> categoryColPurchases;
-    @FXML
-    private TableColumn<Auction,Double> winpriceColPurchases;
-    @FXML
-    private TableColumn<Auction, LocalDateTime> dateColPurchases;
-    @FXML
-    private TableColumn<Auction,AuctionStatus> statusColPurchases;
-    @FXML
-    private ComboBox<ItemCategory> categoryComboPurchases;
-    @FXML
-    private ImageView imagePurchaseIcon;
-    @FXML
-    private PieChart piechartPurchases;
-
-    //observableArrayList(Callback extractor)	tự động update khi property con thay đổi
-    // cần phải thay đổi ngay
-    public void setDataForColumn(){
-        itemColPurchases.setCellValueFactory(cellData -> {
-            //cellData mang thông tin Auction hiển thị lên trên màn hình
-            // -> getValue() trả ra Aution của hàng;
-            Item product = cellData.getValue().getItem();
-            String name = (product != null) ? product.getName() : "Unknown!";
-            //JavaFx không chấp nhận return name
-            //Do nó bảng tableView chỉ chấp nhận đối tượng trả ve
-            // la -> "Property"
-            return new SimpleStringProperty(name);
-        });
-
-        categoryColPurchases.setCellValueFactory(cellData -> {
-            Item product = cellData.getValue().getItem();
-            String category = (product != null && product.getCategory() != null)
-                ? product.getCategory().name()
-                : "Unknown!";
-            return new SimpleStringProperty(category);
-        });
-
-        winpriceColPurchases.setCellValueFactory(cellData ->{
-            return cellData.getValue().currentPriceProperty().asObject();
-        });
-
-        dateColPurchases.setCellValueFactory(cellData -> {
-            return new SimpleObjectProperty<>(cellData.getValue().getFinishTime());
-        });
-
-        dateColPurchases.setCellFactory(getCountdownCellFactory());
-
-        statusColPurchases.setCellValueFactory(cellData -> {
-            return new SimpleObjectProperty<>(cellData.getValue().getStatus());
-        });
+    private boolean isPurchaseAuction(Auction auction, Clients currentUser) {
+        return hasStatus(auction, AuctionStatus.FINISHED, AuctionStatus.PAID)
+                && (currentUser == null || sameUser(auction.getCurrentWinner(), currentUser));
     }
-    //
-    private void loadPieChart(){
-        Map<ItemCategory,Integer> count = new HashMap<>();
-        for(Auction auction: auctionList){
-            Item product = auction.getItem();
-            if (product == null || product.getCategory() == null) {
-                continue;
-            }
-            ItemCategory temp =  product.getCategory();
-            count.put(temp,count.getOrDefault(temp,0) + 1);
-        }
-        int total = 0;
-        for(Integer value: count.values()){
-            total += value;
-        }
-        if(total == 0){
+
+    private boolean isBiddingAuction(Auction auction, Clients currentUser) {
+        return hasStatus(auction, AuctionStatus.PENDING, AuctionStatus.RUNNING)
+                && (currentUser == null || sameUser(auction.getCurrentWinner(), currentUser));
+    }
+
+    private boolean hasStatus(Auction auction, AuctionStatus... statuses) {
+        return auction != null && Arrays.asList(statuses).contains(auction.getStatus());
+    }
+
+    private boolean sameUser(Clients a, Clients b) {
+        return a != null && b != null && Objects.equals(a.getUsername(), b.getUsername());
+    }
+
+    private void loadPieChart() {
+        Map<ItemCategory, Long> counts = purchaseData.stream()
+                .map(Auction::getItem)
+                .filter(Objects::nonNull)
+                .map(Item::getCategory)
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(c -> c, Collectors.counting()));
+
+        long total = counts.values().stream().mapToLong(Long::longValue).sum();
+        if (total == 0) {
             piechartPurchases.setData(FXCollections.observableArrayList());
-            return;// tranh chia cho 0
-        }
-        //load data
-        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
-
-        for(Map.Entry<ItemCategory,Integer> entry: count.entrySet()){
-            double percent = (double) entry.getValue() / total * 100;
-            String label = entry.getKey().name() + " (" + String.format("%.1f", percent) + "%)";
-            pieData.add(new PieChart.Data(label, entry.getValue()));
+            return;
         }
 
-        piechartPurchases.setData(pieData);
+        piechartPurchases.setData(FXCollections.observableArrayList(
+                counts.entrySet().stream()
+                        .map(e -> new PieChart.Data(
+                                e.getKey().name() + " (" + String.format("%.1f", e.getValue() * 100.0 / total) + "%)",
+                                e.getValue()))
+                        .collect(Collectors.toList())
+        ));
     }
 
-    //-------------
-    //FOR SELLING
-    //-------------
-    private List<Auction> auctionSelling = new ArrayList<>();
-    public void setAuctionSelling(List<Auction> auctionSelling){
-        this.auctionSelling = auctionSelling;
-        loadDataForSelling();
-    }
-    @FXML
-    private TableView<Auction> tableSelling;
-    @FXML
-    private TableColumn<Auction,String> itemColSelling;
-    @FXML
-    private TableColumn<Auction,String> indexColSelling;
-    @FXML
-    private TableColumn<Auction,Double> currentbidColSelling ;
-    @FXML
-    private TableColumn<Auction,LocalDateTime> enddateColSelling;
-    @FXML
-    private TableColumn<Auction,AuctionStatus> statusColSelling;
-    @FXML
-    private ComboBox<ItemCategory> typeComboSelling;
-
-    public void setDataForSelling(){
-        itemColSelling.setCellValueFactory(cellData ->{
-            Item item = cellData.getValue().getItem();
-            String name = (item != null) ? item.getName() : "Unknown";
-            return new SimpleStringProperty(name);
-        });
-
-        indexColSelling.setCellValueFactory(cellData -> {
-            return new SimpleStringProperty(cellData.getValue().getId());
-        });
-
-        currentbidColSelling.setCellValueFactory(cellData -> {
-            return cellData.getValue().currentPriceProperty().asObject();
-        });
-
-        enddateColSelling.setCellValueFactory(cellData -> {
-            return new SimpleObjectProperty<>(cellData.getValue().getFinishTime());
-        });
-
-        enddateColSelling.setCellFactory(getCountdownCellFactory());
-
-        statusColSelling.setCellValueFactory(cellData -> {
-            return new SimpleObjectProperty<>(cellData.getValue().getStatus());
-        });
-
-    }
-    public void setScatterChart(Auction sellingData){
-        CategoryAxis xAxis = new CategoryAxis(); // category axis for String
-        xAxis.setLabel("Time");
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("Current Bid");
-        ScatterChart<String, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
-        scatterChart.setTitle("Auction Selling Data");
-
+    private void bindString(TableColumn<Auction, String> col, java.util.function.Function<Auction, String> fn) {
+        col.setCellValueFactory(cd -> new SimpleStringProperty(fn.apply(cd.getValue())));
     }
 
-    private Callback<TableColumn<Auction, LocalDateTime>, TableCell<Auction, LocalDateTime>> getCountdownCellFactory() {
-        return column -> new TableCell<Auction, LocalDateTime>() {
+    private <T> void bindObject(TableColumn<Auction, T> col, java.util.function.Function<Auction, T> fn) {
+        col.setCellValueFactory(cd -> new SimpleObjectProperty<>(fn.apply(cd.getValue())));
+    }
+
+    private String textOf(Item item, java.util.function.Function<Item, String> fn) {
+        return item == null ? "Unknown" : fn.apply(item);
+    }
+
+    private Callback<TableColumn<Auction, LocalDateTime>, TableCell<Auction, LocalDateTime>> createCountdownCellFactory() {
+        return col -> new TableCell<>() {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    return;
-                }
-
-                if (LocalDateTime.now().isAfter(item)) {
-                    setText("Ended");
-                } else {
-                    Duration duration = Duration.between(LocalDateTime.now(), item);
-                    long days = duration.toDays();
-                    long hours = duration.toHoursPart();
-                    long minutes = duration.toMinutesPart();
-                    long seconds = duration.toSecondsPart();
-
-                    String format = days > 0
-                        ? String.format("%d ngày %02d:%02d:%02d", days, hours, minutes, seconds)
-                        : String.format("%02d:%02d:%02d", hours, minutes, seconds);
-                    setText(format);
-                }
+                setText(empty || item == null ? null : formatCountdown(item));
             }
         };
     }
-    //khởi tạo
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        //-----PURCHASES------
-        setDataForColumn();
-        setDataForSelling();
-        setDataForCategory();
 
-        loadDataForPurchases();
-        loadDataForSelling();
-        loadPieChart();
+    private String formatCountdown(LocalDateTime endTime) {
+        ClientSocket clientSocket = ClientSocket.getInstance();
+        long endMillis = clientSocket.toServerEpochMillis(endTime);
+        long remainingMillis = endMillis - clientSocket.getServerTimeMillis();
+        if (remainingMillis <= 0) return "Ended";
 
-        // --- CHẠY ĐỒNG HỒ ĐẾM NGƯỢC ---
-        Timeline clock = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), e -> {
+        Duration d = Duration.ofMillis(remainingMillis);
+        long days = d.toDays();
+        return days > 0
+                ? String.format("%d ngày %02d:%02d:%02d", days, d.toHoursPart(), d.toMinutesPart(), d.toSecondsPart())
+                : String.format("%02d:%02d:%02d", d.toHoursPart(), d.toMinutesPart(), d.toSecondsPart());
+    }
+
+    private void startCountdownClock() {
+        clock = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), e -> {
             tablePurchases.refresh();
-            if (tableSelling != null) {
-                tableSelling.refresh();
-            }
+            tableSelling.refresh();
         }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
     }
 
-    public void loadDataForPurchases(){
-        ObservableList<Auction> auctionObservableList = FXCollections.observableArrayList(this.auctionList);
-        tablePurchases.setItems(auctionObservableList);
+    private void registerAuctionListener() {
+        updateListener = new AuctionUpdateListener() {
+            @Override public void onAuctionAdded(Auction auction) { runOnFxThread(ControlHistory.this::refreshDerivedLists); }
+            @Override public void onAuctionUpdated(Auction auction) { runOnFxThread(ControlHistory.this::refreshDerivedLists); }
+            @Override public void onAuctionsReplaced(List<Auction> auctions) { runOnFxThread(ControlHistory.this::refreshDerivedLists); }
+            @Override public void onAuctionRemoved(String auctionId) { runOnFxThread(ControlHistory.this::refreshDerivedLists); }
+        };
+        AuctionManager.getInstance().registerListener(updateListener);
     }
 
-    public void loadDataForSelling(){
-        ObservableList<Auction> auctionObservableSelling = FXCollections.observableArrayList(this.auctionSelling);
-        tableSelling.setItems(auctionObservableSelling);
+    private void runOnFxThread(Runnable action) {
+        if (Platform.isFxApplicationThread()) action.run();
+        else Platform.runLater(action);
     }
 
-    public void setDataForCategory(){
-        ObservableList<ItemCategory> itemCategories = FXCollections.observableArrayList(ItemCategory.values());
-        categoryComboPurchases.setItems(itemCategories);
-        if(typeComboSelling != null) {
-            typeComboSelling.setItems(itemCategories);
+    public void unregisterAuctionListener() {
+        if (updateListener != null) {
+            AuctionManager.getInstance().unregisterListener(updateListener);
+            updateListener = null;
         }
+    }
+
+    private void bindCleanupToWindowClose() {
+        tablePurchases.sceneProperty().addListener((sceneObs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((windowObs, oldWindow, newWindow) -> {
+                    if (newWindow != null) newWindow.setOnHidden(e -> cleanup());
+                });
+            }
+        });
+    }
+
+    public void cleanup() {
+        if (cleanedUp) return;
+        cleanedUp = true;
+        unregisterAuctionListener();
+        if (clock != null) clock.stop();
     }
 }

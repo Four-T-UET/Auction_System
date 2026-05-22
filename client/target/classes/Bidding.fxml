@@ -3,7 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,78 +13,220 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ControlBidding">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f0f4ff, #e8f0ff);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ControlBidding">
     <children>
-        <!-- Khung bên trái: Chứa Scene của bạn (Giữ nguyên) -->
-        <VBox fx:id="ProductCard" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #ffffff;" HBox.hgrow="ALWAYS" />
+        <!-- Khung bên trái: Hiển thị thông tin sản phẩm -->
+        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #ffffff; -fx-border-color: #e0e7ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefHeight="400.0" spacing="24.0" style="-fx-padding: 28;">
+                <children>
+                    <!-- Product Image Container -->
+                    <VBox alignment="CENTER" style="-fx-background-color: linear-gradient(to bottom, #f3f7ff, #eef3fb); -fx-background-radius: 16; -fx-border-radius: 16; -fx-border-color: #e0e7ff; -fx-border-width: 2; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 12, 0.2, 0, 4);">
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                        <ImageView fx:id="productImage" fitHeight="260.0" fitWidth="330.0" pickOnBounds="true" preserveRatio="true" />
+                    </VBox>
+
+                    <!-- Product Name -->
+                    <Label fx:id="productNameLabel" text="Product Name" textFill="#1a2847">
+                        <font>
+                            <Font name="System Bold" size="24.0" />
+                        </font>
+                    </Label>
+
+                    <!-- Description Section -->
+                    <VBox spacing="10.0" style="-fx-border-color: #dbeafe; -fx-border-width: 0 0 2 0;">
+                        <children>
+                            <Label text="📝 Description" textFill="#3b82f6">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="productDescription" text="Product description..." textFill="#4b5563" wrapText="true" style="-fx-padding: 10; -fx-font-smoothing-type: gray;">
+                                <font>
+                                    <Font size="13.0" />
+                                </font>
+                            </Label>
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="8.0" />
+                        </VBox.margin>
+                    </VBox>
+
+                    <!-- Details Card -->
+                    <VBox spacing="14.0" style="-fx-background-color: linear-gradient(to bottom, #f8faff, #f0f7ff); -fx-background-radius: 14; -fx-border-color: #c7d2fe; -fx-border-width: 1; -fx-border-radius: 14; -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.1), 8, 0.15, 0, 2);">
+                        <padding>
+                            <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                        </padding>
+                        <children>
+                            <!-- Category -->
+                            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <Label text="🏷️" style="-fx-font-size: 16.0;" />
+                                    <Label text="Category:" textFill="#6366f1">
+                                        <font>
+                                            <Font name="System Bold" size="13.0" />
+                                        </font>
+                                    </Label>
+                                    <Label fx:id="productCategory" text="N/A" textFill="#1e293b" style="-fx-font-weight: bold;">
+                                        <font>
+                                            <Font size="13.0" />
+                                        </font>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <!-- Starting Price -->
+                            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <Label text="💰" style="-fx-font-size: 16.0;" />
+                                    <Label text="Current Price:" textFill="#059669">
+                                        <font>
+                                            <Font name="System Bold" size="13.0" />
+                                        </font>
+                                    </Label>
+                                    <Label fx:id="productStartPrice" text="N/A" textFill="#059669" style="-fx-font-weight: bold; -fx-font-size: 14.0;">
+                                        <font>
+                                            <Font size="13.0" />
+                                        </font>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <!-- Time Left -->
+                            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <Label text="⏰" style="-fx-font-size: 16.0;" />
+                                    <Label text="Time Left:" textFill="#dc2626">
+                                        <font>
+                                            <Font name="System Bold" size="13.0" />
+                                        </font>
+                                    </Label>
+                                    <Label fx:id="productTimeLeft" text="N/A" textFill="#dc2626" style="-fx-font-weight: bold; -fx-font-size: 14.0;">
+                                        <font>
+                                            <Font size="13.0" />
+                                        </font>
+                                    </Label>
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+                </children>
+            </VBox>
+        </ScrollPane>
 
         <!-- Khung bên phải: Giao diện Đấu giá -->
-        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="25.0" style="-fx-background-color: #f8f9fa; -fx-border-color: #e9ecef; -fx-border-width: 0 0 0 1;" HBox.hgrow="ALWAYS">
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="24.0" style="-fx-background-color: linear-gradient(to bottom, #ffffff, #f8faff);" HBox.hgrow="ALWAYS">
             <padding>
-                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                <Insets bottom="40.0" left="46.0" right="46.0" top="40.0" />
             </padding>
             <children>
-                <!-- Tiêu đề -->
-                <Label text="Place Your Bid" textFill="#2c3e50">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
-                </Label>
-
-                <!-- Khu vực thông tin -->
-                <GridPane hgap="15.0" vgap="20.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="110.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="130.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                <!-- Header -->
+                <VBox alignment="CENTER_LEFT" spacing="8.0">
                     <children>
-                        <Label text="Current price:" textFill="#7f8c8d">
+                        <Label text="⚡ Place Your Bid" textFill="#1a2847">
+                            <font>
+                                <Font name="System Bold" size="32.0" />
+                            </font>
+                        </Label>
+                        <Label text="Make your offer now" textFill="#6b7280">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label text="Step:" textFill="#7f8c8d" GridPane.rowIndex="1">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                        <Label text="Your bid price:" textFill="#7f8c8d" GridPane.rowIndex="2">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-
-                        <!-- Các giá trị -->
-                        <Label fx:id="priceCurrent" text="N/A" textFill="#e74c3c" GridPane.columnIndex="1">
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="step" text="N/A" textFill="#e74c3c" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
-                        </Label>
-
-                        <!-- Ô nhập liệu -->
-                        <TextField fx:id="fieldPrice" promptText="Enter amount..." style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #bdc3c7; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     </children>
-                </GridPane>
+                </VBox>
 
-                <!-- Nút bấm -->
-                <Button fx:id="Bidding" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBid" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 12;" text="Bid Now" VBox.vgrow="ALWAYS">
+                <!-- Bid Information Card -->
+                <VBox spacing="20.0" style="-fx-background-color: linear-gradient(to bottom right, #f0f9ff, #f5f3ff); -fx-background-radius: 16; -fx-border-color: #c7d2fe; -fx-border-width: 1; -fx-border-radius: 16; -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.12), 16, 0.2, 0, 6);">
+                    <padding>
+                        <Insets bottom="28.0" left="28.0" right="28.0" top="28.0" />
+                    </padding>
+                    <children>
+                        <!-- Current Price Section -->
+                        <VBox spacing="10.0">
+                            <children>
+                                <Label text="Current Price" textFill="#6366f1">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="priceCurrent" text="N/A" textFill="#2563eb">
+                                    <font>
+                                        <Font name="System Bold" size="28.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <!-- Step Section -->
+                        <VBox spacing="10.0" style="-fx-border-color: #e0e7ff; -fx-border-width: 1 0 0 0;">
+                            <padding>
+                                <Insets top="16.0" />
+                            </padding>
+                            <children>
+                                <Label text="Minimum Step" textFill="#7c3aed">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="step" text="N/A" textFill="#7c3aed">
+                                    <font>
+                                        <Font name="System Bold" size="22.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <!-- Winner Section -->
+                        <VBox spacing="10.0" style="-fx-border-color: #e0e7ff; -fx-border-width: 1 0 0 0;">
+                            <padding>
+                                <Insets top="16.0" />
+                            </padding>
+                            <children>
+                                <Label text="Current Winner" textFill="#7c3aed">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="winnerLabel" text="N/A" textFill="#059669">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <!-- Bid Input Section -->
+                <VBox spacing="14.0">
+                    <children>
+                        <Label text="Your Bid Amount" textFill="#1a2847">
+                            <font>
+                                <Font name="System Bold" size="15.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="fieldPrice" promptText="Enter your bid amount..." style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #c7d2fe; -fx-border-width: 2; -fx-padding: 14 16; -fx-font-size: 15; -fx-focus-color: #3b82f6; -fx-faint-focus-color: #3b82f625;" />
+                    </children>
+                </VBox>
+
+                <!-- Bid Button -->
+                <Button fx:id="Bidding" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBid" style="-fx-background-color: linear-gradient(to right, #3b82f6, #2563eb); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 16; -fx-cursor: hand; -fx-font-size: 16; -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.3), 12, 0.25, 0, 4);" text="🚀 Submit Bid">
                     <font>
-                        <Font size="15.0" />
+                        <Font size="16.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="10.0" />
+                        <Insets top="8.0" />
                     </VBox.margin>
                 </Button>
+
+                <!-- Info Text -->
+                <Label text="Check the current bid amount and make sure your bid exceeds the minimum step." textFill="#9ca3af" wrapText="true" style="-fx-font-size: 12;">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
             </children>
         </VBox>
     </children>

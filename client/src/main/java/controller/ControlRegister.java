@@ -77,4 +77,13 @@ public class ControlRegister implements Initializable {
         });
 
     }
+
+    @FXML
+    public void goToLogin(ActionEvent event) {
+        try {
+            ChangeScene.SignUpToLogin(event);
+        } catch (Exception e) {
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Không thể chuyển đến trang đăng nhập: " + e.getMessage());
+        }
+    }
 }

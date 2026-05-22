@@ -6,13 +6,15 @@ import auction.logic.enums.AuthenticationException;
 import auction.logic.enums.AuctionStatus;
 import auction.logic.manager.AuctionStateManagement;
 import auction.logic.manager.BidHistory;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.DoubleProperty;
 
 
-public class Auction extends Entity {
+public class Auction extends Entity implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private AuctionStatus status;
 	private LocalDateTime startTime;
 	private LocalDateTime finishTime;
@@ -20,15 +22,15 @@ public class Auction extends Entity {
 	private double currentPrice;
 	private double minimumStep;
 	private Bidder currentWinner;
-	private DoubleProperty currentPriceProperty;
+//	private DoubleProperty currentPriceProperty;
 
 
 	private BidHistory bidHistory = new BidHistory();
 	private AuctionObservers auctionObservers;
 	private final AuctionStateManagement auctionStateManagement = new AuctionStateManagement();
 
-	// Constructor with duration in days
-	public Auction(Item product, double currentPrice, double miniumStep,int durationDays){
+	// Constructor with duration in minutes
+	public Auction(Item product, double currentPrice, double miniumStep,long durationMinutes){
 		try{
 			if(currentPrice < 0){
 				throw new AuthenticationException("Giá tiến không hợp lệ. Vui lòng nhập lại");
@@ -42,11 +44,11 @@ public class Auction extends Entity {
 		this.auctionObservers=new AuctionObservers();
 		this.product=product;
 		this.currentPrice=currentPrice;
-		this.currentPriceProperty = new SimpleDoubleProperty(currentPrice);
+//		this.currentPriceProperty = new SimpleDoubleProperty(currentPrice);
 		this.minimumStep=miniumStep;
 		this.status= AuctionStatus.PENDING;
 		this.startTime= LocalDateTime.now();
-		this.finishTime=LocalDateTime.now().plusDays(durationDays);
+		this.finishTime=LocalDateTime.now().plusMinutes(durationMinutes);
 	}
 	// Hàm kiểm tra, set người chiến thắng hiện tại
 	public boolean setCurrentWinner(Bidder bidder, double price){
@@ -73,6 +75,19 @@ public class Auction extends Entity {
 		}
 	}
 
+	// Update current price (updates JavaFX property so UI bindings react)
+//	public synchronized void setCurrentPrice(double price) {
+//		this.currentPrice = price;
+//		if (this.currentPriceProperty == null) {
+//			this.currentPriceProperty = new SimpleDoubleProperty(price);
+//		} else {
+//			this.currentPriceProperty.set(price);
+//		}
+//		// notify internal auction observers (bidders) about price change
+//		try {
+//			notifyObservers(AuctionEvent.PRICE_UPDATED, "Gia da duoc cap nhat: " + price);
+//		} catch (Exception ignored) {}
+//	}
 
 	// Getter - Setter
 	public double getMiniumStep(){
@@ -92,9 +107,17 @@ public class Auction extends Entity {
 	public LocalDateTime getFinishTime(){
 		return this.finishTime;
 	}
-	public DoubleProperty currentPriceProperty(){
-		return this.currentPriceProperty;
+
+	public LocalDateTime getStartTime(){
+		return this.startTime;
 	}
+
+	public void setFinishTime(LocalDateTime finishTime){
+		this.finishTime = finishTime;
+	}
+//	public DoubleProperty currentPriceProperty(){
+//		return this.currentPriceProperty;
+//	}
 
 	public void notifyObservers(AuctionEvent event, String message){
 		auctionObservers.sendNotification(this,event, message );

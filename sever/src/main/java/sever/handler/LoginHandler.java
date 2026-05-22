@@ -1,26 +1,19 @@
 package sever.handler;
 
+import auction.logic.RequestDTO.LoginDTO;
 import auction.logic.model.User;
 import sever.dao.UserDAO;
 import java.io.ObjectOutputStream;
 
-public class LoginHandler implements AuthHandler {
+public class LoginHandler {
 
   private UserDAO userDAO = new UserDAO(); // Khởi tạo DAO
 
-  @Override
-  public void handle(String[] parts, ObjectOutputStream out) {
+  public void handle(LoginDTO loginDTO, ObjectOutputStream out) {
     try {
-      // parts[0] là "LOGIN", parts[1] là username, parts[2] là password
-//      if (parts.length < 3) {
-//        out.writeObject("FAILED: Thiếu thông tin đăng nhập");
-//        out.flush();
-//        return;
-//      }
+      String user = loginDTO.getUsername();
+      String pass = loginDTO.getPassword();
 
-
-      String user = parts[1];
-      String pass = parts[2];
 
       User userFromDB = userDAO.getUser(user);  // tìm USER từ dtb
 

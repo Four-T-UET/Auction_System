@@ -5,9 +5,91 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/client.iml" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/AppTrade.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/AppTrade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ChangeScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ChangeScene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlAccount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlBidding.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlBidding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlDashBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlDashBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlProductCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlProductCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlRegister.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlRegister.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlWallet.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlWallet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/Login.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/Login.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/UserSession.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/service/ClientSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/ClientSocket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resource/Bidding.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/Bidding.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resource/MainDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/MainDashboard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resource/loginScene.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/loginScene.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resource/productCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/productCard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resource/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/register.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/Bidding.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/Bidding.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/MainDashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/MainDashboard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/loginScene.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/loginScene.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/productCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/productCard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/register.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/common/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuctionResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuctionResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuthResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/AuthResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/ItemResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/ResponseDTO/ItemResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionStateManagement.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/AuctionStateManagement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/BidHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/BidHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Art.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Art.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Auction.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Auction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/AuctionObservers.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/AuctionObservers.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Clients.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Clients.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Electronics.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Electronics.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Item.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/RealEstate.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/RealEstate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Seller.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Seller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Vehicle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Wallet.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Wallet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/enums/ItemCategory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/enums/ItemCategory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ArtFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ArtFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ElectronicsFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ElectronicsFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ItemFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ItemFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/RealEstateFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/RealEstateFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/VehicleFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/VehicleFactory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionStateManagement.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/AuctionStateManagement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/BidHistory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/manager/BidHistory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Art.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Art.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Auction.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Auction.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/AuctionObservers.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/AuctionObservers.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Clients.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Clients.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Electronics.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Electronics.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Entity.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Entity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Item.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Item.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/RealEstate.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/RealEstate.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Seller.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Seller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Vehicle.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Vehicle.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Wallet.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Wallet.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sever/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/config/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/config/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/dao/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ClientHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/LoginHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/LoginHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/RegisterHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/RegisterHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/config/DatabaseConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/config/DatabaseConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/dao/UserDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/dao/UserDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/handler/ClientHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/handler/ClientHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/handler/LoginHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/handler/LoginHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/classes/sever/handler/RegisterHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/classes/sever/handler/RegisterHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/sever/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +103,9 @@
       <entry key="_D:/Auction_Project/Auction_System/client" value="3DOWiorAo7bxNFJiHAkCD4XbbHk" />
       <entry key="_D:/Testing_SeverandDtbase" value="3DOlIz7VgN7EpQ0XTOBsLzayjrs" />
     </persistenceIdMap>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="111" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -82,11 +167,11 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "dev",
+    "git-widget-placeholder": "dev__Tien",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/PC/Documents/code/BaiTapLon/Auction_System",
+    "last_opened_file_path": "D:/UET/HOC/YEAR 1/LTNC/big project/Auction_System/common/src/main/java/auction/logic",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -102,6 +187,9 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\UET\HOC\YEAR 1\LTNC\big project\Auction_System\common\src\main\java\auction\logic" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Auction_Project\Auction_System\client\src\main" />
       <recent name="D:\Auction_Project\Auction_System\client\src\main\java" />
@@ -158,6 +246,7 @@
       <workItem from="1778336247279" duration="171000" />
       <workItem from="1778336543732" duration="5643000" />
       <workItem from="1778382376578" duration="311000" />
+      <workItem from="1779346168680" duration="316000" />
     </task>
     <task id="LOCAL-00001" summary="new branch">
       <option name="closed" value="true" />
