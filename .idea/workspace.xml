@@ -5,43 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="refactor controller UI">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/service/ClientSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/ClientSocket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/service/ItemService.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/service/ItemService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resource/productCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/productCard.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/productCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/productCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/RequestDTO/ItemDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/RequestDTO/ItemDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ArtFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ArtFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ElectronicsFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ElectronicsFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ItemFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/ItemFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/RealEstateFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/RealEstateFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/VehicleFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/factory/VehicleFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Art.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Art.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Electronics.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Electronics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Item.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/RealEstate.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/RealEstate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/auction/logic/model/Vehicle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ArtFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ArtFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ElectronicsFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ElectronicsFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ItemFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/ItemFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/RealEstateFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/RealEstateFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/VehicleFactory.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/factory/VehicleFactory.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Art.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Art.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Electronics.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Electronics.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Item.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Item.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/RealEstate.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/RealEstate.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Vehicle.class" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/classes/auction/logic/model/Vehicle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/dao/AuctionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/dao/AuctionDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/dao/ItemDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/dao/ItemDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/AuctionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/AuctionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ItemHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/handler/ItemHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/service/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/service/AuctionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sever/src/main/java/sever/service/ItemService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sever/src/main/java/sever/service/ItemService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +22,7 @@
   <component name="CopilotChats">
     <option name="panelChat">
       <chat>
-        <option name="activeSessionId" value="2b9ecde9-061f-4892-9057-0dfa7ebc0a1f" />
+        <option name="activeSessionId" value="d19cff9b-3522-482b-871b-769bf1e66ae8" />
         <option name="sessions">
           <session>
             <option name="chatType" value="PANEL" />
@@ -114,6 +85,15 @@
           <session>
             <option name="chatType" value="PANEL" />
             <option name="id" value="2b9ecde9-061f-4892-9057-0dfa7ebc0a1f" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="status" value="Completed" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="d19cff9b-3522-482b-871b-769bf1e66ae8" />
             <option name="modeId" value="Agent" />
             <option name="modelType" value="builtin_family" />
             <option name="modelValue" value="auto" />
@@ -357,7 +337,7 @@
       <workItem from="1779351659974" duration="2633000" />
       <workItem from="1779369955036" duration="1816000" />
       <workItem from="1779412992687" duration="1484000" />
-      <workItem from="1779417810755" duration="396000" />
+      <workItem from="1779417810755" duration="2884000" />
     </task>
     <task id="LOCAL-00001" summary="new branch">
       <option name="closed" value="true" />

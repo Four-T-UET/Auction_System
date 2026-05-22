@@ -37,7 +37,10 @@ import java.util.stream.Collectors;
 
 public class ControlHistory implements Initializable {
     private final ObservableList<Auction> purchaseData = FXCollections.observableArrayList();
-    private final ObservableList<Auction> biddingData = FXCollections.observableArrayList();
+
+    // Đã sửa: biddingData -> sellingData
+    private final ObservableList<Auction> sellingData = FXCollections.observableArrayList();
+
     private AuctionUpdateListener updateListener;
     private Timeline clock;
     private boolean cleanedUp;
@@ -72,7 +75,8 @@ public class ControlHistory implements Initializable {
 
     private void setupTables() {
         tablePurchases.setItems(purchaseData);
-        tableSelling.setItems(biddingData);
+        // Đã sửa: truyền sellingData vào tableSelling
+        tableSelling.setItems(sellingData);
     }
 
     private void setupColumns() {
@@ -101,8 +105,10 @@ public class ControlHistory implements Initializable {
         Clients currentUser = UserSession.getCurrentUser();
         List<Auction> master = AuctionManager.getInstance().getMasterAuctionList();
 
+        if (master == null) return;
         purchaseData.setAll(master.stream().filter(a -> isPurchaseAuction(a, currentUser)).collect(Collectors.toList()));
-        biddingData.setAll(master.stream().filter(a -> isBiddingAuction(a, currentUser)).collect(Collectors.toList()));
+
+        sellingData.setAll(master.stream().filter(a -> isSellingAuction(a, currentUser)).collect(Collectors.toList()));
         loadPieChart();
     }
 
@@ -111,9 +117,10 @@ public class ControlHistory implements Initializable {
                 && (currentUser == null || sameUser(auction.getCurrentWinner(), currentUser));
     }
 
-    private boolean isBiddingAuction(Auction auction, Clients currentUser) {
-        return hasStatus(auction, AuctionStatus.PENDING, AuctionStatus.RUNNING)
-                && (currentUser == null || sameUser(auction.getCurrentWinner(), currentUser));
+    // Đã sửa: Tên hàm từ isBiddingAuction thành isSellingAuction
+    private boolean isSellingAuction(Auction auction, Clients currentUser) {
+        return hasStatus(auction, AuctionStatus.PENDING, AuctionStatus.RUNNING);
+//                && (currentUser == null || sameUser(auction.getOwner(), currentUser));
     }
 
     private boolean hasStatus(Auction auction, AuctionStatus... statuses) {
@@ -148,11 +155,25 @@ public class ControlHistory implements Initializable {
     }
 
     private void bindString(TableColumn<Auction, String> col, java.util.function.Function<Auction, String> fn) {
-        col.setCellValueFactory(cd -> new SimpleStringProperty(fn.apply(cd.getValue())));
+        col.setCellValueFactory(cd -> {
+            if (cd == null || cd.getValue() == null) return new SimpleStringProperty("");
+            try {
+                return new SimpleStringProperty(fn.apply(cd.getValue()));
+            } catch (Exception e) {
+                return new SimpleStringProperty("Error");
+            }
+        });
     }
 
     private <T> void bindObject(TableColumn<Auction, T> col, java.util.function.Function<Auction, T> fn) {
-        col.setCellValueFactory(cd -> new SimpleObjectProperty<>(fn.apply(cd.getValue())));
+        col.setCellValueFactory(cd -> {
+            if (cd == null || cd.getValue() == null) return new SimpleObjectProperty<>(null);
+            try {
+                return new SimpleObjectProperty<>(fn.apply(cd.getValue()));
+            } catch (Exception e) {
+                return new SimpleObjectProperty<>(null);
+            }
+        });
     }
 
     private String textOf(Item item, java.util.function.Function<Item, String> fn) {
@@ -164,7 +185,12 @@ public class ControlHistory implements Initializable {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : formatCountdown(item));
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(formatCountdown(item));
+                }
             }
         };
     }
