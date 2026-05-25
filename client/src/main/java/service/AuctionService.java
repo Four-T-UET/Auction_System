@@ -11,10 +11,10 @@ import auction.logic.model.Item;
 import java.util.List;
 
 public class AuctionService {
-  public static Object addAuction(Item item, double startPrice, double minStep, int duration){
+  public static Object addAuction(Item item, double startPrice, double minStep, int duration, String sellerId){
     try{
       ClientSocket clientSocket = ClientSocket.getInstance();
-      AuctionDTO auctionDTO = new AuctionDTO(item.getId(), startPrice, minStep, duration);
+      AuctionDTO auctionDTO = new AuctionDTO(item.getId(), startPrice, minStep, duration,sellerId);
       clientSocket.send(auctionDTO);
       Object response = clientSocket.receive();
 

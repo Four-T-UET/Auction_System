@@ -40,6 +40,22 @@ public class BidHandler {
                 return;
             }
 
+            Clients seller = auction.getSeller();
+            if (seller != null && bidderId.equals(seller.getId())) {
+                out.writeObject("FAILED: Seller cannot bid on own auction");
+                out.flush();
+                return;
+            }
+
+            if (seller == null) {
+                String sellerId = auctionDAO.findSellerIdByAuctionId(auctionId);
+                if (sellerId != null && sellerId.equals(bidderId)) {
+                    out.writeObject("FAILED: Seller cannot bid on own auction");
+                    out.flush();
+                    return;
+                }
+            }
+
             Clients bidder = ClientRuntimeManager.getInstance().getOrLoad(bidderId);
             if (bidder == null) {
                 out.writeObject("FAILED: Bidder not found");
@@ -62,9 +78,10 @@ public class BidHandler {
             }
 
             // Update database
-            auctionDAO.updateStartPrice(auction.getId(), auction.getCurrentPrice());
+            String currentWinnerId = auction.getCurrentWinner() != null ? auction.getCurrentWinner().getId() : null;
+            auctionDAO.updatePriceAndWinner(auction.getId(), auction.getCurrentPrice(), currentWinnerId);
             walletDAO.updateWalletSnapshot(bidder.getId(), bidder.getWallet().getBalance(), bidder.getWallet().getLockBalance());
-            
+
             // Send wallet update to bidder
             WalletResponseDTO bidderWalletUpdate = new WalletResponseDTO(
                 bidder.getWallet().getBalance(),
@@ -79,7 +96,7 @@ public class BidHandler {
             // Handle previous winner (if exists and different from bidder)
             if (previousWinner != null && previousWinner != bidder) {
                 walletDAO.updateWalletSnapshot(previousWinner.getId(), previousWinner.getWallet().getBalance(), previousWinner.getWallet().getLockBalance());
-                
+
                 WalletResponseDTO prevWinnerWalletUpdate = new WalletResponseDTO(
                     previousWinner.getWallet().getBalance(),
                     previousWinner.getWallet().getLockBalance()

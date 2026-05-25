@@ -50,7 +50,7 @@ public class Clients extends User implements Bidder, Seller{
 
         //check money
         try {
-            if (wallet.getBalance() + wallet.getLockBalance() < price) {
+            if (wallet.getBalance() < price) {
                 throw new InvalidBidException("Khong du tien trong tai khoan");
             }
         }catch(InvalidBidException e){

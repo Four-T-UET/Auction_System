@@ -19,10 +19,11 @@ public class AuctionHandler {
       double startPrice = auctionDTO.getStartValue();
       double minPrice = auctionDTO.getMinStep();
       int duration = auctionDTO.getDuration();
+      String sellerId = auctionDTO.getSellerId();
 
 
       AuctionService auctionService = new AuctionService();
-      Auction auction = auctionService.createAuction(itemid, startPrice, minPrice, duration);  // tìm USER từ database
+      Auction auction = auctionService.createAuction(itemid, startPrice, minPrice, duration, sellerId);  // tìm USER từ database
       Object response;
       if (auction != null) { // gọi hàm login trong User ( logic )
         response = auction; // gán phản hồi là User đó ( là một Object ) vì đã implements Serializable

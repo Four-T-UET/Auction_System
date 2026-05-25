@@ -7,8 +7,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Wallet extends Entity implements Serializable {
     private volatile double balance;
     private double totalLockBalance;
-    private ReentrantLock lock=new ReentrantLock();
-    private ConcurrentHashMap<String,Double> lockList=new ConcurrentHashMap<>();
+    private ReentrantLock lock = new ReentrantLock();
+    private ConcurrentHashMap<String,Double> lockList = new ConcurrentHashMap<>();
     public Wallet(){
         super();
         this.balance = 0;this.totalLockBalance = 0;
@@ -27,18 +27,30 @@ public class Wallet extends Entity implements Serializable {
         balance += amount;
     }
     public synchronized void lockWallet(Auction auction,double amount){
-        this.totalLockBalance=this.totalLockBalance-lockList.getOrDefault(auction.getId(),0.0)+amount;
+        double currentLocked = lockList.getOrDefault(auction.getId(), 0.0);
+        double delta = amount - currentLocked;
+        if (delta == 0) {
+            return;
+        }
+        this.totalLockBalance += delta;
+        this.balance -= delta;
         lockList.put(auction.getId(), amount);
-        this.balance = this.balance - totalLockBalance;
 
+    }
+
+    public synchronized double getLockedAmount(String auctionId) {
+        return lockList.getOrDefault(auctionId, 0.0);
     }
 
     public void releaseBalance(Auction auction){
         lock.lock();
         try {
-            this.balance += lockList.get(auction.getId());
-            this.totalLockBalance -= lockList.get(auction.getId());
-            lockList.remove(auction.getId());
+            Double locked = lockList.remove(auction.getId());
+            if (locked == null) {
+                return;
+            }
+            this.balance += locked;
+            this.totalLockBalance -= locked;
 
         }finally {
             lock.unlock();
@@ -49,10 +61,34 @@ public class Wallet extends Entity implements Serializable {
     public void deductLockBalance(Auction auction){
         lock.lock();
         try {
-            this.balance -= lockList.get(auction.getId());
-            this.totalLockBalance -= lockList.get(auction.getId());
-            lockList.remove(auction.getId());
+            Double locked = lockList.remove(auction.getId());
+            if (locked == null) {
+                return;
+            }
+            this.balance -= locked;
+            this.totalLockBalance -= locked;
         }finally{
+            lock.unlock();
+        }
+    }
+
+    public void deductLockedAmount(String auctionId, double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        lock.lock();
+        try {
+            Double locked = lockList.get(auctionId);
+            if (locked != null) {
+                double remaining = locked - amount;
+                if (remaining <= 0) {
+                    lockList.remove(auctionId);
+                } else {
+                    lockList.put(auctionId, remaining);
+                }
+            }
+            this.totalLockBalance -= amount;
+        } finally {
             lock.unlock();
         }
     }

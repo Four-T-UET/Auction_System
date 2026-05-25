@@ -22,6 +22,7 @@ public class Auction extends Entity implements Serializable {
 	private double currentPrice;
 	private double minimumStep;
 	private Bidder currentWinner;
+	private Clients seller;
 //	private DoubleProperty currentPriceProperty;
 
 
@@ -75,19 +76,6 @@ public class Auction extends Entity implements Serializable {
 		}
 	}
 
-	// Update current price (updates JavaFX property so UI bindings react)
-//	public synchronized void setCurrentPrice(double price) {
-//		this.currentPrice = price;
-//		if (this.currentPriceProperty == null) {
-//			this.currentPriceProperty = new SimpleDoubleProperty(price);
-//		} else {
-//			this.currentPriceProperty.set(price);
-//		}
-//		// notify internal auction observers (bidders) about price change
-//		try {
-//			notifyObservers(AuctionEvent.PRICE_UPDATED, "Gia da duoc cap nhat: " + price);
-//		} catch (Exception ignored) {}
-//	}
 
 	// Getter - Setter
 	public double getMiniumStep(){
@@ -97,6 +85,7 @@ public class Auction extends Entity implements Serializable {
 		return this.currentPrice;
 	}
 	public Clients getCurrentWinner(){return (Clients)currentWinner;}
+	public Clients getSeller(){return seller;}
 	public AuctionStatus getStatus(){
 		return status;
 	}
@@ -142,5 +131,13 @@ public class Auction extends Entity implements Serializable {
 	}
 	public synchronized void cancelAuction(){
 		auctionStateManagement.cancelAuction(this);
+	}
+
+	public void setCurrentWinnerSnapshot(Bidder bidder) {
+		this.currentWinner = bidder;
+	}
+
+	public void setSellerSnapshot(Clients seller) {
+		this.seller = seller;
 	}
 }

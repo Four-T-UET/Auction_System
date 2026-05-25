@@ -46,7 +46,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>controller.AppTrade</mainClass>
+                            <mainClass>clientController.AppTrade</mainClass>
                             <launcher>sever</launcher>
                             <jlinkZipName>sever</jlinkZipName>
                             <jlinkImageName>sever</jlinkImageName>

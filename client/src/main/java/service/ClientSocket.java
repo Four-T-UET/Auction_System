@@ -4,7 +4,7 @@ import auction.logic.RequestDTO.TimeSyncRequest;
 import auction.logic.ResponseDTO.BroadcastMessage;
 import auction.logic.ResponseDTO.ServerTimeSnapshot;
 import auction.logic.manager.AuctionManager;
-import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,8 +30,8 @@ public class ClientSocket {
   // Singleton: Đảm bảo cả ứng dụng chỉ có 1 kết nối duy nhất
   private ClientSocket() {
     try {
-//      socket = new Socket("10.11.217.159", 5000);
-      socket = new Socket("localhost", 5000);
+//      socket = new Socket("10.11.219.227", 5000);
+      socket = new Socket("10.11.223.207", 5000);
       out = new ObjectOutputStream(socket.getOutputStream()); // lấy dữ liệu output stream của socket localhost
       out.flush();
       in = new ObjectInputStream(socket.getInputStream()); // đọc dữ liệu sẽ được gửi lại từ sever: byte --> text
@@ -186,7 +186,7 @@ public class ClientSocket {
         System.out.println("[ClientSocket] WALLET_UPDATED broadcast received");
         if (msg.getData() instanceof auction.logic.ResponseDTO.WalletResponseDTO walletUpdate) {
           // Update current user's wallet if this client is the one
-          auction.logic.model.Clients currentUser = controller.UserSession.getCurrentUser();
+          auction.logic.model.Clients currentUser = clientController.UserSession.getCurrentUser();
           if (currentUser != null) {
             currentUser.getWallet().setBalance(walletUpdate.getBalance());
             currentUser.getWallet().settotalLockBalance(walletUpdate.getLockedBalance());
