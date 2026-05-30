@@ -15,8 +15,9 @@ public class WalletResponseDTO implements Serializable {
         return balance;
     }
 
-    public double getLockedBalance() {
+    public double getLocked() {
         return lockedBalance;
     }
+
 }
 

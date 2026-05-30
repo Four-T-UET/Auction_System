@@ -6,8 +6,11 @@ import auction.logic.model.Item;
 import java.io.ObjectOutputStream;
 import sever.dao.ItemDAO;
 import sever.service.ItemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemHandler {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ItemHandler.class);
   public void handle(ItemDTO itemDTO, ObjectOutputStream out) {
     try{
       ItemService itemService = new ItemService();
@@ -17,13 +20,11 @@ public class ItemHandler {
       byte[] imageByte = itemDTO.getImageByte();
 
       Item itemFromDB = itemService.createAndSaveItem(name, category, description, imageByte);
-
       Object response;
-
 
       if (itemFromDB != null) {
         response = itemFromDB;
-        System.out.println("Them san pham thanh cong " + name);
+        LOGGER.info("[Item Handler] : Them san pham thanh cong " + name);
       } else {
         response = "FAILED";
       }
@@ -32,15 +33,8 @@ public class ItemHandler {
 
       out.writeObject(response);
       out.flush();
-
-
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.error("[Item Handler] : Lỗi khi xử ly item request", e);
     }
   }
 }
-
-
-
-
-

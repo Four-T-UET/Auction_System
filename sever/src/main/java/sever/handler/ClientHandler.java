@@ -8,8 +8,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import sever.service.AuctionService;
 import sever.manager.ServerClientManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientHandler implements Runnable {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ClientHandler.class);
   private final Socket socket;
   private ObjectOutputStream out;
 
@@ -19,14 +22,14 @@ public class ClientHandler implements Runnable {
 
   @Override
   public void run() {
-    // Lưu ý: ObjectOutputStream phải được khởi tạo TRƯỚC ObjectInputStream
+    // CHÚ Ý: ObjectOutputStream phải được khởi tạo TRƯỚC ObjectInputStream
     try (ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
          ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
       out = outStream;
-      //  REGISTER client vào ServerClientManager khi connect
+      //  ĐĂNG KÝ client vào ServerClientManager khi kết nối
       ServerClientManager.getInstance().registerClient(out);
-      System.out.println("[ClientHandler] ✓ Client registered for broadcasting");
+      LOGGER.info("[ClientHandler] : Client đăng ký để được thông báo");
 
       while (true) {
         Object received = in.readObject();
@@ -35,13 +38,13 @@ public class ClientHandler implements Runnable {
 
 
         if (received instanceof LoginDTO loginDTO ){
-          LoginHandler handler = new LoginHandler();
-          handler.handle(loginDTO, out);
+          UserHandler handler = new UserHandler();
+          handler.handleLogin(loginDTO, out);
         }
         else if (received instanceof RegisterDTO registerDTO) {
 
-          RegisterHandler handler = new RegisterHandler();
-          handler.handle(registerDTO, out);
+          UserHandler handler = new UserHandler();
+          handler.handleRegister(registerDTO, out);
         }else if(received instanceof AuctionDTO auctionDTO){
           AuctionHandler handler = new AuctionHandler();
           handler.handle(auctionDTO, out);
@@ -61,6 +64,14 @@ public class ClientHandler implements Runnable {
         else if(received instanceof PullDTO ){
           AuctionHandler handler = new AuctionHandler();
           handler.pull(out);
+        }else if(received instanceof  PullUserDTO){
+            UserHandler userHandler = new UserHandler();
+            userHandler.pull(out);
+        }
+        /// ////////////
+        else if(received instanceof CancelAuctionDTO cancelAuctionDTO){
+            AdminHandler adminHandler = new AdminHandler();
+            adminHandler.handleCancel(cancelAuctionDTO, out);
         }
         else {
           out.writeObject("UNDEFINED");
@@ -70,31 +81,29 @@ public class ClientHandler implements Runnable {
     }
     // ====================== PHẦN SỬA Ở ĐÂY ======================
     catch (EOFException e) {
-      System.out.println(" Client đã ngắt kết nối bình thường (EOF).");
+      LOGGER.info("[Item Handler] : Client đã ngắt kết nối bình thường (EOF).");
     }
     catch (SocketException e) {
       String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
       if (msg.contains("connection reset") || msg.contains("reset by peer") || msg.contains("socket closed")) {
-        System.out.println(" Client đã ngắt kết nối đột ngột (Connection reset).");
+        LOGGER.warn(" Client đã ngắt kết nối đột ngột (Connection reset).");
       } else {
-        System.err.println("SocketException: " + e.getMessage());
+        LOGGER.warn("SocketException: " + e.getMessage(), e);
       }
     }
     catch (ClassNotFoundException e) {
-      System.err.println("Lỗi ClassNotFound khi đọc object từ client.");
-      e.printStackTrace();
+      LOGGER.error("Lỗi ClassNotFound khi đọc object từ client.", e);
     }
     catch (Exception e) {
       // Các lỗi khác mới in stack trace
-      System.err.println(" Lỗi xử lý client không mong muốn:");
-      e.printStackTrace();
+      LOGGER.error(" Lỗi xử lý client không mong muốn:", e);
     }
     // ===========================================================
     finally {
-      //  UNREGISTER client khỏi ServerClientManager khi disconnect
+      //  HỦY ĐĂNG KÝ client khỏi ServerClientManager khi ngắt kết nối
       if (out != null) {
         ServerClientManager.getInstance().unregisterClient(out);
-        System.out.println("[ClientHandler] ✓ Client unregistered from broadcasting");
+        LOGGER.info("[ClientHandler] ✓ Client huỷ đăng ký để được thông báo");
       }
       try {
         if (socket != null && !socket.isClosed()) {

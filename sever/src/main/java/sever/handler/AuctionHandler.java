@@ -10,8 +10,11 @@ import sever.dao.AuctionDAO;
 import sever.service.AuctionService;
 import sever.manager.ServerClientManager;
 import sever.manager.AuctionRuntimeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuctionHandler {
+  private static final Logger LOGGER = LoggerFactory.getLogger(AuctionHandler.class);
   public void handle(AuctionDTO auctionDTO, ObjectOutputStream out) {
     try {
 
@@ -27,25 +30,25 @@ public class AuctionHandler {
       Object response;
       if (auction != null) { // gọi hàm login trong User ( logic )
         response = auction; // gán phản hồi là User đó ( là một Object ) vì đã implements Serializable
-        System.out.println("[AuctionHandler] ✓ Tạo phiên đấu giá thành công: " + auction.getId());
+        LOGGER.info("[AuctionHandler] : Tạo phiên đấu giá thành công: " + auction.getId());
 
         AuctionRuntimeManager.getInstance().addOrUpdate(auction);
-        //  BROADCAST AUCTION MỚI tới TẤT CẢ OTHER CLIENTS
+        //  BROADCAST AUCTION MỚI tới TẤT CẢ CLIENTS KHÁC
         BroadcastMessage broadcastMsg = new BroadcastMessage(
             BroadcastMessage.EventType.AUCTION_CREATED,
             auction
         );
         ServerClientManager.getInstance().broadcastToAll(broadcastMsg);
-        System.out.println("[AuctionHandler] ✓ Broadcast new auction to all clients");
+        LOGGER.info("[AuctionHandler] : Thông báo tới tất cả các clients - auction mới được tạo ");
       } else {
         response = "FAILED";
-        System.out.println("[AuctionHandler] ✗ Tạo phiên đấu giá thất bại");
+        LOGGER.warn("[AuctionHandler] : Tạo phiên đấu giá thất bại");
       }
       out.writeObject(response);
       out.flush();
 
     }catch (Exception e){
-      e.printStackTrace();
+      LOGGER.error("[AuctionHandler] : lỗi khi xử ly request", e);
     }
 
   }

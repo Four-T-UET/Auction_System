@@ -1,5 +1,6 @@
 package sever.dao;
 
+import auction.logic.ResponseDTO.WalletResponseDTO;
 import sever.config.DatabaseConnection;
 
 import java.sql.Connection;
@@ -8,20 +9,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WalletDAO {
-    public WalletSnapshot getWalletByClientId(String clientId) throws SQLException {
+    private static final WalletDAO instance = new WalletDAO();
+    public static WalletDAO getInstance(){
+        return instance;
+    }
+    private WalletDAO (){}
+
+    public WalletResponseDTO getWalletByClientId(String clientId) throws SQLException {
         String query = "SELECT balance, locked_balance FROM wallets WHERE client_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, clientId);
             ResultSet res = ps.executeQuery();
             if (res.next()) {
-                return new WalletSnapshot(res.getDouble("balance"), res.getDouble("locked_balance"));
+                return new WalletResponseDTO(res.getDouble("balance"), res.getDouble("locked_balance"));
             }
         }
         return null;
     }
 
-    public WalletSnapshot updateWalletBalance(String clientId, double amount, boolean isDeposit) throws SQLException {
+    public WalletResponseDTO updateWalletBalance(String clientId, double amount, boolean isDeposit) throws SQLException {
         if (clientId == null || clientId.isBlank()) {
             throw new IllegalArgumentException("Client id is required");
         }
@@ -56,7 +63,7 @@ public class WalletDAO {
                 }
 
                 conn.commit();
-                return new WalletSnapshot(updatedBalance, locked);
+                return new WalletResponseDTO(updatedBalance, locked);
             } catch (SQLException | RuntimeException e) {
                 conn.rollback();
                 throw e;
@@ -66,7 +73,7 @@ public class WalletDAO {
         }
     }
 
-    public void updateWalletSnapshot(String clientId, double balance, double lockedBalance) throws SQLException {
+    public void updateWallet(String clientId, double balance, double lockedBalance) throws SQLException {
         if (clientId == null || clientId.isBlank()) {
             throw new IllegalArgumentException("Client id is required");
         }
@@ -77,24 +84,6 @@ public class WalletDAO {
             ps.setDouble(2, lockedBalance);
             ps.setString(3, clientId);
             ps.executeUpdate();
-        }
-    }
-
-    public static class WalletSnapshot {
-        private final double balance;
-        private final double locked;
-
-        public WalletSnapshot(double balance, double locked) {
-            this.balance = balance;
-            this.locked = locked;
-        }
-
-        public double getBalance() {
-            return balance;
-        }
-
-        public double getLocked() {
-            return locked;
         }
     }
 }

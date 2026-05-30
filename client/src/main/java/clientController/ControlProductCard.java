@@ -1,5 +1,6 @@
 package clientController;
 
+import auction.logic.enums.AuctionStatus;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -13,13 +14,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import auction.logic.model.Auction;
 import service.ClientSocket;
+import service.TimeSyncService;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControlProductCard{
-    private Timeline countdownTimeline;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ControlProductCard.class);
+
     @FXML
     private ImageView itemImageView;
     @FXML
@@ -39,19 +44,14 @@ public class ControlProductCard{
         return currentAuction;
     }
 
-    //HELPER
-    public void setOnBidHandler(EventHandler<ActionEvent> eventHandler) {
-        if(bidBut != null){
-            bidBut.setOnAction(eventHandler);
-        }
-    }
+
     public void setBidButVisible(boolean visible) {
         if(bidBut != null){
             bidBut.setVisible(visible);
             bidBut.setManaged(visible);
         }
     }
-    public void setData(Auction auction){
+    public void setData(Auction auction, boolean isHidden){
         if(currentAuction != null){
             itemCurrentBid.textProperty().unbind();
         }
@@ -67,17 +67,11 @@ public class ControlProductCard{
         itemName.setText(auction.getItem().getName());
         itemType.setText(auction.getItem().getCategory() != null ? auction.getItem().getCategory().toString() : "Unknown");
         loadImage(auction);
-        // Disable bid button if auction already ended
-        try {
-            boolean ended = isAuctionEnded(auction);
-            setBidButVisible(!ended);
-        } catch (Exception ignored) {}
-        if(countdownTimeline != null){
-            countdownTimeline.stop();
-            countdownTimeline = null;
+        // Vô hiệu hóa nút bid nếu phiên đấu giá đã kết thúc
+        if (bidBut != null) {
+            bidBut.setDisable(isHidden);
         }
         refreshDisplay();
-        startRealtimeUpdate();
     }
 
     private void loadImage(Auction auction) {
@@ -87,25 +81,39 @@ public class ControlProductCard{
                 itemImageView.setImage(image);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Không loa được ảnh", e);
         }
     }
 
-    public static VBox renderCard(Auction myAuction,boolean isHidden) {
-        try{
+    // Đổi EventHandler<ActionEvent> thành Consumer<Auction>
+    public static ControlProductCard renderCard(Auction myAuction,
+                                                boolean isHidden,
+                                                PaneContainer container,
+                                                java.util.function.Consumer<Auction> onBidClick) {
+        try {
             FXMLLoader loader = new FXMLLoader(ControlProductCard.class.getResource("/clientResource/productCard.fxml"));
             VBox cardBox = loader.load();
-            ControlProductCard controlProductCard = loader.getController();
+            ControlProductCard controller = loader.getController();
 
-            cardBox.setUserData(controlProductCard);
-            if(isHidden){
-                controlProductCard.bidBut.setDisable(isHidden);
+            if (controller.bidBut != null) {
+                // Sửa lại đoạn này: Lấy currentAuction hiện tại của controller để truyền ra ngoài
+                controller.bidBut.setOnAction(e -> {
+                    if (onBidClick != null) {
+                        onBidClick.accept(controller.getCurrentAuction());
+                    }
+                });
+                if (isHidden) controller.bidBut.setDisable(true);
             }
-            controlProductCard.setData(myAuction);
-            return cardBox;
-        }catch (IOException e){
-            System.out.println("Error loading FXML");
-            e.printStackTrace();
+
+            controller.setData(myAuction, isHidden);
+
+            if (container != null) {
+                container.addNode(cardBox);
+            }
+
+            return controller;
+        } catch (IOException e) {
+            LOGGER.error("Error khi load FXML", e);
             return null;
         }
     }
@@ -117,7 +125,7 @@ private Image resolveImage(Auction auction) {
             return new Image(new ByteArrayInputStream(auction.getItem().getImageBytes()));
         }
     } catch (Exception e) {
-        System.err.println("Error loading image from bytes: " + e.getMessage());
+        LOGGER.warn("Error loading image from bytes: " + e.getMessage(), e);
     }
 
     //  Thử load default image từ classpath
@@ -127,28 +135,15 @@ private Image resolveImage(Auction auction) {
             return new Image(stream);
         }
     } catch (Exception e) {
-        System.err.println("Error loading default image from resources: " + e.getMessage());
+        LOGGER.warn("Error loading default image from resources: " + e.getMessage(), e);
     }
 
     //  Nếu fail hết, trả về null
-    System.err.println("Warning: No image available for auction");
+    LOGGER.warn("Warning: No image available for auction");
     return null;
 }
 
-    // chage time
-    private void startRealtimeUpdate(){
-        if (countdownTimeline != null) countdownTimeline.stop();
-        countdownTimeline = new Timeline(
-            new KeyFrame(javafx.util.Duration.ZERO, e -> refreshDisplay()),
-            new KeyFrame(javafx.util.Duration.seconds(1), e -> {
-                refreshDisplay();
-            })
-        );
-        countdownTimeline.setCycleCount(Timeline.INDEFINITE);
-        countdownTimeline.play();
-    }
-
-    private void refreshDisplay() {
+    public void refreshDisplay() {
         if (currentAuction == null) {
             itemCurrentBid.setText("0.00");
             itemTimeLeft.setText("N/A");
@@ -157,22 +152,41 @@ private Image resolveImage(Auction auction) {
 
         itemCurrentBid.setText(String.format("%.2f", currentAuction.getCurrentPrice()));
         itemTimeLeft.setText(formatRemaining(currentAuction));
+        // Tự động kiểm tra hết giờ để ẩn nút
+        boolean ended = isAuctionEnded(currentAuction);
+        setBidButVisible(!ended);
     }
     private boolean isAuctionEnded(Auction auction) {
         if (auction == null || auction.getFinishTime() == null) return false;
+        /// ///////////////////////////////////////////////////////
+        if (auction.getStatus() == AuctionStatus.CANCELLED){
+            return true;
+        }
+        /// ///////////////////////////////////////////////////////
         ClientSocket clientSocket = ClientSocket.getInstance();
-        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
-        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
         return remainingMillis <= 0;  // TRUE = hết giờ → nút biến mất
+        // ĐOẠN DEBUG: In ra console để xem số nào đang bị sai
     }
 
     private String formatRemaining(Auction auction){
         if(auction == null || auction.getFinishTime() == null){
             return "N/A";
         }
-        ClientSocket clientSocket = ClientSocket.getInstance();
-        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
-        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+
+
+        /// /////////////////////////////////////////////
+        if (auction.getStatus() == AuctionStatus.CANCELLED) {
+            return "Auction Canceled";
+        }
+        /// ///////////////////////////////////////////////
+
+
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
 
         if(remainingMillis <= 0){
             return "Auction ended";
@@ -190,14 +204,14 @@ private Image resolveImage(Auction auction) {
     }
 
     public void dispose(){
-        if(countdownTimeline != null){
-            countdownTimeline.stop();
-            countdownTimeline = null;
-        }
         if(currentAuction != null){
             itemCurrentBid.textProperty().unbind();
         }
         currentAuction = null;
     }
-
+    // Giao diện hỗ trợ Dashboard nhét thẻ vào FlowPane
+    @FunctionalInterface
+    public interface PaneContainer {
+        void addNode(VBox cardVisual);
+    }
 }

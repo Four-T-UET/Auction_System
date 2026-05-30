@@ -30,7 +30,7 @@ public class ControlRegister implements Initializable {
         String pass = password.getText();
         String repass = reEnterpass.getText();
 
-        // Validate
+        // Kiểm tra hợp lệ
         if (!validateInput(user, pass, repass)) {
             return; // Nếu không hợp lệ thì dừng việc tạo tài khoản
         }

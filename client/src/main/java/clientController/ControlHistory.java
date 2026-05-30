@@ -2,9 +2,11 @@ package clientController;
 
 import auction.logic.enums.AuctionStatus;
 import auction.logic.enums.ItemCategory;
-import auction.logic.manager.AuctionManager;
-import auction.logic.manager.AuctionUpdateListener;
+import stateManager.AuctionManager;
+import stateManager.AuctionUpdateListener;
+import auction.logic.manager.BidHistory;
 import auction.logic.model.Auction;
+import auction.logic.model.BidTransaction;
 import auction.logic.model.Clients;
 import auction.logic.model.Item;
 import javafx.animation.Animation;
@@ -17,28 +19,34 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import service.ClientSocket;
 
 
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import service.TimeSyncService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import stateManager.UserSession;
 
 public class ControlHistory implements Initializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ControlHistory.class);
     private final ObservableList<Auction> purchaseData = FXCollections.observableArrayList();
 
     private final ObservableList<Auction> sellingData = FXCollections.observableArrayList();
@@ -46,6 +54,8 @@ public class ControlHistory implements Initializable {
     private AuctionUpdateListener updateListener;
     private Timeline clock;
     private boolean cleanedUp;
+    private Auction selectedSellingAuction;
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @FXML private TableView<Auction> tablePurchases;
     @FXML private TableColumn<Auction, String> itemColPurchases;
@@ -61,7 +71,7 @@ public class ControlHistory implements Initializable {
     @FXML private TableColumn<Auction, String> indexColSelling;
     @FXML private TableColumn<Auction, Double> currentbidColSelling;
     @FXML private TableColumn<Auction, LocalDateTime> timeLeftSelling;
-    @FXML private ScatterChart scatterchartSelling;
+    @FXML private LineChart<String, Number> lineChart;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -109,17 +119,18 @@ public class ControlHistory implements Initializable {
 
         sellingData.setAll(master.stream().filter(a -> isSellingAuction(a, currentUser)).collect(Collectors.toList()));
         loadPieChart();
+        loadBidChart();
     }
 
     private boolean isPurchaseAuction(Auction auction, Clients currentUser) {
         return hasStatus(auction, AuctionStatus.FINISHED, AuctionStatus.PAID)
-                && (currentUser == null || sameUser(auction.getCurrentWinner(), currentUser));
+            && (currentUser == null || sameUser(auction.getCurrentWinner(), currentUser));
     }
 
     // Đã sửa: Tên hàm từ isBiddingAuction thành isSellingAuction
     private boolean isSellingAuction(Auction auction, Clients currentUser) {
         return hasStatus(auction, AuctionStatus.PENDING, AuctionStatus.RUNNING, AuctionStatus.FINISHED, AuctionStatus.CANCELLED, AuctionStatus.PAID)
-                && (currentUser == null || sameUser(auction.getSeller(), currentUser));
+            && (currentUser == null || sameUser(auction.getSeller(), currentUser));
     }
 
     private boolean hasStatus(Auction auction, AuctionStatus... statuses) {
@@ -132,11 +143,11 @@ public class ControlHistory implements Initializable {
 
     private void loadPieChart() {
         Map<ItemCategory, Long> counts = purchaseData.stream()
-                .map(Auction::getItem)
-                .filter(Objects::nonNull)
-                .map(Item::getCategory)
-                .filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(c -> c, Collectors.counting()));
+            .map(Auction::getItem)
+            .filter(Objects::nonNull)
+            .map(Item::getCategory)
+            .filter(Objects::nonNull)
+            .collect(Collectors.groupingBy(c -> c, Collectors.counting()));
 
         long total = counts.values().stream().mapToLong(Long::longValue).sum();
         if (total == 0) {
@@ -145,11 +156,11 @@ public class ControlHistory implements Initializable {
         }
 
         piechartPurchases.setData(FXCollections.observableArrayList(
-                counts.entrySet().stream()
-                        .map(e -> new PieChart.Data(
-                                e.getKey().name() + " (" + String.format("%.1f", e.getValue() * 100.0 / total) + "%)",
-                                e.getValue()))
-                        .collect(Collectors.toList())
+            counts.entrySet().stream()
+                .map(e -> new PieChart.Data(
+                    e.getKey().name() + " (" + String.format("%.1f", e.getValue() * 100.0 / total) + "%)",
+                    e.getValue()))
+                .collect(Collectors.toList())
         ));
     }
 
@@ -184,20 +195,42 @@ public class ControlHistory implements Initializable {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
+
+                // 1. Nếu ô này trống hoặc không có dữ liệu, xóa chữ và dừng xử lý
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(formatCountdown(item));
+                    setStyle("");
+                    return;
                 }
+
+                // 2. Lấy đối tượng Auction của dòng hiện tại ra
+                Auction auction = getTableRow().getItem();
+
+                // 3. Lấy chuỗi chữ hiển thị (Đã xử lý Cancelled / Ended ở hàm formatCountdown)
+                String countdownText = formatCountdown(auction);
+                setText(countdownText);
+
             }
         };
     }
+    /// //////////////////////////
+    private String formatCountdown(Auction auction) {
+        if (auction == null) return "N/A";
+
+        // !!! CHỐT CHẶN: Nếu phiên đấu giá đã bị HỦY, dừng đếm ngược ngay lập tức
+        if (auction.getStatus() == AuctionStatus.CANCELLED) {
+            return "Auction cancelled";
+        }
+
+        // Nếu không bị hủy, lấy endTime ra và chuyển tiếp cho hàm format cũ xử lý
+        return formatCountdown(auction.getFinishTime());
+    }
+    /// ///////////////////////////////////
 
     private String formatCountdown(LocalDateTime endTime) {
-        ClientSocket clientSocket = ClientSocket.getInstance();
-        long endMillis = clientSocket.toServerEpochMillis(endTime);
-        long remainingMillis = endMillis - clientSocket.getServerTimeMillis();
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(endTime);
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
         if (remainingMillis <= 0) return "Auction ended";
 
         Duration d = Duration.ofMillis(remainingMillis);
@@ -207,8 +240,8 @@ public class ControlHistory implements Initializable {
         long minutes = (totalSeconds % 3600) / 60;
         long seconds = totalSeconds % 60;
         return days > 0
-                ? String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds)
-                : String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            ? String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+            : String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     private void startCountdownClock() {
@@ -267,6 +300,12 @@ public class ControlHistory implements Initializable {
                 setPurchaseDefaultImage();
             }
         });
+
+        // Lắng nghe sự kiện click chọn dòng trên tableSelling -> cập nhật LineChart
+        tableSelling.getSelectionModel().selectedItemProperty().addListener((observable, oldSelection, newSelection) -> {
+            selectedSellingAuction = newSelection;
+            loadBidChart();
+        });
     }
     private void updateRightSideImage(Auction auction) {
         if (auction == null || auction.getItem() == null) {
@@ -283,7 +322,7 @@ public class ControlHistory implements Initializable {
                 imagePurchaseIcon.setImage(image);
                 return; // Đã load thành công thì dừng lại
             } catch (Exception e) {
-                System.err.println("Lỗi chuyển đổi ảnh sản phẩm: " + e.getMessage());
+                LOGGER.warn("Lỗi chuyển đổi ảnh sản phẩm: " + e.getMessage(), e);
             }
         }
 
@@ -301,9 +340,47 @@ public class ControlHistory implements Initializable {
                 imagePurchaseIcon.setImage(null);
             }
         } catch (Exception e) {
-            System.err.println("Không thể load ảnh mặc định: " + e.getMessage());
+            LOGGER.warn("Không thể load ảnh mặc định: " + e.getMessage(), e);
             imagePurchaseIcon.setImage(null);
         }
+    }
+
+    private void loadBidChart() {
+        if (lineChart == null) return;
+
+        lineChart.getData().clear();
+
+        Auction auction = selectedSellingAuction;
+        if (auction == null) {
+            // Nếu chưa chọn auction nào, thử lấy auction đầu tiên trong sellingData
+            if (!sellingData.isEmpty()) {
+                auction = sellingData.get(0);
+            } else {
+                return;
+            }
+        }
+
+        BidHistory bidHistory = auction.getBidHistory();
+        if (bidHistory == null) return;
+
+        List<BidTransaction> transactions = bidHistory.getTransactions();
+        if (transactions == null || transactions.isEmpty()) return;
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Bid History - " + (auction.getItem() != null ? auction.getItem().getName() : auction.getId()));
+
+        // === TÍNH TOÁN GIỚI HẠN 10 CHẤM CUỐI ===
+        // Nếu tổng số lượt bid ít hơn 10, bắt đầu từ 0.
+        // Nếu nhiều hơn 10, ví dụ có 25 lượt bid, vòng lặp sẽ chạy từ vị trí số 15 (25 - 10).
+        int startIndex = Math.max(0, transactions.size() - 10);
+
+        for (int i = startIndex; i < transactions.size(); i++) {
+            BidTransaction tx = transactions.get(i);
+            String timeLabel = tx.getTime() != null ? tx.getTime().format(TIME_FORMAT) : "N/A";
+            series.getData().add(new XYChart.Data<>(timeLabel, tx.getAmount()));
+        }
+
+        lineChart.getData().add(series);
     }
 
     public void cleanup() {

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class AuctionResponseDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
     public String auctionId;
     public String itemId;
     public double startPrice;

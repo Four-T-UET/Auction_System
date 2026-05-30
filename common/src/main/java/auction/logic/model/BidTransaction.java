@@ -12,7 +12,15 @@ public class BidTransaction extends Entity {
         this.time=LocalDateTime.now();
     }
 
-    public Clients getBidder(){return bidder;}
+    public double getAmount() {
+        return amount;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+
 
 }
 	

@@ -1,7 +1,6 @@
 package auction.logic.model;
 
 
-import auction.logic.enums.AuctionEvent;
 import auction.logic.enums.AuthenticationException;
 import auction.logic.enums.AuctionStatus;
 import auction.logic.manager.AuctionStateManagement;
@@ -9,11 +8,14 @@ import auction.logic.manager.BidHistory;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.DoubleProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 public class Auction extends Entity implements Serializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Auction.class);
+
 	private static final long serialVersionUID = 1L;
 	private AuctionStatus status;
 	private LocalDateTime startTime;
@@ -23,29 +25,24 @@ public class Auction extends Entity implements Serializable {
 	private double minimumStep;
 	private Bidder currentWinner;
 	private Clients seller;
-//	private DoubleProperty currentPriceProperty;
-
 
 	private BidHistory bidHistory = new BidHistory();
-	private AuctionObservers auctionObservers;
 	private final AuctionStateManagement auctionStateManagement = new AuctionStateManagement();
 
-	// Constructor with duration in minutes
+	// Hàm khởi tạo với thời gian kéo dài tính bằng phút
 	public Auction(Item product, double currentPrice, double miniumStep,long durationMinutes){
 		try{
 			if(currentPrice < 0){
 				throw new AuthenticationException("Giá tiến không hợp lệ. Vui lòng nhập lại");
 			}
 		}catch (AuthenticationException e){
-			System.out.println(e.getMessage());
+			LOGGER.warn(e.getMessage(), e);
 		}
 
 
 		super();
-		this.auctionObservers=new AuctionObservers();
 		this.product=product;
 		this.currentPrice=currentPrice;
-//		this.currentPriceProperty = new SimpleDoubleProperty(currentPrice);
 		this.minimumStep=miniumStep;
 		this.status= AuctionStatus.PENDING;
 		this.startTime= LocalDateTime.now();
@@ -60,15 +57,16 @@ public class Auction extends Entity implements Serializable {
 				return false;
 			}
 			if (this.currentPrice + minimumStep <= price) {
-				//update new winner
+				// Hoàn tiền cho người thắng cũ TRƯỚC KHI set winner mới
+				if (this.currentWinner != null) {
+					this.currentWinner.releaseBalance(this);
+				}
+				
+				// Đặt winner mới
 				this.currentWinner = bidder;
 				this.currentPrice = price;
 				this.addBidTransaction((Clients) bidder, price);
-
-				// add observer
-				auctionObservers.registerObserver((Clients) bidder);
-
-				notifyObservers(AuctionEvent.PRICE_UPDATED, "Gia da duoc cap nhat: " + price);
+				
 				return true;
 			} else {
 				return false;
@@ -77,7 +75,7 @@ public class Auction extends Entity implements Serializable {
 	}
 
 
-	// Getter - Setter
+	// Phương thức lấy - gán giá trị
 	public double getMiniumStep(){
 		return this.minimumStep;
 	}
@@ -104,31 +102,20 @@ public class Auction extends Entity implements Serializable {
 	public void setFinishTime(LocalDateTime finishTime){
 		this.finishTime = finishTime;
 	}
-//	public DoubleProperty currentPriceProperty(){
-//		return this.currentPriceProperty;
-//	}
 
-	public void notifyObservers(AuctionEvent event, String message){
-		auctionObservers.sendNotification(this,event, message );
-	}
+
 	// Thêm lịch sử đã giao dịch
 	public void addBidTransaction(Clients bidder, double price){
 		this.bidHistory.addingTransaction(bidder, price);
 	}
-	public void printBidTransaction(){
-		bidHistory.printBidTransaction();
-	}
+
 	// --------------------------------------------------------
 	// Logic chuyển trạng thái của AUCTION --------------------
 	public synchronized void startAuction(){
 		auctionStateManagement.startAuction(this);
 	}
-	public synchronized void finishAuction(){
-		auctionStateManagement.finishAuction(this);
-	}
-	public synchronized void payingAuction(){
-		auctionStateManagement.payingAuction(this);
-	}
+
+
 	public synchronized void cancelAuction(){
 		auctionStateManagement.cancelAuction(this);
 	}
@@ -139,5 +126,8 @@ public class Auction extends Entity implements Serializable {
 
 	public void setSellerSnapshot(Clients seller) {
 		this.seller = seller;
+	}
+	public BidHistory getBidHistory(){
+		return bidHistory;
 	}
 }

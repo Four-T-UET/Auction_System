@@ -1,7 +1,7 @@
 package clientController;
 
 import auction.logic.enums.ItemCategory;
-import auction.logic.manager.AuctionManager;
+import stateManager.AuctionManager;
 import auction.logic.model.Auction;
 import auction.logic.model.Item;
 import javafx.concurrent.Task;
@@ -27,9 +27,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import stateManager.UserSession;
+
 import static Utils.AlertShow.showAlert;
 
 public class ControlSelling implements Initializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ControlSelling.class);
     private static final int MAX_HOURS = 100;
     private static final int MAX_MINUTES = 59;
     private static final String DEFAULT_IMAGE_PATH = "image/loginImage.jpg";
@@ -191,8 +196,7 @@ public class ControlSelling implements Initializable {
     }
 
     private void handleSuccess(Auction response, SellingFormData formData) {
-        System.out.println("[ControlSelling] Server response class: " + (response == null ? "null" : response.getClass().getName()));
-        System.out.println("[ControlSelling] Server response toString: " + (response == null ? "null" : response.toString()));
+        LOGGER.info("[ControlSelling] Server response : " + (response == null ? "null" : response.getClass().getName()));
 
         if (response == null) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Server không thể tạo phiên đấu giá. Vui lòng thử lại.");
@@ -226,4 +230,3 @@ public class ControlSelling implements Initializable {
         }
     }
 }
-

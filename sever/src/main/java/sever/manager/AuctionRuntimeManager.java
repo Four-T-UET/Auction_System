@@ -5,16 +5,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import sever.service.AuctionService;
 
 public class AuctionRuntimeManager {
-    private static AuctionRuntimeManager instance;
+    private static AuctionRuntimeManager instance = new AuctionRuntimeManager();
     private final ConcurrentHashMap<String, Auction> auctionCache = new ConcurrentHashMap<>();
     private final AuctionService auctionService = new AuctionService();
 
     private AuctionRuntimeManager() {}
 
     public static AuctionRuntimeManager getInstance() {
-        if (instance == null) {
-            instance = new AuctionRuntimeManager();
-        }
         return instance;
     }
 
@@ -24,6 +21,14 @@ public class AuctionRuntimeManager {
         }
         return auctionCache.computeIfAbsent(auctionId, id -> auctionService.getAuctionById(id));
     }
+    /// ///////////////////////////////
+    public Auction getFromCache(String auctionId) {
+        if (auctionId == null || auctionId.isBlank()) {
+            return null;
+        }
+        return auctionCache.get(auctionId);
+    }
+    /// ////////////////////////////
 
     public void addOrUpdate(Auction auction) {
         if (auction == null || auction.getId() == null) {

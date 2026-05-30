@@ -80,9 +80,9 @@
             <Insets top="-2.0" />
         </VBox.margin>
         <children>
-            <Button fx:id="cancelBut" mnemonicParsing="false" onAction="#cancel" prefHeight="34.0" prefWidth="85.0" style="-fx-background-color: transparent; -fx-border-color: #d32f2f; -fx-border-width: 1.5; -fx-border-radius: 12; -fx-text-fill: #d32f2f; -fx-font-weight: bold; -fx-cursor: hand;" text="Cancel" />
+            <Button fx:id="cancelBut" mnemonicParsing="false" prefHeight="34.0" prefWidth="85.0" style="-fx-background-color: transparent; -fx-border-color: #d32f2f; -fx-border-width: 1.5; -fx-border-radius: 12; -fx-text-fill: #d32f2f; -fx-font-weight: bold; -fx-cursor: hand;" text="Cancel" />
 
-            <Button fx:id="viewBtn" mnemonicParsing="false" onAction="#view" prefHeight="34.0" prefWidth="101.0" style="-fx-background-color: linear-gradient(to right, #e53935, #c62828); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.4), 8, 0, 0, 3);" text="View" />
+            <Button fx:id="viewBtn" mnemonicParsing="false" prefHeight="34.0" prefWidth="101.0" style="-fx-background-color: linear-gradient(to right, #e53935, #c62828); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.4), 8, 0, 0, 3);" text="View" />
         </children>
     </HBox>
 </VBox>

@@ -1,12 +1,10 @@
 package service;
 
 import auction.logic.RequestDTO.AuctionDTO;
-import auction.logic.RequestDTO.ItemDTO;
 import auction.logic.RequestDTO.PullDTO;
 import auction.logic.RequestDTO.BidDTO;
-import auction.logic.manager.AuctionManager;
+import stateManager.AuctionManager;
 import auction.logic.model.Auction;
-import auction.logic.model.Clients;
 import auction.logic.model.Item;
 import java.util.List;
 
@@ -29,9 +27,9 @@ public class AuctionService {
       BidDTO bidDTO = new BidDTO(auctionId, bidderId, price);
       clientSocket.send(bidDTO);
       Object response = clientSocket.receive();
-      // If server returns updated Auction, update AuctionManager
+      // nếu server trả về updated Auction, thì auctionManager sẽ update
       if (response instanceof Auction) {
-        AuctionManager.getInstance().addOrUpdate((auction.logic.model.Auction) response);
+        AuctionManager.getInstance().addOrUpdate((Auction) response);
       }
       return response;
     } catch (RuntimeException e) {

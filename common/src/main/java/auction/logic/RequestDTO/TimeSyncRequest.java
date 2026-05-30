@@ -3,7 +3,7 @@ package auction.logic.RequestDTO;
 import java.io.Serializable;
 
 /**
- * Marker request used by the client to ask the server for its current timestamp.
+ * Yêu cầu đánh dấu được client sử dụng để hỏi server thời gian hiện tại.
  */
 public class TimeSyncRequest implements Serializable {
 	private static final long serialVersionUID = 1L;

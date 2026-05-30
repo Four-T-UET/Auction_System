@@ -7,15 +7,21 @@ import auction.logic.enums.AuctionStatus;
 import auction.logic.model.Auction;
 import auction.logic.model.Clients;
 import java.io.ObjectOutputStream;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sever.dao.AuctionDAO;
 import sever.dao.WalletDAO;
 import sever.manager.AuctionRuntimeManager;
 import sever.manager.ClientRuntimeManager;
 import sever.manager.ServerClientManager;
+import sever.scheduler.AuctionStatusScheduler;
 
 public class BidHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BidHandler.class);
     private final AuctionDAO auctionDAO = AuctionDAO.getInstance();
-    private final WalletDAO walletDAO = new WalletDAO();
+    private final WalletDAO walletDAO = WalletDAO.getInstance();
 
     public void handle(BidDTO bidDTO, ObjectOutputStream out) {
         try {
@@ -29,11 +35,17 @@ public class BidHandler {
             double price = bidDTO.getPrice();
 
             Auction auction = AuctionRuntimeManager.getInstance().getOrLoad(auctionId);
+            /// //////////////////////////////////////////////////////////////
+
             if (auction == null) {
-                out.writeObject("FAILED: Auction not found");
-                out.flush();
-                return;
+              out.writeObject("FAILED: Auction not found");
+              out.flush();
+              return;
             }
+
+            
+            /// ////////////////////////////////////////////////////////////
+
             if (auction.getStatus() != AuctionStatus.RUNNING) {
                 out.writeObject("FAILED: Auction not running");
                 out.flush();
@@ -76,13 +88,28 @@ public class BidHandler {
                 out.flush();
                 return;
             }
+            /// /////////////////////////////////////////
 
-            // Update database
+            long remainingSeconds = Duration.between(LocalDateTime.now(), auction.getFinishTime()).getSeconds();
+            if (remainingSeconds <= 10) {
+                LocalDateTime oldFinishTime = auction.getFinishTime();
+                LocalDateTime newFinishTime = oldFinishTime.plusSeconds(30);
+                auction.setFinishTime(newFinishTime);
+                auctionDAO.updateFinishTime(auction.getId(), newFinishTime);
+                AuctionStatusScheduler.getInstance().rescheduleAuctionEnd(auction.getId(), newFinishTime);
+                LOGGER.info("[ANTI_SNIPING] auctionId=" + auction.getId()
+                    + " bidderId=" + bidder.getId()
+                    + " remainingSeconds=" + remainingSeconds
+                    + " oldFinishTime=" + oldFinishTime
+                    + " newFinishTime=" + newFinishTime);
+            }
+
+            // cập nhật database time
             String currentWinnerId = auction.getCurrentWinner() != null ? auction.getCurrentWinner().getId() : null;
             auctionDAO.updatePriceAndWinner(auction.getId(), auction.getCurrentPrice(), currentWinnerId);
-            walletDAO.updateWalletSnapshot(bidder.getId(), bidder.getWallet().getBalance(), bidder.getWallet().getLockBalance());
+            walletDAO.updateWallet(bidder.getId(), bidder.getWallet().getBalance(), bidder.getWallet().getLockBalance());
 
-            // Send wallet update to bidder
+            // cập nhật ví cho bidder
             WalletResponseDTO bidderWalletUpdate = new WalletResponseDTO(
                 bidder.getWallet().getBalance(),
                 bidder.getWallet().getLockBalance()
@@ -92,10 +119,9 @@ public class BidHandler {
                 bidderWalletUpdate
             );
             ServerClientManager.getInstance().sendToUser(bidder.getId(), walletMsgForBidder);
-            
-            // Handle previous winner (if exists and different from bidder)
+            // Xử lý những thằng previous winner ( nếu có tồn tại và khác thằng bidder hiện tại )
             if (previousWinner != null && previousWinner != bidder) {
-                walletDAO.updateWalletSnapshot(previousWinner.getId(), previousWinner.getWallet().getBalance(), previousWinner.getWallet().getLockBalance());
+                walletDAO.updateWallet(previousWinner.getId(), previousWinner.getWallet().getBalance(), previousWinner.getWallet().getLockBalance());
 
                 WalletResponseDTO prevWinnerWalletUpdate = new WalletResponseDTO(
                     previousWinner.getWallet().getBalance(),
@@ -108,12 +134,11 @@ public class BidHandler {
                 ServerClientManager.getInstance().sendToUser(previousWinner.getId(), walletMsgForPrevWinner);
             }
 
-            // Update runtime cache
+            // cập nhật runtime cache
             AuctionRuntimeManager.getInstance().addOrUpdate(auction);
             out.writeObject(auction);
             out.flush();
-
-            // Broadcast auction update to all clients
+            // Thông báo, broadcast auction cập nhật tới tất cả các thằng clients
             BroadcastMessage broadcastMsg = new BroadcastMessage(BroadcastMessage.EventType.AUCTION_UPDATED, auction);
             ServerClientManager.getInstance().broadcastToAll(broadcastMsg);
         } catch (IllegalArgumentException | IllegalStateException e) {

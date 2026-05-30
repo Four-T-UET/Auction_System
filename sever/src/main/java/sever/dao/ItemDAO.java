@@ -14,8 +14,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import sever.config.DatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemDAO {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ItemDAO.class);
   private static final ItemDAO instance = new ItemDAO();
   private ItemDAO() {}
   public static ItemDAO getInstance(){
@@ -33,12 +36,11 @@ public class ItemDAO {
       pstmt.setBytes(5,item.getImageBytes());
       pstmt.executeUpdate();
     } catch (SQLException e) {
-      System.err.println(" Lỗi khi INSERT item:");
-      e.printStackTrace();
+      LOGGER.error("Lỗi khi INSERT item", e);
     }
   }
 
-  public ItemResponseDTO findRawItemById(String itemID) throws SQLException {
+  public ItemResponseDTO findItemById(String itemID) throws SQLException {
     String query = "SELECT id, name, description, category, image_byte FROM items WHERE id = ?";
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement pstmt = conn.prepareStatement(query)) {

@@ -6,14 +6,14 @@ import auction.logic.enums.WalletAction;
 
 public class WalletService {
     public static Object deposit(String userId, double amount) {
-        return sendWalletRequest(userId, WalletAction.DEPOSIT, amount);
+        return walletRequest(userId, WalletAction.DEPOSIT, amount);
     }
 
     public static Object withdraw(String userId, double amount) {
-        return sendWalletRequest(userId, WalletAction.WITHDRAW, amount);
+        return walletRequest(userId, WalletAction.WITHDRAW, amount);
     }
 
-    private static Object sendWalletRequest(String userId, WalletAction action, double amount) {
+    private static Object walletRequest(String userId, WalletAction action, double amount) {
         try {
             ClientSocket clientSocket = ClientSocket.getInstance();
             WalletDTO walletDTO = new WalletDTO(userId, action, amount);

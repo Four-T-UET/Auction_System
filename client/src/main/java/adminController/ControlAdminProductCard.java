@@ -1,8 +1,8 @@
 package adminController;
 
+import auction.logic.enums.AuctionStatus;
 import auction.logic.model.Auction;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import java.io.InputStream;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,51 +17,24 @@ import service.ClientSocket;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
+import service.TimeSyncService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControlAdminProductCard {
-    private Timeline countdownTimeline;
-    @FXML
-    private Label name;
-    @FXML
-    private Label type;
-    @FXML
-    private Label price;
-    @FXML
-    private Label time;
-    @FXML
-    private ImageView itemImageView;
-    @FXML
-    private Button viewBtn;
-    @FXML
-    private Button cancelBut;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ControlAdminProductCard.class);
+
+    @FXML private Label name;
+    @FXML private Label type;
+    @FXML private Label price;
+    @FXML private Label time;
+    @FXML private ImageView itemImageView;
+    @FXML private Button viewBtn;
+    @FXML private Button cancelBut;
 
     private Auction currentAuction;
 
-    public void setOnCancelHandler(EventHandler<ActionEvent> eventHandler) {
-        if(cancelBut != null){
-            cancelBut.setOnAction(eventHandler);
-        }
-    }
-    public void setOnViewHandler(EventHandler<ActionEvent> eventHandler) {
-        if(viewBtn != null){
-            viewBtn.setOnAction(eventHandler);
-        }
-    }
-
-    @FXML
-    public void cancel(ActionEvent event) {
-        // FXML onAction='#cancel' will call this; forward to any programmatically set handler if present
-        if (cancelBut != null && cancelBut.getOnAction() != null) {
-            cancelBut.getOnAction().handle(event);
-        }
-    }
-
-    @FXML
-    public void view(ActionEvent event) {
-        if (viewBtn != null && viewBtn.getOnAction() != null) {
-            viewBtn.getOnAction().handle(event);
-        }
-    }
     public Auction getCurrentAuction() {
         return currentAuction;
     }
@@ -81,15 +54,10 @@ public class ControlAdminProductCard {
         name.setText(auction.getItem().getName());
         type.setText(auction.getItem().getCategory() != null ? auction.getItem().getCategory().toString() : "Unknown");
         loadImage(auction);
-        // Disable bid button if auction already ended
 
-        if(countdownTimeline != null){
-            countdownTimeline.stop();
-            countdownTimeline = null;
-        }
         refreshDisplay();
-        startRealtimeUpdate();
     }
+
     private void loadImage(Auction auction) {
         try {
             Image image = resolveImage(auction);
@@ -97,66 +65,65 @@ public class ControlAdminProductCard {
                 itemImageView.setImage(image);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error loading Product Card FXML", e);
         }
     }
-    public static VBox renderCard(Auction myAuction) {
-        try{
+
+    public static ControlAdminProductCard renderCard(Auction myAuction, PaneContainer container) {
+        try {
             FXMLLoader loader = new FXMLLoader(ControlAdminProductCard.class.getResource("/adminResource/productCardForAdmin.fxml"));
             VBox cardBox = loader.load();
-            ControlAdminProductCard controlProductCard = loader.getController();
-            controlProductCard.setData(myAuction);
 
-            cardBox.setUserData(controlProductCard);
-            // set CSS ids so callers using lookup("#cancel"/"#view") can find buttons
-            if (controlProductCard.cancelBut != null) controlProductCard.cancelBut.setId("cancel");
-            if (controlProductCard.viewBtn != null) controlProductCard.viewBtn.setId("view");
-            return cardBox;
-        }catch (IOException e){
-            System.out.println("Error loading FXML");
+            ControlAdminProductCard controller = loader.getController();
+            controller.setData(myAuction);
+
+            // Đẩy đồ họa vào FlowPane
+            container.addNode(cardBox);
+
+            return controller; // Trả controller về cho Dashboard xử lý tiếp
+        } catch (IOException e) {
+            System.err.println("Error loading Product Card FXML");
             e.printStackTrace();
             return null;
         }
     }
+
+    // Để Dashboard có thể cài sự kiện bằng EventHandler thông thường
+    public void setOnCancelAction(EventHandler<ActionEvent> handler) {
+        if (this.cancelBut != null) {
+            this.cancelBut.setOnAction(handler);
+        }
+    }
+
+    public void setOnViewAction(EventHandler<ActionEvent> handler) {
+        if (this.viewBtn != null) {
+            this.viewBtn.setOnAction(handler);
+        }
+    }
+
     private Image resolveImage(Auction auction) {
         try {
-            //  Thử load từ bytes trước
             if (auction.getItem().getImageBytes() != null && auction.getItem().getImageBytes().length > 0) {
                 return new Image(new ByteArrayInputStream(auction.getItem().getImageBytes()));
             }
         } catch (Exception e) {
-            System.err.println("Error loading image from bytes: " + e.getMessage());
+            LOGGER.warn("Error loading image from bytes: " + e.getMessage(), e);
         }
 
-        //  Thử load default image từ classpath
         try {
-            java.io.InputStream stream = getClass().getResourceAsStream("/image/loginImage.jpg");
+            InputStream stream = getClass().getResourceAsStream("/image/loginImage.jpg");
             if (stream != null) {
                 return new Image(stream);
             }
         } catch (Exception e) {
-            System.err.println("Error loading default image from resources: " + e.getMessage());
+            LOGGER.warn("Error loading default image from resources: " + e.getMessage(), e);
         }
-
-        //  Nếu fail hết, trả về null
-        System.err.println("Warning: No image available for auction");
+        LOGGER.warn("Warning: No image available for auction");
         return null;
     }
 
-    // chage time
-    private void startRealtimeUpdate(){
-        if (countdownTimeline != null) countdownTimeline.stop();
-        countdownTimeline = new Timeline(
-                new KeyFrame(javafx.util.Duration.ZERO, e -> refreshDisplay()),
-                new KeyFrame(javafx.util.Duration.seconds(1), e -> {
-                    refreshDisplay();
-                })
-        );
-        countdownTimeline.setCycleCount(Timeline.INDEFINITE);
-        countdownTimeline.play();
-    }
-
-    private void refreshDisplay() {
+    // ĐÃ CHUYỂN THÀNH PUBLIC ĐỂ DASHBOARD GỌI
+    public void refreshDisplay() {
         if (currentAuction == null) {
             price.setText("0.00");
             time.setText("N/A");
@@ -165,12 +132,28 @@ public class ControlAdminProductCard {
 
         price.setText(String.format("%.2f", currentAuction.getCurrentPrice()));
         time.setText(formatRemaining(currentAuction));
+        /// //////////////////////////////////////////////////////
+        boolean isStopped = isAuctionEnded(currentAuction);
+
+        if (cancelBut != null) {
+            // Nếu auction đã ended hoặc cancelled, vô hiệu hóa nút Hủy (xám nút, không cho bấm nữa)
+            cancelBut.setDisable(isStopped);
+        }
+        /// /////////////////////////////////////////////
     }
+
     private boolean isAuctionEnded(Auction auction) {
         if (auction == null || auction.getFinishTime() == null) return false;
-        ClientSocket clientSocket = ClientSocket.getInstance();
-        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
-        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+
+        /// /////////////////////////////////////////////
+        if (auction.getStatus() == AuctionStatus.CANCELLED) {
+            return true;
+        }
+        /// ////////////////////////////////////////////////
+
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
         return remainingMillis <= 0;
     }
 
@@ -178,9 +161,14 @@ public class ControlAdminProductCard {
         if(auction == null || auction.getFinishTime() == null){
             return "N/A";
         }
-        ClientSocket clientSocket = ClientSocket.getInstance();
-        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
-        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+        /// ///////////////////////////////
+        if(auction.getStatus() == AuctionStatus.CANCELLED){
+            return "Auction cancelled";
+        }
+        /// /////////////////////////////////
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
 
         if(remainingMillis <= 0){
             return "Auction ended";
@@ -198,13 +186,14 @@ public class ControlAdminProductCard {
     }
 
     public void dispose(){
-        if(countdownTimeline != null){
-            countdownTimeline.stop();
-            countdownTimeline = null;
-        }
         if(currentAuction != null){
             price.textProperty().unbind();
         }
         currentAuction = null;
+    }
+    // Giao tiếp chức năng trung gian để lồng VBox đồ họa vào FlowPane
+    @FunctionalInterface
+    public interface PaneContainer {
+        void addNode(VBox cardVisual);
     }
 }

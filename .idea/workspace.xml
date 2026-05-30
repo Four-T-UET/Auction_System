@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="refactor controller UI">
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controller/ControlSelling.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resource/DashBoardTOSelling.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/DashBoardTOSelling.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/common-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/common/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-    </list>
+    <list default="true" id="8c731018-e0d0-4f1c-b020-645f86aadbd1" name="Changes" comment="refactor controller UI" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,7 +13,7 @@
   <component name="CopilotChats">
     <option name="panelChat">
       <chat>
-        <option name="activeSessionId" value="d19cff9b-3522-482b-871b-769bf1e66ae8" />
+        <option name="activeSessionId" value="50207dfe-ea62-4fe6-b47d-e6cf9ced7415" />
         <option name="sessions">
           <session>
             <option name="chatType" value="PANEL" />
@@ -88,12 +79,67 @@
             <option name="modeId" value="Agent" />
             <option name="modelType" value="builtin_family" />
             <option name="modelValue" value="auto" />
-            <option name="status" value="Completed" />
             <option name="targetType" value="LOCAL" />
           </session>
           <session>
             <option name="chatType" value="PANEL" />
-            <option name="id" value="d19cff9b-3522-482b-871b-769bf1e66ae8" />
+            <option name="id" value="7d0ecf88-ba1a-417b-a3f1-4f3a3482a5e1" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="7085e827-1fea-4810-a722-632f7657335a" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="06dfab09-cf15-46bb-8f59-91933a3b93e2" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="8e8c3d2f-1f55-414f-8444-e6bdcbd88fbf" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="e889baad-8fcd-4e95-929a-fade338fc148" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="8c9a2d7f-b55a-45b8-8c77-811396e53aad" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="93200e48-d5f6-448f-a552-5b47324b0cd2" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="50207dfe-ea62-4fe6-b47d-e6cf9ced7415" />
             <option name="modeId" value="Agent" />
             <option name="modelType" value="builtin_family" />
             <option name="modelValue" value="auto" />
@@ -106,24 +152,42 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_C:/Users/Admin/Downloads/AuctionSystem_FINAL" value="3EKnKn0UnNZCJrS0fK8TzbjChbV" />
+      <entry key="_C:/Users/Admin/Downloads/CancelMaking" value="3EFMjgdfhIKhJi1inBPDE0Kr5g0" />
+      <entry key="_C:/Users/Admin/Downloads/READ/AuctionSystem_Final" value="3EIqmIXX8Z7fyufyuy14tfkqcje" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/Auctionmake" value="3E3sUXRVWv36TEvEEmfDTGIXwja" />
       <entry key="_C:/Users/Admin/Downloads/Tung/Duan - Copy/Testing_SeverandDtbase" value="3DyXPCsti2trFTJbIFnrAlwUHTO" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/New folder/Tuan_xulytratien" value="3E7BFjMRujnz9AI9X7zjyNERddv" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/New folder/Tuan_xulytratien+Tung_suaAdmin" value="3E7JwFAdWgpWUUYPTbHLiZ4AJBT" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/New folder/currentwiinerandseller_xulytratien" value="3E7BA7e8znzW0MeDoYzx4RZGfFJ" />
       <entry key="_C:/Users/Admin/Downloads/Tung/Test/Testing_SeverandDtbase" value="3Dyli1hj6dHEBxjobHMurmx9snk" />
       <entry key="_C:/Users/Admin/Downloads/Tung/Testing_SeverandDtbase" value="3DpngcFhrvh7MqTpViXevWz0ByI" />
       <entry key="_C:/Users/Admin/Downloads/Tung/Testing_SeverandDtbase (3)/Testing_SeverandDtbase" value="3Dfd92iFsnCPlefSCCTRgWW0ANe" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/currentwiinerandseller" value="3E4KDUgGmT4GNxaBBKBoazZiLjV" />
+      <entry key="_C:/Users/Admin/Downloads/Tung/currentwiinerandseller_xulytratien" value="3E4ncnrBA8pXHJmK2LGubsfq11w" />
       <entry key="_C:/Users/PC/Documents/code/BaiTapLon/Auction_System" value="3DUUB06mxYIQkEEf4lxmc12mCw5" />
+      <entry key="_C:/Users/PC/Downloads/CancelMaking" value="3EIc7haT9pb28m93pPNULx2ePPm" />
       <entry key="_C:/Users/PC/Downloads/Duan - Copy/Testing_SeverandDtbase" value="3DyRv3tQknSClDpiJAZNGqYVbaz" />
       <entry key="_C:/Users/PC/Downloads/Duan/Testing_SeverandDtbase" value="3DyGwSggCPwsR3M8rp0GbHT9WOE" />
       <entry key="_C:/Users/PC/Downloads/Main/Testing_SeverandDtbase" value="3E1gpPVOFLz99qOq14pSqHhusU3" />
       <entry key="_C:/Users/PC/Downloads/New folder (4)/Testing_SeverandDtbase" value="3DoSEAbB7v0Vmi9hobSRqxHRKPP" />
+      <entry key="_C:/Users/PC/Downloads/bidding/currentwiinerandseller_xulytratien" value="3E6zRnEtuwYhDwziAQkReB7psLJ" />
+      <entry key="_C:/Users/PC/Downloads/haha/AuctionSystem_FINAL/AuctionSystem_FINAL" value="3EKqUeaSYwp7jxO2OmBPRLYiSbj" />
+      <entry key="_C:/Users/PC/Downloads/test2/CancelMaking" value="3EFsznPsUPtfYJjQpLz7d6xYQoY" />
       <entry key="_C:/Users/tungh/Downloads/Dowload/Testing_SeverandDtbase (3)/Testing_SeverandDtbase" value="3DfEyZL5LRixZnxiYfGSu1QFjTi" />
+      <entry key="_C:/Users/tungh/Downloads/LastProject/AuctionSystem_FINAL/AuctionSystem_FINAL" value="3EKo6mpW8bJEtANFxtSxtNAxYgo" />
       <entry key="_C:/Users/tungh/Downloads/New folder/Duan - Copy/Duan - Copy/Testing_SeverandDtbase" value="3DyiiXAZfuJwkVbpQPGfXvco8Zo" />
       <entry key="_C:/Users/tungh/Downloads/dât/Testing_SeverandDtbase (1)/Testing_SeverandDtbase" value="3DwhM3zKa3G0nlhI2Tzku2b8xI1" />
       <entry key="_C:/Users/tungh/Downloads/hahaa/AuctionSystem/auctionPlay/Auctionmake" value="3E3h7E0OveKmtZmPUw62DwYdGfR" />
+      <entry key="_C:/Users/tungh/Downloads/hahanwnw/currentwiinerandseller/currentwiinerandseller" value="3E4OzxwdDXvbakKVewNjkKtxfls" />
+      <entry key="_C:/Users/tungh/Downloads/hahanwnw/currentwiinerandseller_xulytratien/currentwiinerandseller_xulytratien" value="3E59Ngrftrc9vkJhAGZGpFx8n0X" />
+      <entry key="_C:/Users/tungh/Downloads/newLastCuoiCung/Dealing_with_Cancel_state/CancelMaking" value="3EDfAfvFLyKpysx40PQo7f5E30B" />
       <entry key="_C:/Users/tungh/Downloads/pro/Auction_System" value="3E3qsns5euuFoQ9oKqFLcyC2SA5" />
       <entry key="_C:/Users/tungh/Downloads/pro/Bidding/Testing_SeverandDtbase" value="3E1J41GgdfBNaGsimlK84q6XG7c" />
       <entry key="_D:/Auction_Project/Auction_System" value="3DITvUe84OcuZNFlgo9DnymNlBm" />
       <entry key="_D:/Auction_Project/Auction_System/client" value="3DOWiorAo7bxNFJiHAkCD4XbbHk" />
       <entry key="_D:/Testing_SeverandDtbase" value="3DOlIz7VgN7EpQ0XTOBsLzayjrs" />
+      <entry key="_D:/temp/New folder/AuctionSystem_Final (1)" value="3EJqeI9CBa58uA4uhy4fcwcfpGI" />
     </persistenceIdMap>
   </component>
   <component name="CopilotUserSelectedChatMode">
@@ -131,17 +195,19 @@
   </component>
   <component name="CopilotUserSelectedModel">
     <selectedModels>
-      <entry key="agent-panel" value="Auto" />
-      <entry key="chat-panel" value="Auto" />
+      <entry key="agent-panel" value="GPT-5.2-Codex" />
+      <entry key="chat-panel" value="GPT-5.2-Codex" />
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="153" />
+    <option name="cachedIndexableFilesCount" value="169" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -160,6 +226,9 @@
     &quot;assignee&quot;: &quot;25022017-BuiDuyThang&quot;
   }
 }</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="8e20707c-dfe2-4817-b711-e3102de1dcb1" />
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Four-T-UET/Auction_System.git&quot;,
@@ -195,56 +264,61 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.AppTrade.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Application.Server.executor": "Run",
-    "Downloaded.Files.Path.Enabled": "false",
-    "JUnit.AuctionTest.executor": "Run",
-    "Maven.Etrade [clean,package].executor": "Run",
-    "Maven.Etrade [clean].executor": "Run",
-    "Maven.Etrade [package].executor": "Run",
-    "Maven.Etrade [validate].executor": "Run",
-    "Maven.common [validate].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "dev",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/tungh/Downloads/pro/Auction_System",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "D:/Testing_SeverandDtbase/sever/src/main/java/app/Main.java",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.AppTrade.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;JUnit.AuctionTest.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Etrade [clean,package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Etrade [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Etrade [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Etrade [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Etrade [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.common [validate].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ToolWindow.GitHub Copilot Chat.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/tungh/Downloads/LastProject/AuctionSystem_FINAL/AuctionSystem_FINAL&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;D:/Testing_SeverandDtbase/sever/src/main/java/app/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Auction_Project\Auction_System\client\src\main" />
-      <recent name="D:\Auction_Project\Auction_System\client\src\main\java" />
-      <recent name="D:\Auction_Project\Auction_System\common" />
-      <recent name="D:\Auction_Project\Auction_System\client" />
-      <recent name="D:\Auction_Project\Auction_System" />
+      <recent name="C:\Users\Admin\Downloads\Tung\New folder\Tuan_xulytratien+Tung_suaAdmin\client\src\main\resource\adminResource" />
+      <recent name="C:\Users\Admin\Downloads\Tung\New folder\Tuan_xulytratien+Tung_suaAdmin\sever\src\main\java\sever\service" />
+      <recent name="C:\Users\Admin\Downloads\Tung\New folder\Tuan_xulytratien+Tung_suaAdmin\sever\src\main\java\sever\handler" />
+      <recent name="C:\Users\Admin\Downloads\Tung\New folder\Tuan_xulytratien+Tung_suaAdmin\common\src\main\java\auction\logic\manager" />
+      <recent name="C:\Users\Admin\Downloads\Tung\New folder\Tuan_xulytratien+Tung_suaAdmin\common\src\main\java\auction\logic\RequestDTO" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -255,6 +329,30 @@
       <recent name="auction.logic.enums" />
       <recent name="controller" />
     </key>
+  </component>
+  <component name="RunManager" selected="Application.AppTrade">
+    <configuration name="AppTrade" type="Application" factoryName="Application" singleton="false">
+      <option name="ALTERNATIVE_JRE_PATH" value="$USER_HOME$/.jdks/liberica-full-25.0.3" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="AppTrade" />
+      <module name="client" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/src/main/java/clientController" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="sever.Server" />
+      <module name="sever" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.AppTrade" />
+      <item itemvalue="Application.Server" />
+      <item itemvalue="JUnit.AuctionTest" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -337,7 +435,66 @@
       <workItem from="1779351659974" duration="2633000" />
       <workItem from="1779369955036" duration="1816000" />
       <workItem from="1779412992687" duration="1484000" />
-      <workItem from="1779417810755" duration="2884000" />
+      <workItem from="1779417810755" duration="396000" />
+      <workItem from="1779418598922" duration="223000" />
+      <workItem from="1779418843009" duration="7051000" />
+      <workItem from="1779431519394" duration="2000" />
+      <workItem from="1779431525967" duration="592000" />
+      <workItem from="1779432283364" duration="723000" />
+      <workItem from="1779433050179" duration="1223000" />
+      <workItem from="1779434296732" duration="23000" />
+      <workItem from="1779434643024" duration="3537000" />
+      <workItem from="1779442516088" duration="3912000" />
+      <workItem from="1779446785481" duration="3566000" />
+      <workItem from="1779457526863" duration="9169000" />
+      <workItem from="1779513787153" duration="3208000" />
+      <workItem from="1779519576019" duration="26000" />
+      <workItem from="1779519626673" duration="4199000" />
+      <workItem from="1779523911737" duration="11039000" />
+      <workItem from="1779541493557" duration="404000" />
+      <workItem from="1779542869955" duration="18000" />
+      <workItem from="1779542937771" duration="5000" />
+      <workItem from="1779552696059" duration="3043000" />
+      <workItem from="1779556248802" duration="1096000" />
+      <workItem from="1779558564898" duration="831000" />
+      <workItem from="1779559421667" duration="4000" />
+      <workItem from="1779559430035" duration="3502000" />
+      <workItem from="1779586889166" duration="189000" />
+      <workItem from="1779587460506" duration="687000" />
+      <workItem from="1779588166074" duration="196000" />
+      <workItem from="1779588370320" duration="193000" />
+      <workItem from="1779590798111" duration="411000" />
+      <workItem from="1779591218291" duration="259000" />
+      <workItem from="1779591501081" duration="580000" />
+      <workItem from="1779599632896" duration="56000" />
+      <workItem from="1779668939457" duration="441000" />
+      <workItem from="1779671441912" duration="702000" />
+      <workItem from="1779672423552" duration="3584000" />
+      <workItem from="1779679410140" duration="18346000" />
+      <workItem from="1779700147557" duration="324000" />
+      <workItem from="1779702203842" duration="4032000" />
+      <workItem from="1779717920331" duration="3878000" />
+      <workItem from="1779721907615" duration="917000" />
+      <workItem from="1779770001921" duration="134000" />
+      <workItem from="1779770353901" duration="7373000" />
+      <workItem from="1779781656863" duration="496000" />
+      <workItem from="1779785862865" duration="400000" />
+      <workItem from="1779788905756" duration="1335000" />
+      <workItem from="1779812079387" duration="2616000" />
+      <workItem from="1779843032036" duration="1289000" />
+      <workItem from="1779844698597" duration="1598000" />
+      <workItem from="1779849709289" duration="4615000" />
+      <workItem from="1779869332638" duration="5940000" />
+      <workItem from="1779876590303" duration="1186000" />
+      <workItem from="1779886064132" duration="67000" />
+      <workItem from="1779907114963" duration="29000" />
+      <workItem from="1779907180442" duration="263000" />
+      <workItem from="1779908379680" duration="1123000" />
+      <workItem from="1779936067409" duration="48000" />
+      <workItem from="1779936450963" duration="881000" />
+      <workItem from="1779937605262" duration="2568000" />
+      <workItem from="1779976609646" duration="5429000" />
+      <workItem from="1780149361876" duration="598000" />
     </task>
     <task id="LOCAL-00001" summary="new branch">
       <option name="closed" value="true" />

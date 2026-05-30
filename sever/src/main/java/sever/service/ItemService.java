@@ -4,18 +4,12 @@ import auction.logic.enums.ItemCategory;
 import auction.logic.factory.*;
 import auction.logic.model.Item;
 import sever.dao.ItemDAO;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ItemService {
   private final ItemDAO itemDAO = ItemDAO.getInstance();
 
-  public Item createAndSaveItem(String name, ItemCategory category, String description) {
-    return createAndSaveItem(name, category, description, null);
-  }
-
   public Item createAndSaveItem(String name, ItemCategory category, String description, byte[] imageBytes) {
-    // factory method
+    // Phương thức factory
     ItemFactory factory = getFactory(category);
     Item item = factory.createItem(name, description, imageBytes);
 

@@ -3,14 +3,19 @@ package auction.logic.model;
 import auction.logic.enums.AuthenticationException;
 import java.io.Serializable;
 import javax.swing.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class User extends Entity implements Serializable {
+    private static final Logger LOGGER = Logger.getLogger(User.class.getName());
     private String username;
     private String password;
-    public User( String username, String password){
+    private String role;
+    public User( String username, String password, String role){
         super();
         this.username = username;
         this.password = password;
+        this.role = role;
     }
     public String getUsername(){
         return username;
@@ -23,10 +28,10 @@ public abstract class User extends Entity implements Serializable {
                 throw new AuthenticationException("Tài khoản đăng nhập không hợp lệ");
             }
         }catch (AuthenticationException e){
-            System.out.println(e.getMessage()); // catch này sau này UI xử lý
+            LOGGER.log(Level.WARNING, e.getMessage(), e); // catch này sau này UI xử lý
         }
         return check;
     }
-    // synchronized để avoid 2 thằng cùng login 1 thời điểm
+    // synchronized để tránh 2 luồng cùng login cùng lúc
 }
 

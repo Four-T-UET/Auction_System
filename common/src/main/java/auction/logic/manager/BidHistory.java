@@ -6,7 +6,10 @@ import auction.logic.model.Bidder;
 import auction.logic.model.Clients;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class BidHistory implements Serializable {
     private HashMap<String, BidTransaction> bidHistory = new HashMap<>();
@@ -15,10 +18,11 @@ public class BidHistory implements Serializable {
         BidTransaction temp = new BidTransaction(bidder, price);
         bidHistory.put(temp.getId(),temp);
     }
-    public void printBidTransaction(){
-        for(String key : bidHistory.keySet()){
-            System.out.println(key +  " " + bidHistory.get(key).getBidder().getUsername());
-        }
-    }
 
+
+    public List<BidTransaction> getTransactions(){
+        List<BidTransaction> list = new ArrayList<>(bidHistory.values());
+        list.sort(Comparator.comparing(BidTransaction::getTime));
+        return list;
+    }
 }

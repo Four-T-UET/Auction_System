@@ -2,25 +2,26 @@ package auction.logic.model;
 
 
 import auction.logic.enums.AuctionClosedException;
-import auction.logic.enums.AuctionEvent;
 import auction.logic.enums.AuctionStatus;
 import auction.logic.enums.InvalidBidException;
+
 import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Clients extends User implements Bidder, Seller{
+    private static final Logger LOGGER = LoggerFactory.getLogger(Clients.class);
     private HashMap<String, Item> inventory = new HashMap<>();
     private Wallet wallet = new Wallet();
 
-    public Clients(String username, String password){
-        super(username, password);
+    public Clients(String username, String password, String userRole){
+        super(username, password, userRole);
     }
     @Override
     public synchronized boolean login(String name, String pass) {
         return super.login(name, pass);
     }
-    public Clients register(String id, String name, String pass){
-        return new Clients(name, pass);
-    }
+
 
     @Override
     public void removeItem(Item temp) {
@@ -40,50 +41,34 @@ public class Clients extends User implements Bidder, Seller{
                 throw new AuctionClosedException("Phiên đấu giá đang chờ ");
             }
             if (inventory.containsValue(auction.getItem()) ){
-                System.out.println("Ban khong the dau gia san pham cua chinh minh");
+                LOGGER.warn("Ban khong the dau gia san pham cua chinh minh");
                 return;
             }
         }catch(AuctionClosedException e){
-            System.out.println(e.getMessage());
+            LOGGER.warn(e.getMessage(), e);
             return;
         }
 
-        //check money
+        // Kiểm tra số tiền
         try {
-            if (wallet.getBalance() < price) {
+            if (wallet.getBalance() + wallet.getLockedAmount(auction.getId()) < price ) {
                 throw new InvalidBidException("Khong du tien trong tai khoan");
             }
         }catch(InvalidBidException e){
-            System.out.println(e.getMessage());
+            LOGGER.warn(e.getMessage(), e);
             return;
         }
 
         boolean isBidValid = auction.setCurrentWinner(this, price);
-        //Lockmoney
+        // Khóa tiền
         if (isBidValid) {
-            //lockbalance
+            // Khóa số dư
             wallet.lockWallet(auction,price);
         } else {
 
         }
     }
-    // observers pattern
-    public void update(Auction auction, AuctionEvent eventType, String message){
-        //print notification
-        // logic wallet
-        if (eventType== AuctionEvent.PRICE_UPDATED){
-            //check lockbalance
-            boolean isMoneyLocked = wallet.getLockBalance() > 0;
-            //check winner
-            boolean amIWinner = (auction.getCurrentWinner() == this);
-
-            if (isMoneyLocked && !amIWinner){
-                wallet.releaseBalance(auction);
-            }
-        }
-    }
-
-    // method với Wallet
+    // Phương thức liên quan đến Wallet
     public Wallet getWallet(){
         return this.wallet;
     }
@@ -92,9 +77,6 @@ public class Clients extends User implements Bidder, Seller{
     }
     public void releaseBalance(Auction auction) {
         wallet.releaseBalance(auction);
-    }
-    public void deductLockbalance(Auction auction) {
-        wallet.deductLockBalance(auction);
     }
 
 

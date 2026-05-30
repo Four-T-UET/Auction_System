@@ -5,12 +5,15 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.time.ZoneId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Server-side: Quản lý tất cả connected clients
- * Chịu trách nhiệm broadcast message tới tất cả clients
+ * Phía Server: Quản lý tất cả client đã kết nối
+ * Gửi thông báo broadcast tới tất cả clients
  */
 public class ServerClientManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerClientManager.class);
     private static ServerClientManager instance;
     private final CopyOnWriteArrayList<ClientInfo> connectedClients = new CopyOnWriteArrayList<>();
     private final ConcurrentHashMap<String, ObjectOutputStream> userIdToStream = new ConcurrentHashMap<>();
@@ -31,7 +34,7 @@ public class ServerClientManager {
         if (out != null) {
             ClientInfo info = new ClientInfo(out);
             connectedClients.add(info);
-            System.out.println("[SERVER MANAGER] Client registered. Total clients: " + connectedClients.size());
+            LOGGER.info("[ServerClientManager] : Đăng ký Client. Tổng Clients: " + connectedClients.size());
         }
     }
 
@@ -41,7 +44,7 @@ public class ServerClientManager {
     public void registerUserId(String userId, ObjectOutputStream out) {
         if (userId != null && out != null) {
             userIdToStream.put(userId, out);
-            System.out.println("[SERVER MANAGER] Registered user: " + userId);
+            LOGGER.info("[ServerClientManager] : Đăng ký User: " + userId);
         }
     }
 
@@ -49,12 +52,12 @@ public class ServerClientManager {
      * Hủy đăng ký client khi ngắt kết nối
      */
     public synchronized void unregisterClient(ObjectOutputStream out) {
-        // Remove from connectedClients
+        // Xóa khỏi connectedClients
         boolean removed = connectedClients.removeIf(client -> client.getOut() == out);
-        // Remove from userIdToStream (find by stream value)
+        // Xóa khỏi userIdToStream (tìm theo giá trị stream)
         userIdToStream.entrySet().removeIf(entry -> entry.getValue() == out);
         if (removed) {
-            System.out.println("[SERVER MANAGER] Client unregistered. Total clients: " + connectedClients.size());
+            LOGGER.info("[ServerClientManager] : Huỷ đăng ky Client. Tổng clients: " + connectedClients.size());
         }
     }
 
@@ -64,7 +67,7 @@ public class ServerClientManager {
     public void sendToUser(String userId, Object message) {
         ObjectOutputStream out = userIdToStream.get(userId);
         if (out == null) {
-            System.err.println("[SERVER MANAGER] User not found or not connected: " + userId);
+            LOGGER.warn("[ServerClientManager] : Không thể kết nối / không tìm thấy User: " + userId);
             return;
         }
         try {
@@ -74,45 +77,18 @@ public class ServerClientManager {
                 out.flush();
                 out.reset();
             }
-            System.out.println("[SERVER MANAGER] Sent to user " + userId);
+            LOGGER.info("[ServerClientManager] : Gửi cho user " + userId);
         } catch (Exception e) {
-            System.err.println("[SERVER MANAGER] Failed to send to user " + userId + ": " + e.getMessage());
+            LOGGER.error("[ServerClientManager] : Gửi cho user thất bại " + userId, e);
             unregisterClient(out);
         }
     }
-
     /**
-     * Broadcast message tới TẤT CẢ connected clients NGOẠI TRỪ sender
-     */
-    public void broadcastToAllExcept(BroadcastMessage message, ObjectOutputStream senderOut) {
-        stampServerTime(message);
-        System.out.println("[SERVER MANAGER] Broadcasting: " + message);
-        for (ClientInfo client : connectedClients) {
-            // Không gửi lại cho người gửi
-            if (client.getOut() == senderOut) {
-                continue;
-            }
-            try {
-                synchronized (client.getOut()) {
-                    client.getOut().reset();
-                    client.getOut().writeObject(message);
-                    client.getOut().flush();
-                    client.getOut().reset();
-                }
-                System.out.println("[SERVER MANAGER] ✓ Sent to client");
-            } catch (Exception e) {
-                System.err.println("[SERVER MANAGER] ✗ Failed to broadcast to client: " + e.getMessage());
-                unregisterClient(client.getOut());
-            }
-        }
-    }
-
-    /**
-     * Broadcast tới TẤT CẢ clients (including sender)
+     * Broadcast tới TẤT CẢ clients (bao gồm cả người gửi)
      */
     public void broadcastToAll(BroadcastMessage message) {
         stampServerTime(message);
-        System.out.println("[SERVER MANAGER] Broadcasting to ALL: " + message);
+        LOGGER.info("[ServerClientManager] : Thông báo tới tất cả: " + message);
         for (ClientInfo client : connectedClients) {
             try {
                 synchronized (client.getOut()) {
@@ -121,16 +97,16 @@ public class ServerClientManager {
                     client.getOut().flush();
                     client.getOut().reset();
                 }
-                System.out.println("[SERVER MANAGER] ✓ Sent to client");
+                LOGGER.info("[ServerClientManager] : Gửi cho client");
             } catch (Exception e) {
-                System.err.println("[SERVER MANAGER] ✗ Failed to broadcast to client: " + e.getMessage());
+                LOGGER.error("[ServerClientManager] : thông báo cho cac client thất bại", e);
                 unregisterClient(client.getOut());
             }
         }
     }
 
     /**
-     * Inner class để wrap client connection
+     * Lớp nội bộ để đóng gói kết nối client
      */
     private static class ClientInfo {
         private final ObjectOutputStream out;

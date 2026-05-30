@@ -17,7 +17,7 @@ public abstract class Item extends Entity implements Serializable {
         this.imageBytes = imageBytes;
     }
 
-    // Getter - setter
+    // Phương thức lấy - gán giá trị
     public String getName(){return this.name;}
     public void setName(String name){this.name = name;}
     public String getDescription(){return this.description;}

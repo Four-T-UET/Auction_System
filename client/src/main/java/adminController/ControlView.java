@@ -1,35 +1,30 @@
 package adminController;
 
 import Utils.AlertShow;
-import Utils.ChangeScene;
 import auction.logic.enums.AuctionStatus;
-import auction.logic.manager.AuctionManager;
-import auction.logic.manager.AuctionUpdateListener;
+import stateManager.AuctionManager;
+import stateManager.AuctionUpdateListener;
 import auction.logic.model.Auction;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import service.ClientSocket;
+import service.TimeSyncService;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControlView implements Initializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ControlView.class);
     private Auction auction;
     private AuctionUpdateListener updateListener;
     private Timeline countdownTimeLine;
@@ -82,10 +77,15 @@ public class ControlView implements Initializable {
         timeLeft.setText(formatTimeLeft(auction));
 
         // Cập nhật Status
-        if(isAuctionEnded(auction) && auction.getCurrentWinner() == null) {
-            statusLabel.setText("UN_SOLDED");
+        /// /////////////////////////////////////////////
+        if (auction.getStatus() == AuctionStatus.CANCELLED) {
+            statusLabel.setText("CANCELLED");
+        } else if (isAuctionEnded(auction) && auction.getCurrentWinner() == null) {
+            statusLabel.setText("UN_SOLD");
+        } else {
+            statusLabel.setText(auction.getStatus().toString());
         }
-        statusLabel.setText(auction.getStatus().toString());
+        /// /////////////////////////////////////////////////
 
         // Cập nhật hình ảnh
         if (auction.getItem().getImageBytes() != null && auction.getItem().getImageBytes().length > 0) {
@@ -93,7 +93,7 @@ public class ControlView implements Initializable {
                 Image image = new Image(new java.io.ByteArrayInputStream(auction.getItem().getImageBytes()));
                 itemImageView.setImage(image);
             } catch (Exception e) {
-                System.err.println("Error loading product image: " + e.getMessage());
+                LOGGER.warn("Error loading product image: " + e.getMessage(), e);
             }
         } else {
             Image image = new Image("image/loginImage.jpg");
@@ -108,9 +108,12 @@ public class ControlView implements Initializable {
         if(auction == null || auction.getFinishTime() == null){
             return "N/A";
         }
-        ClientSocket clientSocket = ClientSocket.getInstance();
-        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
-        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+        if (auction.getStatus() == AuctionStatus.CANCELLED){
+            return "Auction cancelled";
+        }
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
 
         if(remainingMillis <= 0){
             return "Auction ended";
@@ -126,7 +129,7 @@ public class ControlView implements Initializable {
                 ? String.format("%dd %02d:%02d:%02d", days, hours, minutes, seconds)
                 : String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
-    /**     * Apply style: red if ended, green if active     */
+    /**     * Áp dụng style: đỏ nếu đã kết thúc, xanh nếu đang hoạt động     */
     private void applyTimeLeftStyle(Auction auction) {
         if (timeLeft == null) return;
         if (auction == null) {
@@ -141,9 +144,14 @@ public class ControlView implements Initializable {
 
     private boolean isAuctionEnded(Auction auction) {
         if (auction == null || auction.getFinishTime() == null) return false;
-        ClientSocket clientSocket = ClientSocket.getInstance();
-        long finishMillis = clientSocket.toServerEpochMillis(auction.getFinishTime());
-        long remainingMillis = finishMillis - clientSocket.getServerTimeMillis();
+        /// ///////////////
+        if (auction.getStatus() == AuctionStatus.CANCELLED) {
+            return true;
+        }
+        /// ////////////////////////////////////////////////////
+        TimeSyncService timeSyncService = TimeSyncService.getInstance();
+        long finishMillis = timeSyncService.toServerEpochMillis(auction.getFinishTime());
+        long remainingMillis = finishMillis - timeSyncService.getServerTimeMillis();
         return remainingMillis <= 0;
     }
 
@@ -152,13 +160,14 @@ public class ControlView implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Start per-second countdown
+        registerAuctionListener();
+        // Bắt đầu đếm ngược mỗi giây
         startRealtimeCountdown();
         setupAutoCleanup();
     }
 
     /**
-     * Start per-second countdown update
+     * Bắt đầu cập nhật đếm ngược mỗi giây
      */
     private void startRealtimeCountdown() {
         if (countdownTimeLine != null) countdownTimeLine.stop();
@@ -171,7 +180,7 @@ public class ControlView implements Initializable {
     }
 
     /**
-     * Refresh time display every second with color
+     * Làm mới hiển thị thời gian mỗi giây kèm màu sắc
      */
     private void refreshTimeDisplay() {
         if (auction != null) {
@@ -215,7 +224,7 @@ public class ControlView implements Initializable {
                     Platform.runLater(() -> {
                         AlertShow.showAlert(Alert.AlertType.WARNING, "Thông báo",
                                 "Phiên đấu giá đã bị hủy!");
-                        // TODO: có thể gọi returnToMain() hoặc close bidding screen
+                        // TODO: có thể gọi returnToMain() hoặc đóng màn hình bidding
                     });
                 }
             }
@@ -231,23 +240,27 @@ public class ControlView implements Initializable {
     public void Display(Auction updatedAuction) {
         if (updatedAuction == null) return;
 
-        // Cập nhật reference
+        // 1. Unregister listener cũ (nếu có) để tránh duplicate
+        unregisterAuctionListener();
+
+        // 2. Cập nhật reference
         this.auction = updatedAuction;
 
-        // Cập nhật thông tin sản phẩm (đã bao gồm check winner null nội bộ)
+        // 3. Cập nhật thông tin sản phẩm
         updateProductInfo(updatedAuction);
-        if (updateListener == null) {
-            registerAuctionListener();
-        }
+
+        // 4. Đăng ký listener mới cho auction này
+        registerAuctionListener();
     }
 
+
     /**
-     * Hủy đăng ký listener khi không còn cần (tránh memory leak)
-     * Gọi method này khi scene được thay đổi hoặc controller bị destroy
+     * Hủy đăng ký listener từ AuctionManager một cách an toàn
      */
-    public void unregisterAuctionListener() {
+    private void unregisterAuctionListener() {
         if (updateListener != null) {
             AuctionManager.getInstance().unregisterListener(updateListener);
+            updateListener = null;
         }
     }
 
@@ -275,11 +288,9 @@ public class ControlView implements Initializable {
         }
 
         // 2. Hủy đăng ký listener từ AuctionManager
-        if (updateListener != null) {
-            AuctionManager.getInstance().unregisterListener(updateListener);
-            updateListener = null;
-        }
+        unregisterAuctionListener();
 
+        // 3. Clear auction reference
         auction = null;
     }
 

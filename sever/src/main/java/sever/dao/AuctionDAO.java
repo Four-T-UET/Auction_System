@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class AuctionDAO {
     }
   }
 
-  public List<AuctionResponseDTO> pullAllAuctionsRawData() throws SQLException {
+  public List<AuctionResponseDTO> pullAllAuctionsData() throws SQLException {
     List<AuctionResponseDTO> list = new ArrayList<>();
     String query = "SELECT a.id AS auction_id, a.item_id, a.startPrice, a.minStep, a.duration, " +
             "a.finish_time, a.status, a.current_winner_id, a.seller_id, " +
@@ -52,7 +53,7 @@ public class AuctionDAO {
             rs.getDouble("startPrice"),
             rs.getDouble("minStep"),
             rs.getLong("duration"),
-            rs.getObject("finish_time", java.time.LocalDateTime.class),
+            rs.getObject("finish_time", LocalDateTime.class),
             rs.getString("status"),
             rs.getString("current_winner_id"),
             rs.getString("seller_id"),
@@ -64,16 +65,6 @@ public class AuctionDAO {
       }
     }
     return list;
-  }
-
-  public void updateStartPrice(String auctionId, double newPrice) throws SQLException {
-    String sql = "UPDATE auctions SET startPrice = ? WHERE id = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setDouble(1, newPrice);
-      pstmt.setString(2, auctionId);
-      pstmt.executeUpdate();
-    }
   }
 
   public void updatePriceAndWinner(String auctionId, double newPrice, String currentWinnerId) throws SQLException {
@@ -97,7 +88,17 @@ public class AuctionDAO {
     }
   }
 
-  public AuctionResponseDTO findRawAuctionById(String auctionId) throws SQLException {
+  public void updateFinishTime(String auctionId, LocalDateTime finishTime) throws SQLException {
+    String sql = "UPDATE auctions SET finish_time = ? WHERE id = ?";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setObject(1, finishTime);
+      pstmt.setString(2, auctionId);
+      pstmt.executeUpdate();
+    }
+  }
+
+  public AuctionResponseDTO findAuctionById(String auctionId) throws SQLException {
     String query = "SELECT a.id AS auction_id, a.item_id, a.startPrice, a.minStep, a.duration, " +
             "a.finish_time, a.status, a.current_winner_id, a.seller_id, " +
             "i.name, i.description, i.category, i.image_byte " +
@@ -113,7 +114,7 @@ public class AuctionDAO {
               rs.getDouble("startPrice"),
               rs.getDouble("minStep"),
               rs.getLong("duration"),
-              rs.getObject("finish_time", java.time.LocalDateTime.class),
+              rs.getObject("finish_time", LocalDateTime.class),
               rs.getString("status"),
               rs.getString("current_winner_id"),
               rs.getString("seller_id"),

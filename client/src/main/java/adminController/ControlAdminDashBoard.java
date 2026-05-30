@@ -2,11 +2,13 @@ package adminController;
 
 import Utils.AlertShow;
 import Utils.ChangeScene;
-import auction.logic.manager.AuctionManager;
-import auction.logic.manager.AuctionUpdateListener;
+import auction.logic.enums.AuctionStatus;
+import stateManager.AuctionManager;
+import stateManager.AuctionUpdateListener;
 import auction.logic.model.Auction;
-// ...existing code...
-import clientController.UserSession;
+import stateManager.UserSession;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,191 +19,73 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
+import service.AdminService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class ControlAdminDashBoard implements Initializable {
     private ObservableList<Auction> allAuctions;
     private AuctionUpdateListener updateListener;
-    // Quản lý danh sách các controller đang hiển thị trên trang hiện tại
-    private final List<ControlAdminProductCard> activeControllers = new java.util.ArrayList<>();
+    private final List<ControlAdminProductCard> activeControllers = new ArrayList<>();
+
+    private Timeline masterTimeline;
 
     @FXML private BorderPane adminMainPane;
     @FXML private Pagination mainPagination;
 
-    @FXML
-    public void manageAuctionsBtn(ActionEvent event) {
-        try {
-            // Hủy đăng ký listener trước khi về
-            unregisterAuctionListener();
-            clearActiveControllers();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminResource/AdminDashboard.fxml"));
-            Parent root = loader.load();
-            Scene scene = adminMainPane.getScene();
-            if (scene != null) {
-                scene.setRoot(root);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    @FXML
-    public void userManager(ActionEvent event) {
-        try {
-            // Hủy đăng ký listener trước khi về
-            unregisterAuctionListener();
-            clearActiveControllers();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminResource/ManageUserAdmin.fxml"));
-            Parent root = loader.load();
-            Scene scene = adminMainPane.getScene();
-            if (scene != null) {
-                scene.setRoot(root);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @FXML
-    public void logoutBtn(ActionEvent event) throws IOException {
-        UserSession.clearAllData();
-        ChangeScene.changeTOLogin(event);
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        allAuctions = AuctionManager.getInstance().getMasterAuctionList();
-        if(!allAuctions.isEmpty()){
-            dividePage(allAuctions);
-        }
-        registerAuctionListener();
-    }
-    private void clearActiveControllers() {
-        for (ControlAdminProductCard controller : activeControllers) {
-            if (controller != null) {
-                controller.dispose(); // Dừng hoàn toàn Timeline chạy ngầm của Card cũ
-            }
-        }
-        activeControllers.clear();
-    }
-    private void registerAuctionListener() {
-        updateListener = new AuctionUpdateListener() {
-            @Override
-            public void onAuctionAdded(Auction auction) {
-                // Thêm mới sản phẩm -> Số lượng thay đổi, phải tính lại trang
-                Platform.runLater(() -> dividePage(allAuctions));
-            }
-
-            @Override
-            public void onAuctionUpdated(Auction auction) {
-                //  CẬP NHẬT CỤC BỘ: Người ta nâng giá thì chỉ sửa đúng cái Card đó thôi!
-                Platform.runLater(() -> {
-                    for (ControlAdminProductCard controller : activeControllers) {
-                        // Giả sử class Auction của bạn có hàm getId() hoặc một định danh tương đương
-                        if (controller.getCurrentAuction() != null &&
-                                controller.getCurrentAuction().getId().equals(auction.getId())) {
-
-                            controller.setData(auction); // Đẩy data mới vào card, tự động đổi giá tiền!
-                            break;
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onAuctionsReplaced(List<Auction> auctions) {
-                Platform.runLater(() -> dividePage(allAuctions));
-            }
-
-            @Override
-            public void onAuctionRemoved(String auctionId) {
-                // Xóa sản phẩm -> Số lượng thay đổi, phải vẽ lại trang
-                Platform.runLater(() -> dividePage(allAuctions));
-            }
-        };
-
-        AuctionManager.getInstance().registerListener(updateListener);
-    }
-
-    /**     * Hủy đăng ký listener khi scene đóng (tránh memory leak)     */
-    private void unregisterAuctionListener() {
-        if (updateListener != null) {
-            AuctionManager.getInstance().unregisterListener(updateListener);
-            updateListener = null;
-        }
-    }
-    private void dividePage(List<Auction> listAuctions) {
-        final int NUM_ITEM = 8;
-        int pageCount = (int) Math.ceil((double) listAuctions.size() / NUM_ITEM);
-        if (listAuctions.isEmpty()) {
-            mainPagination.setPageCount(1);
-            mainPagination.setPageFactory((pageIndex) -> new ScrollPane(new FlowPane()));
-            return;
-        }
-        mainPagination.setPageCount(pageCount);
-        mainPagination.setPageFactory((pageIndex) -> createPage(listAuctions, pageIndex, NUM_ITEM));
-    }
-
-    private ScrollPane createPage(List<Auction> auctions, int pageIndex, int itemsPerPage) {
-        // 1. DỌN DẸP SẠCH SẼ các Timeline cũ trước khi vẽ trang mới
-        clearActiveControllers();
-
-        int start = pageIndex * itemsPerPage;
-        int end = Math.min(start + itemsPerPage, auctions.size());
-
-        FlowPane page = new FlowPane();
-        page.setOrientation(javafx.geometry.Orientation.HORIZONTAL);
-        page.setHgap(30);
-        page.setVgap(12);
-        // Bind wrap length to pagination width so cards wrap when window resizes
-        // Use available center area width (BorderPane width minus sidebar) so cards can wrap across full main pane
-        // Sidebar approx width 240 + padding => subtract 280 for safe margin
-        page.prefWrapLengthProperty().bind(adminMainPane.widthProperty().subtract(280));
-
-        for (int i = start; i < end; i++) {
-            VBox card = createAuctionCard(auctions.get(i));
-            if (card != null) {
-                // 2. LẤY CONTROLLER RA từ UserData và đưa vào danh sách quản lý
-                ControlAdminProductCard controller = (ControlAdminProductCard) card.getUserData();
-                if (controller != null) {
-                    activeControllers.add(controller);
-                }
-                page.getChildren().add(card);
-            }
-        }
-
-        ScrollPane sp = new ScrollPane(page);
-        sp.setFitToWidth(true);  // IMPORTANT: let FlowPane use pagination width
-        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        return sp;
-    }
-
-    private VBox createAuctionCard(Auction auction) {
         try {
-            VBox card = ControlAdminProductCard.renderCard(auction);
-            if (card != null) {
-                Button cancelBut = (Button) card.lookup("#cancel");
-                Button viewBut =  (Button) card.lookup("#view");
-                if (cancelBut != null &&  viewBut != null) {
-                    cancelBut.setOnAction(e -> cancleAuction(auction));
-                    viewBut.setOnAction(e -> openViewScreen(auction));
-                }
-            }
-            return card;
+            allAuctions = AuctionManager.getInstance().getMasterAuctionList();
+            dividePage(allAuctions != null ? allAuctions : new ArrayList<>());
+            registerAuctionListener();
+            startMasterTimeline();
         } catch (Exception e) {
-            System.err.println("Error creating auction card: " + e.getMessage());
             e.printStackTrace();
-            return null;
         }
     }
+
+    private void startMasterTimeline() {
+        if (masterTimeline != null) masterTimeline.stop();
+        masterTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), event -> {
+                    for (ControlAdminProductCard controller : activeControllers) {
+                        if (controller != null) controller.refreshDisplay();
+                    }
+                })
+        );
+        masterTimeline.setCycleCount(Timeline.INDEFINITE);
+        masterTimeline.play();
+    }
+
+    private void stopMasterTimeline() {
+        if (masterTimeline != null) {
+            masterTimeline.stop();
+            masterTimeline = null;
+        }
+    }
+
+    @FXML public void manageAuctionsBtn(ActionEvent event) { changeSceneSafely("/adminResource/AdminDashboard.fxml", true); }
+    @FXML public void userManager(ActionEvent event) { changeSceneSafely("/adminResource/ManageUserAdmin.fxml", false); }
+
+    @FXML
+    public void logoutBtn(ActionEvent event) {
+        try {
+            cleanupResources();
+            UserSession.clearAllData();
+            ChangeScene.changeTOLogin(event);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void openViewScreen(Auction auction) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminResource/ViewForAdmin.fxml"));
@@ -210,11 +94,156 @@ public class ControlAdminDashBoard implements Initializable {
             viewController.Display(auction);
             adminMainPane.setCenter(viewScreen);
         } catch (IOException e) {
-            e.printStackTrace();
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi Tải Trang", "Không thể mở giao diện chi tiết.");
         }
     }
-    public void cancleAuction(Auction auction) {
-        AlertShow.showAlert(Alert.AlertType.INFORMATION,"Erase", "DO you want to delete this auction");
+
+    private void changeSceneSafely(String fxmlPath, boolean isRootChange) {
+        try {
+            cleanupResources();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            if (isRootChange) {
+                Scene scene = adminMainPane.getScene();
+                if (scene != null) scene.setRoot(root);
+            } else {
+                adminMainPane.setCenter(root);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi Hệ Thống", "Không thể tải giao diện.");
+        }
     }
 
+    private void cleanupResources() {
+        unregisterAuctionListener();
+        clearActiveControllers();
+        stopMasterTimeline();
+    }
+
+    private void clearActiveControllers() {
+        for (ControlAdminProductCard controller : activeControllers) {
+            if (controller != null) controller.dispose();
+        }
+        activeControllers.clear();
+    }
+
+    private void registerAuctionListener() {
+        updateListener = new AuctionUpdateListener() {
+            @Override public void onAuctionAdded(Auction auction) { Platform.runLater(() -> dividePage(allAuctions)); }
+            @Override public void onAuctionUpdated(Auction auction) {
+                Platform.runLater(() -> {
+                    for (ControlAdminProductCard controller : activeControllers) {
+                        if (controller.getCurrentAuction() != null && controller.getCurrentAuction().getId().equals(auction.getId())) {
+                            controller.setData(auction);
+                            break;
+                        }
+                    }
+                });
+            }
+            @Override public void onAuctionsReplaced(List<Auction> auctions) { Platform.runLater(() -> dividePage(allAuctions)); }
+            @Override public void onAuctionRemoved(String auctionId) { Platform.runLater(() -> dividePage(allAuctions)); }
+        };
+        AuctionManager.getInstance().registerListener(updateListener);
+    }
+
+    private void unregisterAuctionListener() {
+        if (updateListener != null) {
+            AuctionManager.getInstance().unregisterListener(updateListener);
+            updateListener = null;
+        }
+    }
+
+    private void dividePage(List<Auction> listAuctions) {
+        if (listAuctions == null || listAuctions.isEmpty()) {
+            mainPagination.setPageCount(1);
+            mainPagination.setPageFactory((pageIndex) -> new ScrollPane(new FlowPane()));
+            return;
+        }
+        int pageCount = (int) Math.ceil((double) listAuctions.size() / 8);
+        mainPagination.setPageCount(pageCount);
+        mainPagination.setPageFactory((pageIndex) -> createPage(listAuctions, pageIndex, 8));
+    }
+
+    private ScrollPane createPage(List<Auction> auctions, int pageIndex, int itemsPerPage) {
+        clearActiveControllers(); // Dọn dẹp sạch sẽ danh sách cũ trước khi nạp trang mới
+
+        FlowPane page = new FlowPane();
+        page.setOrientation(javafx.geometry.Orientation.HORIZONTAL);
+        page.setHgap(30);
+        page.setVgap(12);
+        page.prefWrapLengthProperty().bind(adminMainPane.widthProperty().subtract(280));
+
+        int start = pageIndex * itemsPerPage;
+        int end = Math.min(start + itemsPerPage, auctions.size());
+
+        for (int i = start; i < end; i++) {
+            Auction currentAuction = auctions.get(i);
+
+            // 1. Gọi renderCard phiên bản rút gọn (chỉ truyền auction và container)
+            ControlAdminProductCard controller = ControlAdminProductCard.renderCard(
+                currentAuction,
+                cardVisual -> page.getChildren().add(cardVisual)
+            );
+
+            if (controller != null) {
+
+                controller.setOnCancelAction(e -> {
+                    cancelAuction(controller.getCurrentAuction());
+                });
+
+                controller.setOnViewAction(e -> {
+                    openViewScreen(controller.getCurrentAuction());
+                });
+
+                // Đưa controller vào MasterTimeline để quản lý giây
+                activeControllers.add(controller);
+            }
+        }
+
+        ScrollPane sp = new ScrollPane(page);
+        sp.setFitToWidth(true);
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        return sp;
+    }
+    /// /////////////////////////////////////////////////////////////////
+    public void cancelAuction(Auction auction) {
+        if (auction == null) {
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Auction không tồn tại.");
+            return;
+        }
+        /// //////////////////////////////////////////////
+        if ( auction.getStatus() == AuctionStatus.CANCELLED) {
+            AlertShow.showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Phiên đấu giá này đã được hủy trước đó rồi!");
+            return;
+        }
+        /// //////////////////////////////////////////////
+        try{
+            boolean confirm = AlertShow.showConfirm(
+                    "Xác nhận hủy",
+                    "Bạn có chắc muốn hủy auction: " + auction.getItem().getName() + "?"
+            );
+            if (!confirm) {
+                return;
+            }
+
+            Object response = AdminService.cancelAuctionService(auction);
+            if (response instanceof String message) {
+                if (message.startsWith("SUCCESS")) {
+                    AlertShow.showAlert(Alert.AlertType.INFORMATION, "Thành công", message);
+                } else {
+                    AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", message);
+                }
+            } else {
+                AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Phản hồi không hợp lệ từ server.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertShow.showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể hủy auction: " + e.getMessage());
+        }
+
+    }
+    /// ///////////////////////////////////////////////////////////////////
 }

@@ -10,19 +10,25 @@ import auction.logic.ResponseDTO.AuctionResponseDTO;
 import auction.logic.ResponseDTO.ItemResponseDTO;
 import sever.dao.AuctionDAO;
 import sever.dao.ItemDAO;
+import sever.manager.AuctionRuntimeManager;
 import sever.manager.ClientRuntimeManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import sever.scheduler.AuctionStatusScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuctionService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(AuctionService.class);
+
   private final AuctionDAO auctionDAO = AuctionDAO.getInstance();
   private final ItemDAO itemDAO = ItemDAO.getInstance();
 
   public Auction createAuction(String itemID, double startPrice, double minStep, int duration, String sellerId) {
     try {
-      ItemResponseDTO rawItem = itemDAO.findRawItemById(itemID);
+      ItemResponseDTO rawItem = itemDAO.findItemById(itemID);
       if (rawItem != null) {
         ItemFactory factory = getFactory(rawItem.category);
         Item item = factory.createItem(rawItem.name, rawItem.description, rawItem.imageBytes);
@@ -43,27 +49,82 @@ public class AuctionService {
           }
         }
         auctionDAO.save(auction, duration, sellerId);
+        AuctionStatusScheduler.getInstance().scheduleAuctionEnd(auction.getId(), auction.getFinishTime());
         return auction;
       }
     } catch (SQLException e) {
-      System.err.println(">>> Lỗi xử lý nghiệp vụ khi tạo phiên đấu giá: " + e.getMessage());
-      e.printStackTrace();
+      LOGGER.error("[AuctionService]: Lỗi xử lý nghiệp vụ khi tạo phiên đấu giá", e);
     }
     return null;
   }
+  /// /////////////////////////////////////////////
+  public Auction cancelActiveAuction(String auctionId) {
+    if (auctionId == null || auctionId.isBlank()) {
+      LOGGER.warn("[AuctionService]: Auction ID là null");
+      return null;
+    }
+
+    try {
+      AuctionResponseDTO responseDB = auctionDAO.findAuctionById(auctionId);
+      if (responseDB == null) {
+        return null;
+      }
+
+      AuctionStatus currentStatus;
+      try {
+        currentStatus = AuctionStatus.valueOf(responseDB.status);
+      } catch (IllegalArgumentException e) {
+        LOGGER.warn("[AuctionService]: Status không hợp lệ: " + responseDB.status, e);
+        currentStatus = AuctionStatus.FINISHED;
+      }
+
+      if (currentStatus == AuctionStatus.FINISHED
+              || currentStatus == AuctionStatus.PAID
+              || currentStatus == AuctionStatus.CANCELLED) {
+        LOGGER.warn("[AuctionService]: Không thể cancel Auction: " + currentStatus);
+        return null;
+      }
+
+      Auction auction = convertDTOToAuction(responseDB);
+      if (auction == null) return null;
+
+      auction.cancelAuction(); // release tiền ở đây
+
+      auctionDAO.updateStatus(auctionId, AuctionStatus.CANCELLED.name());
+      return auction;
+
+    } catch (SQLException e) {
+      LOGGER.error("[AuctionService]: Lỗi khi cancel Auction", e);
+      return null;
+    }
+  }
+  /// ////////////////////////////////////////////////////////
 
   public List<Auction> getAllAuctions() {
     List<Auction> processedList = new ArrayList<>();
     try {
-      List<AuctionResponseDTO> rawDataList = auctionDAO.pullAllAuctionsRawData();
+      List<AuctionResponseDTO> rawDataList = auctionDAO.pullAllAuctionsData();
       for (AuctionResponseDTO raw : rawDataList) {
+        /// //////////////
+        // 1) Ưu tiên lấy từ cache
+        Auction cached = AuctionRuntimeManager.getInstance().getFromCache(raw.auctionId);
+        if (cached != null) {
+          processedList.add(cached);
+          continue;
+        }
+        /// ////////////////
+        // không có trong cache thì mới tạo mới từ DB
         Auction auction = convertDTOToAuction(raw);
         if (auction != null) {
+          /// ///////////////////////////////////////
+          // Câập nhật vào trong cache
+          AuctionRuntimeManager.getInstance().addOrUpdate(auction);
           processedList.add(auction);
+          /// /////////////////////////////////////////
         }
       }
     } catch (SQLException e) {
-      System.err.println(">>> Lỗi xử lý nghiệp vụ lấy danh sách đấu giá: " + e.getMessage());
+      LOGGER.error("[AuctionService]: Lỗi xử lý lấy danh sách đấu giá", e);
       e.printStackTrace();
     }
     return processedList;
@@ -71,12 +132,11 @@ public class AuctionService {
 
   public Auction getAuctionById(String auctionId) {
     try {
-      AuctionResponseDTO raw = auctionDAO.findRawAuctionById(auctionId);
+      AuctionResponseDTO raw = auctionDAO.findAuctionById(auctionId);
       if (raw == null) return null;
       return convertDTOToAuction(raw);
     } catch (SQLException e) {
-      System.err.println(">>> Lỗi khi lấy auction theo ID: " + e.getMessage());
-      e.printStackTrace();
+      LOGGER.error("[AuctionService]: Lỗi khi lấy auction theo ID", e);
       return null;
     }
   }

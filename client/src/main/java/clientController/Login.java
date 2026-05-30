@@ -2,6 +2,7 @@ package clientController;
 
 import Utils.AlertShow;
 import Utils.ChangeScene;
+import auction.logic.manager.Admin;
 import auction.logic.model.Clients;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -14,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import service.AuctionService;
 import service.AuthService;
+import stateManager.UserSession;
 
 public class Login {
     @FXML
@@ -51,7 +53,7 @@ public class Login {
             AlertShow.showAlert(Alert.AlertType.ERROR,"Error","Vui lòng nhập tài khoản và mật khẩu!");
             return;
         }
-        // Show loading spinner and disable controls
+        // Hiển thị spinner loading và vô hiệu hóa các nút điều khiển
         loadingSpinner.setVisible(true);
         signInButton.setDisable(true);
         signUpButton.setDisable(true);
@@ -59,10 +61,10 @@ public class Login {
         Task<Object> loginTask = new Task<>() {
             @Override
             protected Object call() {
-                // perform authentication on background thread
-                Object result = AuthService.verifyWithServer(user, pass);
+                // Thực hiện xác thực trên luồng nền
+                Object result = AuthService.loginRequest(user, pass);
                 if (result instanceof Clients) {
-                    // load auctions or other heavy data in background
+                    // Tải dữ liệu auction hoặc dữ liệu nặng khác trên luồng nền
                     AuctionService.pullAuction();
                 }
                 return result;
@@ -75,7 +77,7 @@ public class Login {
             if (checkLogin instanceof Clients) {
                 try {
                     UserSession.setCurrentUser((Clients) checkLogin);
-                    // Switch to dashboard on UI thread
+                    // Chuyển sang dashboard trên luồng UI
                     try {
                         ChangeScene.LoginToDashBoard(event);
                     } catch (Exception e) {
@@ -85,7 +87,20 @@ public class Login {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
+            } else if(checkLogin instanceof Admin){
+                try {
+                    try {
+                        AuctionService.pullAuction();
+                        ChangeScene.AdminChangeToMainDash(event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Không thể mở Dashboard: " + e.getMessage());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
                 signInButton.setDisable(false);
                 signUpButton.setDisable(false);
                 AlertShow.showAlert(Alert.AlertType.ERROR, "Error", "Tài khoản hoặc mật khẩu không chính xác!");
