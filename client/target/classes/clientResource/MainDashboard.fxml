@@ -89,17 +89,6 @@
                </padding>
             </Button>
             <Region VBox.vgrow="ALWAYS" />
-            <Button fx:id="settingBut" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" style="-fx-background-color: transparent; -fx-text-fill: #94a3b8; -fx-cursor: hand; -fx-font-size: 15;" text="⚙️ Settings">
-               <font>
-                  <Font size="15.0" />
-               </font>
-               <padding>
-                  <Insets left="28.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets bottom="24.0" />
-               </VBox.margin>
-            </Button>
          </children>
          <padding>
             <Insets top="20.0" />

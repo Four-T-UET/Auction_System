@@ -2,9 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -65,9 +65,9 @@
                            </font>
                         </Label>
                         <VBox alignment="CENTER" spacing="15.0" VBox.vgrow="NEVER">
-                            <children>
-                                <ImageView fx:id="imagePurchaseIcon" fitHeight="120.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                            </children>
+                           <children>
+                              <ImageView fx:id="imagePurchaseIcon" fitHeight="120.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
                         </VBox>
                         <HBox alignment="CENTER_LEFT" spacing="15.0" />
                         <Region prefHeight="10.0" />
@@ -126,14 +126,14 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="15.0" />
                         <Region prefHeight="10.0" />
-                        <ScatterChart fx:id="scatterchartSelling" title="Bid History" VBox.vgrow="ALWAYS">
+                        <LineChart fx:id="lineChart" title="Bid History" VBox.vgrow="ALWAYS">
                            <xAxis>
                               <CategoryAxis label="Time" side="BOTTOM" />
                            </xAxis>
                            <yAxis>
                               <NumberAxis label="Current Bid ($)" side="LEFT" />
                            </yAxis>
-                        </ScatterChart>
+                        </LineChart>
                      </children>
                   </VBox>
                </children>

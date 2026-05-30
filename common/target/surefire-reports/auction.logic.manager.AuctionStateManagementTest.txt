@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: auction.logic.manager.AuctionStateManagementTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.055 s -- in auction.logic.manager.AuctionStateManagementTest
