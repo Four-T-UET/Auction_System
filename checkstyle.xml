@@ -1,0 +1,45 @@
+﻿<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="warning"/>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="^.{101,}$"/>
+        <property name="message" value="Line exceeds 100 characters (possible long method)"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="^\s{20,}(if|else|for|while|switch|try)"/>
+        <property name="message" value="Deep nesting (5+ levels) - consider refactoring"/>
+    </module>
+
+
+    <module name="RegexpSingleline">
+        <property name="format" value="^public\s+class\s+[a-z]"/>
+        <property name="message" value="Class name must start with uppercase"/>
+    </module>
+    <module name="RegexpSingleline">
+        <property name="format" value="^\s+private\s+static\s+final\s+[A-Z].*=.*[a-z]"/>
+        <property name="message" value="Static final should be UPPER_CASE"/>
+    </module>
+
+    <module name="FileLength">
+        <property name="max" value="2000"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="\t"/>
+        <property name="message" value="Use spaces instead of tabs"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="\s+$"/>
+        <property name="message" value="Line has trailing whitespace"/>
+    </module>
+
+    <module name="SuppressionSingleFilter">
+        <property name="checks" value=".*"/>
+        <property name="files" value=".*Auction\.java"/>
+    </module>
+</module>

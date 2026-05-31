@@ -1,0 +1,31 @@
+package auction.logic.model;
+
+import auction.logic.enums.ItemCategory;
+import java.io.Serializable;
+
+public abstract class Item extends Entity implements Serializable {
+    private String name;
+    private String description;
+    private byte[] imageBytes;
+    private ItemCategory category;
+
+    public Item(String name, String description, ItemCategory category,byte[] imageBytes) {
+        super();
+        this.name = name;
+        this.description = description;
+        this.category=category;
+        this.imageBytes = imageBytes;
+    }
+
+    // Phương thức lấy - gán giá trị
+    public String getName(){return this.name;}
+    public void setName(String name){this.name = name;}
+    public String getDescription(){return this.description;}
+    public void setDescription(String description){this.description = description;}
+    public byte[] getImageBytes(){return this.imageBytes;}
+    public void setImageBytes(byte[] imageBytes){this.imageBytes = imageBytes;}
+    public ItemCategory getCategory(){return this.category;}
+    public void setCategory(ItemCategory category){this.category = category;}
+
+}
+

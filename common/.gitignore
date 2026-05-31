@@ -3,12 +3,10 @@
 
 # Log file
 *.log
-**/target/
+
 # BlueJ files
 *.ctxt
-*.iml
-.idea/workspace.xml
-
+target/
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
