@@ -92,7 +92,7 @@ AuctionSystem_FINAL/
 Sau khi build bằng Maven, file JAR nằm trong thư mục `target/` của từng module:
 
 - `client/target/client.jar`
-- `sever/target/sever-1.0-SNAPSHOT.jar` *(hoặc JAR cùng tên theo kết quả build trong `sever/target/`)*
+- `sever/target/server.jar` *(hoặc JAR cùng tên theo kết quả build trong `sever/target/`)*
 
 Nếu build từ root, Maven sẽ sinh JAR theo từng module tương ứng trong thư mục `target/`.
 
@@ -111,7 +111,7 @@ mvn clean package
 Chạy file JAR của server trong `sever/target/`:
 
 ```powershell
-java -jar .\sever\target\sever-1.0-SNAPSHOT.jar
+java -jar .\sever\target\server.jar
 ```
 
 Server cần được khởi động trước để client kết nối.
@@ -134,3 +134,7 @@ java -jar .\client\target\client.jar
 
 - Nếu chạy trong IntelliJ IDEA, mở `sever/src/main/java/sever/Server.java` để chạy server và `client/src/main/java/AppTrade.java` để chạy client.
 - Nếu kết nối CSDL lỗi, kiểm tra lại MySQL đang chạy và cấu hình kết nối trong mã nguồn server.
+
+
+Link PDF báo cáo: https://drive.google.com/file/d/1jI0R0eC06zrD_NUoqKPy99LBGrSXsrQr/view?usp=sharing
+Link Video Demo: https://drive.google.com/file/d/18lYXzI_xeUr-ovs6NCjDU8oXQVbbEN5b/view?usp=sharing
