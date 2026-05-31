@@ -40,14 +40,9 @@ public class AuctionService {
             item.setCategory(ItemCategory.REAL_ESTATE);
           }
         }
-        Auction auction = new Auction(item, startPrice, minStep, duration);
+        Clients seller = ClientRuntimeManager.getInstance().getOrLoad(sellerId);
+        Auction auction = seller.addAuction(item, startPrice, minStep, duration);
         auction.startAuction();
-        if (sellerId != null && !sellerId.isBlank()) {
-          Clients seller = ClientRuntimeManager.getInstance().getOrLoad(sellerId);
-          if (seller != null) {
-            auction.setSellerSnapshot(seller);
-          }
-        }
         auctionDAO.save(auction, duration, sellerId);
         AuctionStatusScheduler.getInstance().scheduleAuctionEnd(auction.getId(), auction.getFinishTime());
         return auction;
@@ -79,8 +74,8 @@ public class AuctionService {
       }
 
       if (currentStatus == AuctionStatus.FINISHED
-              || currentStatus == AuctionStatus.PAID
-              || currentStatus == AuctionStatus.CANCELLED) {
+          || currentStatus == AuctionStatus.PAID
+          || currentStatus == AuctionStatus.CANCELLED) {
         LOGGER.warn("[AuctionService]: Không thể cancel Auction: " + currentStatus);
         return null;
       }

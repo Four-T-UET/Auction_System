@@ -30,7 +30,9 @@ public class Clients extends User implements Bidder, Seller{
 
     @Override
     public Auction addAuction(Item temp, double firstprice, double miniumStep,int durationDays) {
-        return new Auction(temp, firstprice, miniumStep, durationDays);
+        Auction auction =  new Auction(temp, firstprice, miniumStep, durationDays);
+        auction.setSellerSnapshot(this);
+        return auction;
     }
 
 
@@ -71,9 +73,6 @@ public class Clients extends User implements Bidder, Seller{
     // Phương thức liên quan đến Wallet
     public Wallet getWallet(){
         return this.wallet;
-    }
-    public void deposit(double amount){
-        wallet.deposit(amount);
     }
     public void releaseBalance(Auction auction) {
         wallet.releaseBalance(auction);

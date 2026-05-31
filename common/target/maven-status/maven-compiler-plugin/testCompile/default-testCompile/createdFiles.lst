@@ -1,5 +1,0 @@
-auction\logic\factory\ItemFactoryTest.class
-auction\logic\manager\BidHistoryTest.class
-auction\logic\manager\AuctionStateManagementTest.class
-auction\logic\model\AuctionTest.class
-auction\logic\model\WalletTest.class
