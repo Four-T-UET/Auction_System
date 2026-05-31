@@ -77,8 +77,9 @@ public class Clients extends User implements Bidder, Seller{
     public void releaseBalance(Auction auction) {
         wallet.releaseBalance(auction);
     }
-
-
+    public void deposit(double amount){
+        wallet.deposit(amount);
+    }
     public String getUsername(){
         return super.getUsername();
     }
