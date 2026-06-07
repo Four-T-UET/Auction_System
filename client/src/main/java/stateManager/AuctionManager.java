@@ -18,6 +18,13 @@ public class AuctionManager {
 
 	private AuctionManager() {}
 
+	public void clearMaster(){
+		masterAuctionList.clear();
+	}
+	public void  clearListeners(){
+		listeners.clear();
+	}
+
 
 	public static AuctionManager getInstance() {
 		if (instance == null) instance = new AuctionManager();

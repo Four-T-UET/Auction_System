@@ -20,6 +20,12 @@ public class UserManager {
         if (instance == null) { instance = new UserManager();}
         return instance;
     }
+    public void clearListener(){
+        listeners.clear();
+    }
+    public void clearMaster(){
+        masterUserList.clear();
+    }
 
     public ObservableList<User> getMasterUserList() {return this.masterUserList;}
 

@@ -16,6 +16,9 @@ public class WalletManager {
     }
     return instance;
   }
+  public void clearListerners(){
+    listeners.clear();
+  }
   public double getBalance() {
     return balance;
   }

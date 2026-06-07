@@ -95,9 +95,6 @@ public class Auction extends Entity implements Serializable {
 		return this.finishTime;
 	}
 
-	public LocalDateTime getStartTime(){
-		return this.startTime;
-	}
 
 	public void setFinishTime(LocalDateTime finishTime){
 		this.finishTime = finishTime;

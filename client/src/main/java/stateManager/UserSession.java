@@ -2,6 +2,8 @@ package stateManager;
 
 
 import auction.logic.model.Clients;
+import auction.logic.model.User;
+import service.ClientSocket;
 
 /**
  * Session lưu trữ user hiện tại đã login
@@ -28,20 +30,6 @@ public final class UserSession {
     }
 
     /**
-     * Kiểm tra có user login chưa
-     */
-    public static boolean isLoggedIn() {
-        return currentUser != null;
-    }
-
-    /**
-     * Logout và xoá tất cả dữ liệu
-     */
-    public static void logout() {
-        clearAllData();
-    }
-
-    /**
      * Xoá tất cả dữ liệu khi logout
      * - Xoá user hiện tại
      * - Xoá tất cả auction data từ AuctionManager
@@ -49,6 +37,12 @@ public final class UserSession {
      * - Xoá tất cả listeners từ AuctionManager
      */
     public static void clearAllData() {
+        currentUser = null;
+        UserManager.getInstance().clearListener();
+        UserManager.getInstance().clearMaster();
+        AuctionManager.getInstance().clearListeners();
+        AuctionManager.getInstance().clearMaster();
+        WalletManager.getInstance().clearListerners();
     }
 }
 

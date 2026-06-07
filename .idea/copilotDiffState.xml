@@ -64,15 +64,6 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/Admin.java">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/common/src/main/java/auction/logic/manager/Admin.java" />
-              <option name="originalContent" value="package auction.logic.manager;&#10;&#10;import auction.logic.enums.AuctionStatus;&#10;import auction.logic.model.Auction;&#10;import auction.logic.model.User;&#10;import java.util.logging.Logger;&#10;&#10;public class Admin extends User {&#10;    private static final Logger LOGGER = Logger.getLogger(Admin.class.getName());&#10;&#10;    public Admin(String username, String password){&#10;        super(username, password,&quot;ADMIN&quot;);&#10;    }&#10;    public void approveAuction(Auction auction){&#10;        if(auction != null){&#10;            if(auction.getStatus() == AuctionStatus.PENDING){&#10;                auction.startAuction();&#10;                LOGGER.info(&quot;Phiên đấu giá đã được phê duyệt thành công&quot;);&#10;            }else{&#10;                LOGGER.warning(&quot;Đã được phê duyệt&quot;);&#10;            }&#10;        }else{&#10;            LOGGER.warning(&quot;Phiên đấu giá không tồn tại&quot;);&#10;        }&#10;    }&#10;   public void cancelAuction(Auction auction) {&#10;        if(auction != null){&#10;            auction.cancelAuction();&#10;            LOGGER.info(&quot;Phiên đấu giá đã được huỷ&quot;);&#10;        }else{&#10;            LOGGER.warning(&quot;Phiên đấu giá không tồn tại&quot;);&#10;        }&#10;    }&#10;&#10;}&#10;" />
-              <option name="updatedContent" value="package auction.logic.manager;&#10;&#10;import auction.logic.enums.AuctionStatus;&#10;import auction.logic.model.Auction;&#10;import auction.logic.model.User;&#10;import org.slf4j.Logger;&#10;import org.slf4j.LoggerFactory;&#10;&#10;public class Admin extends User {&#10;    private static final Logger LOGGER = LoggerFactory.getLogger(Admin.class);&#10;&#10;    public Admin(String username, String password){&#10;        super(username, password,&quot;ADMIN&quot;);&#10;    }&#10;    public void approveAuction(Auction auction){&#10;        if(auction != null){&#10;            if(auction.getStatus() == AuctionStatus.PENDING){&#10;                auction.startAuction();&#10;                LOGGER.info(&quot;Phiên đấu giá đã được phê duyệt thành công&quot;);&#10;            }else{&#10;                LOGGER.warn(&quot;Đã được phê duyệt&quot;);&#10;            }&#10;        }else{&#10;            LOGGER.warn(&quot;Phiên đấu giá không tồn tại&quot;);&#10;        }&#10;    }&#10;   public void cancelAuction(Auction auction) {&#10;        if(auction != null){&#10;            auction.cancelAuction();&#10;            LOGGER.info(&quot;Phiên đấu giá đã được huỷ&quot;);&#10;        }else{&#10;            LOGGER.warn(&quot;Phiên đấu giá không tồn tại&quot;);&#10;        }&#10;    }&#10;&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
       </map>
     </option>
   </component>
